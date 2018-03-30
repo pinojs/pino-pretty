@@ -1,0 +1,45 @@
+{
+  "name": "pino-pretty",
+  "version": "1.0.0",
+  "description": "Prettifier for Pino log lines",
+  "main": "index.js",
+  "scripts": {
+    "lint": "standard | snazzy",
+    "lint-ci": "standard",
+    "test": "tap --no-cov 'test/**/*.test.js'",
+    "test-ci": "tap --cov --coverage-report=text 'test/**/*.test.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/pinojs/pino-pretty.git"
+  },
+  "keywords": [
+    "pino"
+  ],
+  "author": "James Sumners <james.sumners@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pinojs/pino-pretty/issues"
+  },
+  "homepage": "https://github.com/pinojs/pino-pretty#readme",
+  "precommit": [
+    "lint",
+    "test"
+  ],
+  "dependencies": {
+    "chalk": "^2.3.2",
+    "cldr-data": "^32.0.1",
+    "cldrjs": "^0.5.0",
+    "fast-json-parse": "^1.0.3",
+    "js-joda": "^1.8.2",
+    "js-joda-locale": "^1.0.0",
+    "js-joda-timezone": "^1.2.1"
+  },
+  "devDependencies": {
+    "pino": "^4.15.3",
+    "pre-commit": "^1.2.2",
+    "snazzy": "^7.1.1",
+    "standard": "^11.0.1",
+    "tap": "^11.1.3"
+  }
+}
