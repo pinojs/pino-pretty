@@ -29,6 +29,13 @@ test('basic prettifier tests', (t) => {
     done()
   })
 
+  t.test('preserves output if not valid JSON', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const formatted = pretty('this is not json\nit\'s just regular output\n')
+    t.is(formatted, 'this is not json\nit\'s just regular output\n\n')
+  })
+
   t.test('formats a line without any extra options', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
@@ -155,6 +162,195 @@ test('basic prettifier tests', (t) => {
       }
     }))
     log.info('foo')
+  })
+
+  t.test('handles missing time', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const formatted = pretty('{"hello":"world"}')
+    t.is(formatted, '{"hello":"world"}\n')
+  })
+
+  t.test('handles missing pid, hostname and name', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const log = pino({base: null}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.match(formatted, /\[.*\] INFO: hello world/)
+        cb()
+      }
+    }))
+    log.info('hello world')
+  })
+
+  t.test('handles missing pid', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const name = 'test'
+    const msg = 'hello world'
+    const regex = new RegExp('\\[.*\\] INFO \\(' + name + ' on ' + hostname + '\\): ' + msg)
+
+    const opts = {
+      base: {
+        name: name,
+        hostname: hostname
+      }
+    }
+    const log = pino(opts, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.match(formatted, regex)
+        cb()
+      }
+    }))
+
+    log.info(msg)
+  })
+
+  t.test('handles missing hostname', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const name = 'test'
+    const msg = 'hello world'
+    const regex = new RegExp('\\[.*\\] INFO \\(' + name + '/' + pid + '\\): ' + msg)
+
+    const opts = {
+      base: {
+        name: name,
+        pid: process.pid
+      }
+    }
+    const log = pino(opts, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.match(formatted, regex)
+        cb()
+      }
+    }))
+
+    log.info(msg)
+  })
+
+  t.test('handles missing name', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const msg = 'hello world'
+    const regex = new RegExp('\\[.*\\] INFO \\(' + process.pid + ' on ' + hostname + '\\): ' + msg)
+
+    const opts = {
+      base: {
+        hostname: hostname,
+        pid: process.pid
+      }
+    }
+    const log = pino(opts, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.match(formatted, regex)
+        cb()
+      }
+    }))
+
+    log.info(msg)
+  })
+
+  t.test('works without time', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const log = pino({timestamp: null}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.is(formatted, `[undefined] INFO (${pid} on ${hostname}): hello world\n`)
+        cb()
+      }
+    }))
+    log.info('hello world')
+  })
+
+  t.test('prettifies properties', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.match(formatted, '    a: "b"')
+        cb()
+      }
+    }))
+    log.info({a: 'b'}, 'hello world')
+  })
+
+  t.test('prettifies nested properties', (t) => {
+    t.plan(6)
+    const expectedLines = [
+      '    a: {',
+      '      "b": {',
+      '        "c": "d"',
+      '      }',
+      '    }'
+    ]
+    const pretty = prettyFactory()
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        const lines = formatted.split('\n')
+        t.is(lines.length, expectedLines.length + 2)
+        lines.shift(); lines.pop()
+        for (var i = 0; i < lines.length; i += 1) {
+          t.is(lines[i], expectedLines[i])
+        }
+        cb()
+      }
+    }))
+    log.info({ a: { b: { c: 'd' } } }, 'hello world')
+  })
+
+  t.test('treats the name with care', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const log = pino({name: 'matteo'}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.is(formatted, `[${epoch}] INFO (matteo/${pid} on ${hostname}): hello world\n`)
+        cb()
+      }
+    }))
+    log.info('hello world')
+  })
+
+  t.test('handles `null` input', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const formatted = pretty(null)
+    t.is(formatted, 'null\n')
+  })
+
+  t.test('handles `undefined` input', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const formatted = pretty(undefined)
+    t.is(formatted, 'undefined\n')
+  })
+
+  t.test('handles `true` input', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const formatted = pretty(true)
+    t.is(formatted, 'true\n')
+  })
+
+  t.test('handles customLogLevel', function (t) {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const log = pino({level: 'testCustom', levelVal: 35}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.match(formatted, /USERLVL/)
+        cb()
+      }
+    }))
+    log.testCustom('test message')
   })
 
   t.end()
