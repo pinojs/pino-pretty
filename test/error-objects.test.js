@@ -167,7 +167,6 @@ test('error like objects tests', (t) => {
     log.error(error)
   })
 
-
   t.test('handles errors with a null stack', (t) => {
     t.plan(2)
     const pretty = prettyFactory()

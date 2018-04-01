@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Prettifier for Pino log lines",
   "main": "index.js",
+  "bin": {
+    "pino-pretty": "./bin.js"
+  },
   "scripts": {
     "lint": "standard | snazzy",
     "lint-ci": "standard",
@@ -27,13 +30,17 @@
     "test"
   ],
   "dependencies": {
+    "args": "^3.0.8",
     "chalk": "^2.3.2",
     "cldr-data": "^32.0.1",
     "cldrjs": "^0.5.0",
     "fast-json-parse": "^1.0.3",
     "js-joda": "^1.8.2",
     "js-joda-locale": "^1.0.0",
-    "js-joda-timezone": "^1.2.1"
+    "js-joda-timezone": "^1.2.1",
+    "pump": "^3.0.0",
+    "split2": "^2.2.0",
+    "through2": "^2.0.3"
   },
   "devDependencies": {
     "pino": "^4.15.3",
