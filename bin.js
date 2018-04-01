@@ -9,6 +9,7 @@ const prettyFactory = require('./')
 
 args
   .option(['c', 'color'], 'Force adding color sequences to the output')
+  .option(['f', 'crlf'], 'Append CRLF instead of LF to formatted lines')
   .option(['d', 'dateFormat'], 'A format string to govern display of dates', 'yyyy-MM-dd HH:mm:ss.SSS Z')
   .option(['e', 'errorProps'], 'Comma separated list of properties on error objects to show (`*` for all properties)', '')
   .option(['l', 'levelFirst'], 'Display the log level as the first output field')
