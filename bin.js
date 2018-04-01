@@ -33,6 +33,7 @@ const prettyTransport = through.obj(function (chunk, enc, cb) {
 
 pump(process.stdin, split(), prettyTransport)
 
+// https://github.com/pinojs/pino/pull/358
 if (!process.stdin.isTTY && !fs.fstatSync(process.stdin.fd).isFile()) {
   process.once('SIGINT', function noOp () {})
 }
