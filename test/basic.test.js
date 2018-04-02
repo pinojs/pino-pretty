@@ -60,7 +60,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.is(
           formatted,
-          `[${epoch}] \u001B[32mINFO\u001B[39m (${pid} on ${hostname}): foo\n`
+          `[${epoch}] \u001B[32mINFO\u001B[39m (${pid} on ${hostname}): \u001B[36mfoo\u001B[39m\n`
         )
         cb()
       }

@@ -66,7 +66,8 @@ module.exports = function prettyFactory (options) {
     40: nocolor,
     30: nocolor,
     20: nocolor,
-    10: nocolor
+    10: nocolor,
+    message: nocolor
   }
   if (opts.colorize) {
     const ctx = new chalk.constructor({enabled: true, level: 3})
@@ -77,6 +78,7 @@ module.exports = function prettyFactory (options) {
     color[30] = ctx.green
     color[20] = ctx.blue
     color[10] = ctx.grey
+    color.message = ctx.cyan
   }
 
   return function pretty (inputLine) {
@@ -134,7 +136,7 @@ module.exports = function prettyFactory (options) {
     line += ': '
 
     if (log[messageKey]) {
-      line += log[messageKey]
+      line += color.message(log[messageKey])
     }
 
     line += EOL
