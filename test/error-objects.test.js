@@ -88,7 +88,8 @@ test('error like objects tests', (t) => {
         t.match(lines[3], /\s{6}"message": "hello world",/)
         t.match(lines[4], /\s{6}"stack":/)
         t.match(lines[5], /\s{6}Error: hello world/)
-        t.match(lines[6], /\s{10}at Test.t.test/)
+        // Node 6 starts stack with "at Error (native)"
+        t.match(lines[6], /\s{10}(at Test.t.test|at Error \(native\))/)
         cb()
       }
     }))
@@ -118,7 +119,8 @@ test('error like objects tests', (t) => {
         t.match(lines[3], /\s{6}"message": "hello world",/)
         t.match(lines[4], /\s{6}"stack":/)
         t.match(lines[5], /\s{6}Error: hello world/)
-        t.match(lines[6], /\s{10}at Test.t.test/)
+        // Node 6 starts stack with "at Error (native)"
+        t.match(lines[6], /\s{10}(at Test.t.test|at Error \(native\))/)
         t.match(lines[lines.length - 3], /\s{6}"anotherField": "dummy value"/)
         cb()
       }
