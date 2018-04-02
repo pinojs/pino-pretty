@@ -32,7 +32,7 @@ $ npm install -g pino-pretty
 <a id="cliargs"></a>
 ## CLI Arguments
 
-+ `--color` (`-c`): Adds terminal color escape sequences to the output.
++ `--colorize` (`-c`): Adds terminal color escape sequences to the output.
 + `--crlf` (`-f`): Appends carriage return and line feed, instead of just a line
 feed, to the formatted log line.
 + `--dateFormat` (`-d`): Sets the format string to apply when translating the date
@@ -60,7 +60,7 @@ in [CLI Arguments](#cliargs):
 
 ```js
 {
-  colorize: false, // --color
+  colorize: false, // --colorize
   crlf: false, // --crlf
   dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS Z', // --dateFormat
   errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys
