@@ -69,7 +69,7 @@ module.exports = function prettyFactory (options) {
     10: nocolor
   }
   if (opts.colorize) {
-    const ctx = new chalk.constructor({enabled: true})
+    const ctx = new chalk.constructor({enabled: true, level: 3})
     color.default = ctx.white
     color[60] = ctx.bgRed
     color[50] = ctx.red
