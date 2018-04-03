@@ -26,7 +26,13 @@ const defaultOptions = {
   levelFirst: false,
   localTime: false,
   messageKey: 'msg',
-  translateTime: false
+  translateTime: false,
+  useMetadata: false,
+  outputStream: process.stdout
+}
+
+function isObject (input) {
+  return Object.prototype.toString.apply(input) === '[object Object]'
 }
 
 function isPinoLog (log) {
@@ -81,12 +87,32 @@ module.exports = function prettyFactory (options) {
     color.message = ctx.cyan
   }
 
-  return function pretty (inputLine) {
-    const parsed = jsonParser(inputLine)
-    const log = parsed.value
-    if (parsed.err || !isPinoLog(log)) {
-      // pass through
-      return inputLine + EOL
+  if (!opts.useMetadata) {
+    return pretty
+  }
+
+  const outputSym = Symbol('pino-pretty.out')
+
+  return {
+    [Symbol.for('needsMetadata')]: true,
+    [outputSym]: opts.outputStream,
+    write (chunk) {
+      const formatted = pretty(chunk)
+      this[outputSym].write(formatted)
+    }
+  }
+
+  function pretty (inputData) {
+    let log
+    if (!isObject(inputData)) {
+      const parsed = jsonParser(inputData)
+      log = parsed.value
+      if (parsed.err || !isPinoLog(log)) {
+        // pass through
+        return inputData + EOL
+      }
+    } else {
+      log = inputData
     }
 
     const standardKeys = [

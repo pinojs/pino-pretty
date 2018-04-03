@@ -340,7 +340,7 @@ test('basic prettifier tests', (t) => {
     t.is(formatted, 'true\n')
   })
 
-  t.test('handles customLogLevel', function (t) {
+  t.test('handles customLogLevel', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({level: 'testCustom', levelVal: 35}, new Writable({
@@ -351,6 +351,22 @@ test('basic prettifier tests', (t) => {
       }
     }))
     log.testCustom('test message')
+  })
+
+  t.test('supports pino metadata API', (t) => {
+    t.plan(1)
+    const dest = new Writable({
+      write (chunk, enc, cb) {
+        t.is(
+          chunk.toString(),
+          `[${epoch}] INFO (${pid} on ${hostname}): foo\n`
+        )
+        cb()
+      }
+    })
+    const prettyStream = prettyFactory({useMetadata: true, outputStream: dest})
+    const log = pino({}, prettyStream)
+    log.info('foo')
   })
 
   t.end()
