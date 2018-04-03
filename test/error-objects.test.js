@@ -185,5 +185,29 @@ test('error like objects tests', (t) => {
     log.error(error)
   })
 
+  t.test('handles errors with a null stack for Error object', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const expectedLines = [
+      '    null'
+    ]
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        const lines = formatted.split('\n')
+        lines.shift(); lines.pop()
+        for (var i = 0; i < lines.length; i += 1) {
+          t.is(lines[i], expectedLines[i])
+        }
+        cb()
+      }
+    }))
+
+    const error = Error('error message')
+    error.stack = null
+
+    log.error(error)
+  })
+
   t.end()
 })

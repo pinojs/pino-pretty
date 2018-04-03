@@ -142,7 +142,8 @@ module.exports = function prettyFactory (options) {
     line += EOL
 
     if (log.type === 'Error') {
-      line += IDENT + joinLinesWithIndentation(log.stack) + EOL
+      const stack = log.stack ? log.stack : String(log.stack)
+      line += IDENT + joinLinesWithIndentation(stack) + EOL
 
       let propsForPrint
       if (errorProps && errorProps.length > 0) {
