@@ -262,12 +262,11 @@ function asMetaWrapper (dest) {
         this.lastLogger[parsed] = chindings
       }
 
-      // TODO remove Object.assign as its slow
       const obj = Object.assign({
         level: this.lastLevel,
         msg: this.lastMsg,
         time: this.lastTime
-      }, chindings, this.lastObj || {})
+      }, chindings, this.lastObj)
 
       const formatted = pretty(obj)
       dest.write(formatted)
