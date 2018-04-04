@@ -126,18 +126,21 @@ test('basic prettifier tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const zonedDateTime = joda.ZonedDateTime.ofInstant(
-          joda.Instant.now(),
+          joda.Instant.ofEpochMilli(Date.now()),
           joda.ZoneOffset.SYSTEM
         )
         const offset = joda.DateTimeFormatter.ofPattern('Z').format(
           zonedDateTime
         )
-        const hour = Math.floor(
-          ((17 * 3600) + joda.ZoneOffset.of(offset).totalSeconds()) / 3600
+        const dateStr = joda.DateTimeFormatter.ofPattern('yyy-MM-dd').format(
+          zonedDateTime
+        )
+        const hour = joda.DateTimeFormatter.ofPattern('HH').format(
+          zonedDateTime
         )
         t.is(
           formatted,
-          `[2018-03-30 ${hour}:35:28.992 ${offset}] INFO (${pid} on ${hostname}): foo\n`
+          `[${dateStr} ${hour}:35:28.992 ${offset}] INFO (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
