@@ -359,5 +359,24 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
+  t.test('can swap date and level position through meta stream', (t) => {
+    t.plan(1)
+
+    const dest = new Writable({
+      objectMode: true,
+      write (formatted, enc, cb) {
+        t.is(
+          formatted,
+          `INFO [${epoch}] (${pid} on ${hostname}): foo\n`
+        )
+        cb()
+      }
+    })
+
+    const prettyStream = prettyFactory({ levelFirst: true }).asMetaWrapper(dest)
+    const log = pino({}, prettyStream)
+    log.info('foo')
+  })
+
   t.end()
 })
