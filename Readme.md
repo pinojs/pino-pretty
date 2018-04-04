@@ -17,10 +17,13 @@ And formats it to:
 <a id="example"></a>
 ## Example
 
-```sh
-$ cat app.log | pino-pretty
-# [1522431328992] INFO (42 on foo): hello world
-```
+Using the [example script][exscript] from the Pino module, and specifying
+that logs should be colored and the time translated, we can see what the
+prettified logs will look like:
+
+![demo](demo.png)
+
+[exscript]: https://github.com/pinojs/pino/blob/fc4c83b/example.js
 
 <a id="install"></a>
 ## Install
