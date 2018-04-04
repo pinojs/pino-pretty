@@ -71,28 +71,34 @@ in [CLI Arguments](#cliargs):
   levelFirst: false, // --levelFirst
   localTime: false, // --localTime
   messageKey: 'msg', // --messageKey
-  translateTime: false, // --translateTime
-  useMetadata: false,
-  outputStream: process.stdout
+  translateTime: false // --translateTime
 }
 ```
 
-Unless `useMetadata` is set to `true`, the factory function returns the
-function: `function pretty (line) {}`. See the [next subsection](#usemetadata)
-for information on the other case.
+See the [next subsection](#usemetadata) for information on how to use this
+directly with `pino`.
 
 <a id="usemetadata"></a>
-### `useMetadata` and `outputStream`
+### pretty.asMetaWrapper(writable)
 
-If the `useMetadata` option is set to `true`, then the factory function will
-return an object that can be supplied directly to Pino as a stream that is
-compatible with Pino's [metadata stream API][mdstream]. This allows `pino-pretty`
-to skip the expensive task of parsing JSON log lines and instead work directly
-with Pino's log object.
+```js
+const factory = require('pino-pretty')
+const pino = require('pino')
 
-When `useMetadata` is set to `true` then the `outputStream` option dictates
-where the final formatted log line will be written. This must be a writable
-stream. The default stream is `process.stdout`.
+// writable is any Writable stream
+const writable = process.stdout
+const dest = factory({ colorize: true }).asMetaWrapper(writable)
+
+const logger = pino({}, dest)
+```
+
+The function returned by the factory has a `.asMetaWrapper(dest)` function attached
+which will return an object that can be supplied directly to Pino as a stream
+that is compatible with Pino's [metadata stream API][mdstream].
+This allows `pino-pretty` to skip the expensive task of parsing JSON log lines
+and instead work directly with Pino's log object.
+
+The default stream is `process.stdout`.
 
 [mdstream]: https://github.com/pinojs/pino/blob/fc4c83b/docs/API.md#metadata
 

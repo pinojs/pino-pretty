@@ -242,7 +242,9 @@ module.exports = function prettyFactory (options) {
 function asMetaWrapper (dest) {
   const parsed = Symbol('parsedChindings')
 
-  if (!dest && !dest.write) {
+  if (!dest) {
+    dest = process.stdout
+  } else if (!dest.write) {
     throw new Error('the destination must be writable')
   }
 
