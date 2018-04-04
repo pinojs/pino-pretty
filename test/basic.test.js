@@ -354,7 +354,7 @@ test('basic prettifier tests', (t) => {
         cb()
       }
     })
-    const prettyStream = prettyFactory({useMetadata: true, outputStream: dest})
+    const prettyStream = prettyFactory().asMetaWrapper(dest)
     const log = pino({}, prettyStream)
     log.info('foo')
   })

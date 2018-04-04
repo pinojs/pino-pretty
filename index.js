@@ -76,20 +76,9 @@ module.exports = function prettyFactory (options) {
     color.message = ctx.cyan
   }
 
-  if (!opts.useMetadata) {
-    return pretty
-  }
+  pretty.asMetaWrapper = asMetaWrapper
 
-  const outputSym = Symbol('pino-pretty.out')
-
-  return {
-    [Symbol.for('needsMetadata')]: true,
-    [outputSym]: opts.outputStream,
-    write (chunk) {
-      const formatted = pretty(chunk)
-      this[outputSym].write(formatted)
-    }
-  }
+  return pretty
 
   function pretty (inputData) {
     let log
@@ -246,6 +235,24 @@ module.exports = function prettyFactory (options) {
       }
 
       return result
+    }
+  }
+}
+
+function asMetaWrapper (dest) {
+  const outputSym = Symbol('pino-pretty.out')
+  if (!dest && !dest.write) {
+    throw new Error('the destination must be writable')
+  }
+
+  const pretty = this
+
+  return {
+    [Symbol.for('needsMetadata')]: true,
+    [outputSym]: dest,
+    write (chunk) {
+      const formatted = pretty(chunk)
+      this[outputSym].write(formatted)
     }
   }
 }
