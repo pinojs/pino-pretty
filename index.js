@@ -1,11 +1,8 @@
 'use strict'
 
 const chalk = require('chalk')
-const joda = require('js-joda')
+const dateformat = require('dateformat')
 const jsonParser = require('fast-json-parse')
-
-joda.use(require('js-joda-timezone'))
-joda.use(require('js-joda-locale'))
 
 const levels = {
   default: 'USERLVL',
@@ -20,7 +17,7 @@ const levels = {
 const defaultOptions = {
   colorize: false,
   crlf: false,
-  dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS Z',
+  dateFormat: 'yyyy-mm-dd HH:MM:ss.l o',
   errorLikeObjectKeys: ['err', 'error'],
   errorProps: '',
   levelFirst: false,
@@ -40,17 +37,9 @@ function isPinoLog (log) {
 }
 
 function formatTime (epoch, formatString, localTime) {
-  const instant = joda.Instant.ofEpochMilli(epoch)
-  const zonedDateTime = joda.ZonedDateTime.ofInstant(
-    instant,
-    localTime ? joda.ZoneOffset.SYSTEM : joda.ZoneOffset.UTC
-  )
-  const formatter = joda.DateTimeFormatter.ofPattern(formatString)
-  try {
-    return formatter.format(zonedDateTime)
-  } catch (e) {
-    return epoch
-  }
+  const instant = new Date(epoch)
+  if (localTime) return dateformat(instant, formatString)
+  return dateformat(instant, 'UTC:' + formatString)
 }
 
 function nocolor (input) {

@@ -4,16 +4,13 @@ const Writable = require('stream').Writable
 const os = require('os')
 const test = require('tap').test
 const pino = require('pino')
-const joda = require('js-joda')
+const dateformat = require('dateformat')
 const prettyFactory = require('../')
 
 // All dates are computed from 'Fri, 30 Mar 2018 17:35:28 GMT'
 const epoch = 1522431328992
 const pid = process.pid
 const hostname = os.hostname()
-
-joda.use(require('js-joda-timezone'))
-joda.use(require('js-joda-locale'))
 
 test('basic prettifier tests', (t) => {
   t.beforeEach((done) => {
@@ -125,19 +122,12 @@ test('basic prettifier tests', (t) => {
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        const zonedDateTime = joda.ZonedDateTime.ofInstant(
-          joda.Instant.now(),
-          joda.ZoneOffset.SYSTEM
-        )
-        const offset = joda.DateTimeFormatter.ofPattern('Z').format(
-          zonedDateTime
-        )
-        const hour = Math.floor(
-          ((17 * 3600) + joda.ZoneOffset.of(offset).totalSeconds()) / 3600
-        )
+        const localHour = dateformat(epoch, 'HH')
+        const localDate = dateformat(epoch, 'yyyy-mm-dd')
+        const offset = dateformat(epoch, 'o')
         t.is(
           formatted,
-          `[2018-03-30 ${hour}:35:28.992 ${offset}] INFO (${pid} on ${hostname}): foo\n`
+          `[${localDate} ${localHour}:35:28.992 ${offset}] INFO (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -149,7 +139,7 @@ test('basic prettifier tests', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
       translateTime: true,
-      dateFormat: 'yyy-MM-dd HH:mm'
+      dateFormat: 'yyyy-mm-dd HH:MM'
     })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {

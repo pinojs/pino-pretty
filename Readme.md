@@ -40,8 +40,8 @@ $ npm install -g pino-pretty
 feed, to the formatted log line.
 + `--dateFormat` (`-d`): Sets the format string to apply when translating the date
 to human readable format (see: `--translateTime`). The default format string
-is `'yyyy-MM-dd HH:mm:ss.SSS Z'`. For a list of available patter letters
-see the [js-joda DateTimeFormatter#ofPattern documentation](https://js-joda.github.io/js-joda/esdoc/class/src/format/DateTimeFormatter.js~DateTimeFormatter.html#static-method-ofPattern).
+is `'yyyy-mm-dd HH:MM:ss.l o'`. For a list of available patter letters
+see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
 + `--errorProps` (`-e`): When formatting an error object, display this list
 of properties. The list should be a comma separated list of properties Default: `''`.
 + `--levelFirst` (`-l`): Display the log level name before the logged date and time.
@@ -65,7 +65,7 @@ in [CLI Arguments](#cliargs):
 {
   colorize: false, // --colorize
   crlf: false, // --crlf
-  dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS Z', // --dateFormat
+  dateFormat: 'yyyy-mm-dd HH:MM:ss.l o', // --dateFormat
   errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys
   errorProps: '', // --errorProps
   levelFirst: false, // --levelFirst
