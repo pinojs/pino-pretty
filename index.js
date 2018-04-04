@@ -240,7 +240,8 @@ module.exports = function prettyFactory (options) {
 }
 
 function asMetaWrapper (dest) {
-  const outputSym = Symbol('pino-pretty.out')
+  const parsed = Symbol('parsedChindings')
+
   if (!dest && !dest.write) {
     throw new Error('the destination must be writable')
   }
@@ -249,10 +250,27 @@ function asMetaWrapper (dest) {
 
   return {
     [Symbol.for('needsMetadata')]: true,
-    [outputSym]: dest,
+    lastLevel: 0,
+    lastMsg: null,
+    lastObj: null,
+    lastLogger: null,
     write (chunk) {
-      const formatted = pretty(chunk)
-      this[outputSym].write(formatted)
+      var chindings = this.lastLogger[parsed]
+
+      if (!chindings) {
+        chindings = JSON.parse('{"v":1' + this.lastLogger.chindings + '}')
+        this.lastLogger[parsed] = chindings
+      }
+
+      // TODO remove Object.assign as its slow
+      const obj = Object.assign({
+        level: this.lastLevel,
+        msg: this.lastMsg,
+        time: this.lastTime
+      }, chindings, this.lastObj || {})
+
+      const formatted = pretty(obj)
+      dest.write(formatted)
     }
   }
 }
