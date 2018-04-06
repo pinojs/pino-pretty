@@ -32,18 +32,14 @@
   "dependencies": {
     "args": "^3.0.8",
     "chalk": "^2.3.2",
-    "cldr-data": "^32.0.1",
-    "cldrjs": "^0.5.0",
+    "dateformat": "^3.0.3",
     "fast-json-parse": "^1.0.3",
-    "js-joda": "^1.8.2",
-    "js-joda-locale": "^1.0.0",
-    "js-joda-timezone": "^1.2.1",
     "pump": "^3.0.0",
     "split2": "^2.2.0",
     "through2": "^2.0.3"
   },
   "devDependencies": {
-    "pino": "^4.15.3",
+    "pino": "^4.16.0",
     "pre-commit": "^1.2.2",
     "snazzy": "^7.1.1",
     "standard": "^11.0.1",

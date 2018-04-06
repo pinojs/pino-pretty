@@ -42,8 +42,8 @@ $ npm install -g pino-pretty
 feed, to the formatted log line.
 + `--dateFormat` (`-d`): Sets the format string to apply when translating the date
 to human readable format (see: `--translateTime`). The default format string
-is `'yyyy-MM-dd HH:mm:ss.SSS Z'`. For a list of available patter letters
-see the [js-joda DateTimeFormatter#ofPattern documentation](https://js-joda.github.io/js-joda/esdoc/class/src/format/DateTimeFormatter.js~DateTimeFormatter.html#static-method-ofPattern).
+is `'yyyy-mm-dd HH:MM:ss.l o'`. For a list of available patter letters
+see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
 + `--errorProps` (`-e`): When formatting an error object, display this list
 of properties. The list should be a comma separated list of properties Default: `''`.
 + `--levelFirst` (`-l`): Display the log level name before the logged date and time.
@@ -67,34 +67,40 @@ in [CLI Arguments](#cliargs):
 {
   colorize: false, // --colorize
   crlf: false, // --crlf
-  dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS Z', // --dateFormat
+  dateFormat: 'yyyy-mm-dd HH:MM:ss.l o', // --dateFormat
   errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys
   errorProps: '', // --errorProps
   levelFirst: false, // --levelFirst
   localTime: false, // --localTime
   messageKey: 'msg', // --messageKey
-  translateTime: false, // --translateTime
-  useMetadata: false,
-  outputStream: process.stdout
+  translateTime: false // --translateTime
 }
 ```
 
-Unless `useMetadata` is set to `true`, the factory function returns the
-function: `function pretty (line) {}`. See the [next subsection](#usemetadata)
-for information on the other case.
+See the [next subsection](#usemetadata) for information on how to use this
+directly with `pino`.
 
 <a id="usemetadata"></a>
-### `useMetadata` and `outputStream`
+### pretty.asMetaWrapper(writable)
 
-If the `useMetadata` option is set to `true`, then the factory function will
-return an object that can be supplied directly to Pino as a stream that is
-compatible with Pino's [metadata stream API][mdstream]. This allows `pino-pretty`
-to skip the expensive task of parsing JSON log lines and instead work directly
-with Pino's log object.
+```js
+const factory = require('pino-pretty')
+const pino = require('pino')
 
-When `useMetadata` is set to `true` then the `outputStream` option dictates
-where the final formatted log line will be written. This must be a writable
-stream. The default stream is `process.stdout`.
+// writable is any Writable stream
+const writable = process.stdout
+const dest = factory({ colorize: true }).asMetaWrapper(writable)
+
+const logger = pino({}, dest)
+```
+
+The function returned by the factory has a `.asMetaWrapper(dest)` function attached
+which will return an object that can be supplied directly to Pino as a stream
+that is compatible with Pino's [metadata stream API][mdstream].
+This allows `pino-pretty` to skip the expensive task of parsing JSON log lines
+and instead work directly with Pino's log object.
+
+The default stream is `process.stdout`.
 
 [mdstream]: https://github.com/pinojs/pino/blob/fc4c83b/docs/API.md#metadata
 
