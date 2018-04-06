@@ -1,5 +1,7 @@
 <a id="intro"></a>
 # pino-pretty
+[![Build Status](https://travis-ci.org/pinojs/pino-pretty.svg?branch=master)](https://travis-ci.org/pinojs/pino-pretty)
+[![Coverage Status](https://coveralls.io/repos/github/pinojs/pino-pretty/badge.svg?branch=master)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
 
 This module provides a basic log prettifier for the [Pino](https://getpino.io/)
 logging library. It reads a standard Pino log line like:
