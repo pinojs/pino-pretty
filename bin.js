@@ -6,15 +6,16 @@ const pump = require('pump')
 const split = require('split2')
 const through = require('through2')
 const prettyFactory = require('./')
+const CONSTANTS = require('./lib/constants')
 
 args
   .option(['c', 'colorize'], 'Force adding color sequences to the output')
   .option(['f', 'crlf'], 'Append CRLF instead of LF to formatted lines')
-  .option(['d', 'dateFormat'], 'A format string to govern display of dates', 'yyyy-MM-dd HH:mm:ss.SSS Z')
+  .option(['d', 'dateFormat'], 'A format string to govern display of dates. When not set to the default value, `--translateTime` is implied', CONSTANTS.DATE_FORMAT)
   .option(['e', 'errorProps'], 'Comma separated list of properties on error objects to show (`*` for all properties)', '')
   .option(['l', 'levelFirst'], 'Display the log level as the first output field')
   .option(['k', 'errorLikeObjectKeys'], 'Define which keys contain error objects (`-k err,error`)', 'err,error')
-  .option(['m', 'messageKey'], 'Highlight the message under the specified key', 'msg')
+  .option(['m', 'messageKey'], 'Highlight the message under the specified key', CONSTANTS.MESSAGE_KEY)
   .option(['n', 'localTime'], 'Display timestamps according to system timezone')
   .option(['t', 'translateTime'], 'Convert Epoch timestamps to ISO format')
 

@@ -44,6 +44,8 @@ feed, to the formatted log line.
 to human readable format (see: `--translateTime`). The default format string
 is `'yyyy-mm-dd HH:MM:ss.l o'`. For a list of available patter letters
 see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
+When the value is anything other than the default value, `--translateTime` is
+implied.
 + `--errorProps` (`-e`): When formatting an error object, display this list
 of properties. The list should be a comma separated list of properties Default: `''`.
 + `--levelFirst` (`-l`): Display the log level name before the logged date and time.

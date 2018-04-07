@@ -4,6 +4,8 @@ const chalk = require('chalk')
 const dateformat = require('dateformat')
 const jsonParser = require('fast-json-parse')
 
+const CONSTANTS = require('./lib/constants')
+
 const levels = {
   default: 'USERLVL',
   60: 'FATAL',
@@ -17,12 +19,12 @@ const levels = {
 const defaultOptions = {
   colorize: false,
   crlf: false,
-  dateFormat: 'yyyy-mm-dd HH:MM:ss.l o',
+  dateFormat: CONSTANTS.DATE_FORMAT,
   errorLikeObjectKeys: ['err', 'error'],
   errorProps: '',
   levelFirst: false,
   localTime: false,
-  messageKey: 'msg',
+  messageKey: CONSTANTS.MESSAGE_KEY,
   translateTime: false,
   useMetadata: false,
   outputStream: process.stdout
@@ -53,6 +55,10 @@ module.exports = function prettyFactory (options) {
   const messageKey = opts.messageKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
+
+  if (opts.dateFormat.length > 0 && opts.dateFormat !== CONSTANTS.DATE_FORMAT) {
+    opts.translateTime = true
+  }
 
   const color = {
     default: nocolor,

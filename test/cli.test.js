@@ -31,5 +31,16 @@ test('cli', (t) => {
     t.tearDown(() => child.kill())
   })
 
+  t.test('translates time to default format', (t) => {
+    t.plan(1)
+    const child = spawn(process.argv0, [bin, '-t'])
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.is(data.toString(), `[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n`)
+    })
+    child.stdin.write(logLine)
+    t.tearDown(() => child.kill())
+  })
+
   t.end()
 })

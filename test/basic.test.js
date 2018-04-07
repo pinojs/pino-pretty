@@ -137,10 +137,7 @@ test('basic prettifier tests', (t) => {
 
   t.test('will format date with a custom format string', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({
-      translateTime: true,
-      dateFormat: 'yyyy-mm-dd HH:MM'
-    })
+    const pretty = prettyFactory({dateFormat: 'yyyy-mm-dd HH:MM'})
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
