@@ -19,11 +19,10 @@ const levels = {
 const defaultOptions = {
   colorize: false,
   crlf: false,
-  dateFormat: CONSTANTS.DATE_FORMAT,
   errorLikeObjectKeys: ['err', 'error'],
   errorProps: '',
   levelFirst: false,
-  localTime: false,
+  systemTime: false,
   messageKey: CONSTANTS.MESSAGE_KEY,
   translateTime: false,
   useMetadata: false,
@@ -38,9 +37,9 @@ function isPinoLog (log) {
   return log && (log.hasOwnProperty('v') && log.v === 1)
 }
 
-function formatTime (epoch, formatString, localTime) {
+function formatTime (epoch, formatString, systemTime) {
   const instant = new Date(epoch)
-  if (localTime) return dateformat(instant, formatString)
+  if (systemTime) return dateformat(instant, formatString)
   return dateformat(instant, 'UTC:' + formatString)
 }
 
@@ -55,17 +54,18 @@ module.exports = function prettyFactory (options) {
   const messageKey = opts.messageKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
+  let dateString = CONSTANTS.DATE_FORMAT
 
-  if (opts.localTime) {
-    if (opts.localTime.length > 0) {
-      opts.dateFormat = opts.localTime
+  if (opts.systemTime) {
+    if (opts.systemTime.length > 0) {
+      dateString = opts.systemTime
     }
     opts.translateTime = true
   }
 
   if (opts.translateTime) {
     if (opts.translateTime.length > 0) {
-      opts.dateFormat = opts.translateTime
+      dateString = opts.translateTime
     }
   }
 
@@ -118,7 +118,7 @@ module.exports = function prettyFactory (options) {
     ]
 
     if (opts.translateTime) {
-      log.time = formatTime(log.time, opts.dateFormat, opts.localTime)
+      log.time = formatTime(log.time, dateString, opts.systemTime)
     }
 
     var line = `[${log.time}]`

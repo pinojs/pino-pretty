@@ -15,8 +15,8 @@ args
   .option(['l', 'levelFirst'], 'Display the log level as the first output field')
   .option(['k', 'errorLikeObjectKeys'], 'Define which keys contain error objects (`-k err,error`)', 'err,error')
   .option(['m', 'messageKey'], 'Highlight the message under the specified key', CONSTANTS.MESSAGE_KEY)
-  .option(['n', 'localTime'], 'Display timestamps according to system timezone')
-  .option(['t', 'translateTime'], 'Convert Epoch timestamps to ISO format')
+  .option(['n', 'systemTime'], 'Convert Epoch timestamps to custom systemTimeZone format (defaults to ISO 8601)')
+  .option(['t', 'translateTime'], 'Convert Epoch timestamps to custom UTC format (defaults to ISO 8601)')
 
 args
   .example('cat log | pino-pretty', 'To prettify logs, simply pipe a log file through')

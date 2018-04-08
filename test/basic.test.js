@@ -133,7 +133,7 @@ test('basic prettifier tests', (t) => {
 
   t.test('will format date to local time in default ISO format', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({ localTime: true })
+    const pretty = prettyFactory({ systemTime: true })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
@@ -152,7 +152,7 @@ test('basic prettifier tests', (t) => {
 
   t.test('will format date to local time in custom format', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({ localTime: 'yyyy/mm/dd HH:MM:ss o' })
+    const pretty = prettyFactory({ systemTime: 'yyyy/mm/dd HH:MM:ss o' })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
