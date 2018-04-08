@@ -56,8 +56,17 @@ module.exports = function prettyFactory (options) {
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
 
-  if (opts.dateFormat.length > 0 && opts.dateFormat !== CONSTANTS.DATE_FORMAT) {
+  if (opts.localTime) {
+    if (opts.localTime.length > 0) {
+      opts.dateFormat = opts.localTime
+    }
     opts.translateTime = true
+  }
+
+  if (opts.translateTime) {
+    if (opts.translateTime.length > 0) {
+      opts.dateFormat = opts.translateTime
+    }
   }
 
   const color = {
