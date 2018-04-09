@@ -131,9 +131,9 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
-  t.test('will format date to local time in default ISO format', (t) => {
+  t.test('will format date to systemZone-based in default ISO 8601 format', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({ systemTime: true })
+    const pretty = prettyFactory({ systemZone: true })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
@@ -150,9 +150,12 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
-  t.test('will format date to local time in custom format', (t) => {
+  t.test('will format date to systemZone-based time in custom format', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({ systemTime: 'yyyy/mm/dd HH:MM:ss o' })
+    const pretty = prettyFactory({
+      systemZone: true,
+      translateTime: 'yyyy/mm/dd HH:MM:ss o'
+    })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())

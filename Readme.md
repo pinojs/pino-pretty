@@ -47,13 +47,13 @@ of properties. The list should be a comma separated list of properties Default: 
 error like objects. Default: `err,error`.
 + `--messageKey` (`-m`): Define the key that contains the main log message.
 Default: `msg`.
-+ `--systemTime` (`-n`): When translating the time to a human readable format,
++ `--systemZone` (`-s`): When translating the time to a human readable format,
 use the system timezone for displaying the time. See `--translateTime` for more
 information on the output format.
 + `--translateTime` (`-t`): Translate the epoch time value into a human readable
 UTC date and time string. The default format string is `'yyyy-mm-dd HH:MM:ss.l o'`.
-For a list of available patter letters see the 
-[`dateformat` documentation](https://www.npmjs.com/package/dateformat).
+For a list of available pattern letters see the 
+[`dateformat` documentation](https://www.npmjs.com/package/dateformat#mask-options).
 
 <a id="api"></a>
 ## API
@@ -69,7 +69,7 @@ in [CLI Arguments](#cliargs):
   errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys
   errorProps: '', // --errorProps
   levelFirst: false, // --levelFirst
-  systemTime: false, // --systemTime
+  systemTime: false, // --systemZone
   messageKey: 'msg', // --messageKey
   translateTime: false // --translateTime
 }

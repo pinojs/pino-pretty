@@ -22,7 +22,7 @@ const defaultOptions = {
   errorLikeObjectKeys: ['err', 'error'],
   errorProps: '',
   levelFirst: false,
-  systemTime: false,
+  systemZone: false,
   messageKey: CONSTANTS.MESSAGE_KEY,
   translateTime: false,
   useMetadata: false,
@@ -56,16 +56,18 @@ module.exports = function prettyFactory (options) {
   const errorProps = opts.errorProps.split(',')
   let dateString = CONSTANTS.DATE_FORMAT
 
-  if (opts.systemTime) {
-    if (opts.systemTime.length > 0) {
-      dateString = opts.systemTime
-    }
-    opts.translateTime = true
-  }
-
   if (opts.translateTime) {
     if (opts.translateTime.length > 0) {
       dateString = opts.translateTime
+    }
+  }
+
+  if (opts.systemZone) {
+    if (opts.translateTime.length > 0) {
+      dateString = opts.translateTime
+    } else {
+      opts.translateTime = true
+      dateString = CONSTANTS.DATE_FORMAT
     }
   }
 
@@ -118,7 +120,7 @@ module.exports = function prettyFactory (options) {
     ]
 
     if (opts.translateTime) {
-      log.time = formatTime(log.time, dateString, opts.systemTime)
+      log.time = formatTime(log.time, dateString, opts.systemZone)
     }
 
     var line = `[${log.time}]`
