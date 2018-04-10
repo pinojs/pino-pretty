@@ -42,7 +42,7 @@ function formatTime (epoch, translateTime) {
     return dateformat(instant, 'UTC:' + CONSTANTS.DATE_FORMAT)
   } else {
     const upperFormat = translateTime.toUpperCase()
-    return (upperFormat.indexOf('SYS:') === -1)
+    return (!upperFormat.startsWith('SYS:'))
       ? dateformat(instant, 'UTC:' + translateTime)
       : (upperFormat === 'SYS:STANDARD')
         ? dateformat(instant, CONSTANTS.DATE_FORMAT)

@@ -48,10 +48,10 @@ error like objects. Default: `err,error`.
 + `--messageKey` (`-m`): Define the key that contains the main log message.
 Default: `msg`.
 + `--translateTime` (`-t`): Translate the epoch time value into a human readable
-in `UTC`. The default pattern is `'yyyy-mm-dd HH:MM:ss.l o'` time in UTC.
-IF want to translate to the local system's timezone, require `SYS:` prefix at 
-input format string. For a list of available pattern letters see the 
-[`dateformat` documentation](https://www.npmjs.com/package/dateformat#mask-options).
+date and time string in `UTC`. The default pattern is `'yyyy-mm-dd HH:MM:ss.l o'`.
+If you want to translate to the local system's timezone, then you must prefix the format 
+string with `SYS:`, e.g. `'SYS:yyyy-mm-dd HH:MM:ss'`. See [`dateformat` documentation](https://www.npmjs.com/package/dateformat#mask-options)
+for more available pattern letters.
 
 <a id="api"></a>
 ## API
