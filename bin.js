@@ -18,12 +18,14 @@ args
   .option(['m', 'messageKey'], 'Highlight the message under the specified key', CONSTANTS.MESSAGE_KEY)
   .option(['n', 'localTime'], 'Display timestamps according to system timezone')
   .option(['t', 'translateTime'], 'Convert Epoch timestamps to ISO format')
+  .option(['s', 'search'], 'specifiy a search pattern according to jmespath')
 
 args
   .example('cat log | pino-pretty', 'To prettify logs, simply pipe a log file through')
   .example('cat log | pino-pretty -m fooMessage', 'To highlight a string at a key other than \'msg\', use')
   .example('cat log | pino-pretty -t', 'To convert Epoch timestamps to ISO timestamps use the -t option')
   .example('cat log | pino-pretty -l', 'To flip level and time/date in standard output use the -l option')
+  .example('cat log | pino-pretty -s \'msg === `hello world`\'', 'Only prints messages with msg equals to \'hello world\'')
 
 const opts = args.parse(process.argv)
 const pretty = prettyFactory(opts)
