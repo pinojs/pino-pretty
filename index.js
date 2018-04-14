@@ -19,11 +19,9 @@ const levels = {
 const defaultOptions = {
   colorize: false,
   crlf: false,
-  dateFormat: CONSTANTS.DATE_FORMAT,
   errorLikeObjectKeys: ['err', 'error'],
   errorProps: '',
   levelFirst: false,
-  localTime: false,
   messageKey: CONSTANTS.MESSAGE_KEY,
   translateTime: false,
   useMetadata: false,
@@ -38,10 +36,18 @@ function isPinoLog (log) {
   return log && (log.hasOwnProperty('v') && log.v === 1)
 }
 
-function formatTime (epoch, formatString, localTime) {
+function formatTime (epoch, translateTime) {
   const instant = new Date(epoch)
-  if (localTime) return dateformat(instant, formatString)
-  return dateformat(instant, 'UTC:' + formatString)
+  if (translateTime === true) {
+    return dateformat(instant, 'UTC:' + CONSTANTS.DATE_FORMAT)
+  } else {
+    const upperFormat = translateTime.toUpperCase()
+    return (!upperFormat.startsWith('SYS:'))
+      ? dateformat(instant, 'UTC:' + translateTime)
+      : (upperFormat === 'SYS:STANDARD')
+        ? dateformat(instant, CONSTANTS.DATE_FORMAT)
+        : dateformat(instant, translateTime.slice(4))
+  }
 }
 
 function nocolor (input) {
@@ -55,10 +61,6 @@ module.exports = function prettyFactory (options) {
   const messageKey = opts.messageKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
-
-  if (opts.dateFormat.length > 0 && opts.dateFormat !== CONSTANTS.DATE_FORMAT) {
-    opts.translateTime = true
-  }
 
   const color = {
     default: nocolor,
@@ -109,7 +111,7 @@ module.exports = function prettyFactory (options) {
     ]
 
     if (opts.translateTime) {
-      log.time = formatTime(log.time, opts.dateFormat, opts.localTime)
+      log.time = formatTime(log.time, opts.translateTime)
     }
 
     var line = `[${log.time}]`

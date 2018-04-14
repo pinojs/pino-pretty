@@ -40,12 +40,6 @@ $ npm install -g pino-pretty
 + `--colorize` (`-c`): Adds terminal color escape sequences to the output.
 + `--crlf` (`-f`): Appends carriage return and line feed, instead of just a line
 feed, to the formatted log line.
-+ `--dateFormat` (`-d`): Sets the format string to apply when translating the date
-to human readable format (see: `--translateTime`). The default format string
-is `'yyyy-mm-dd HH:MM:ss.l o'`. For a list of available patter letters
-see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
-When the value is anything other than the default value, `--translateTime` is
-implied.
 + `--errorProps` (`-e`): When formatting an error object, display this list
 of properties. The list should be a comma separated list of properties Default: `''`.
 + `--levelFirst` (`-l`): Display the log level name before the logged date and time.
@@ -53,10 +47,11 @@ of properties. The list should be a comma separated list of properties Default: 
 error like objects. Default: `err,error`.
 + `--messageKey` (`-m`): Define the key that contains the main log message.
 Default: `msg`.
-+ `--localTime` (`-n`): When translating the time to a human readable format,
-use the system timezone for displaying the time.
 + `--translateTime` (`-t`): Translate the epoch time value into a human readable
-date and time string. See `--dateFormat` for information on the output format.
+date and time string in `UTC`. The default pattern is `'yyyy-mm-dd HH:MM:ss.l o'`.
+If you want to translate to the local system's timezone, then you must prefix the format 
+string with `SYS:`, e.g. `'SYS:yyyy-mm-dd HH:MM:ss'`. See [`dateformat` documentation](https://www.npmjs.com/package/dateformat#mask-options)
+for more available pattern letters.
 
 <a id="api"></a>
 ## API
@@ -69,11 +64,9 @@ in [CLI Arguments](#cliargs):
 {
   colorize: false, // --colorize
   crlf: false, // --crlf
-  dateFormat: 'yyyy-mm-dd HH:MM:ss.l o', // --dateFormat
   errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys
   errorProps: '', // --errorProps
   levelFirst: false, // --levelFirst
-  localTime: false, // --localTime
   messageKey: 'msg', // --messageKey
   translateTime: false // --translateTime
 }

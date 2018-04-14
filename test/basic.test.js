@@ -97,7 +97,7 @@ test('basic prettifier tests', (t) => {
     log.info({bar: 'baz'})
   })
 
-  t.test('will format date to UTC', (t) => {
+  t.test('will format time to UTC', (t) => {
     t.plan(1)
     const pretty = prettyFactory({translateTime: true})
     const log = pino({}, new Writable({
@@ -113,12 +113,27 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
-  t.test('will format date to local time', (t) => {
+  t.test('will format time to UTC in custom format', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({
-      translateTime: true,
-      localTime: true
-    })
+    const pretty = prettyFactory({ translateTime: 'HH:MM:ss o' })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        const utcHour = dateformat(epoch, 'UTC:' + 'HH')
+        const offset = dateformat(epoch, 'UTC:' + 'o')
+        t.is(
+          formatted,
+          `[${utcHour}:35:28 ${offset}] INFO (${pid} on ${hostname}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info('foo')
+  })
+
+  t.test('will format time to local systemzone in ISO 8601 format', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ translateTime: 'sys:standard' })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
@@ -135,15 +150,20 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
-  t.test('will format date with a custom format string', (t) => {
+  t.test('will format time to local systemzone in custom format', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({dateFormat: 'yyyy-mm-dd HH:MM'})
+    const pretty = prettyFactory({
+      translateTime: 'SYS:yyyy/mm/dd HH:MM:ss o'
+    })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
+        const localHour = dateformat(epoch, 'HH')
+        const localDate = dateformat(epoch, 'yyyy/mm/dd')
+        const offset = dateformat(epoch, 'o')
         t.is(
           formatted,
-          `[2018-03-30 17:35] INFO (${pid} on ${hostname}): foo\n`
+          `[${localDate} ${localHour}:35:28 ${offset}] INFO (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
