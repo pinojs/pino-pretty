@@ -57,6 +57,8 @@ Default: `msg`.
 use the system timezone for displaying the time.
 + `--translateTime` (`-t`): Translate the epoch time value into a human readable
 date and time string. See `--dateFormat` for information on the output format.
++ `--search` (`-s`): Specifiy a search pattern according to
+  [jmespath](http://jmespath.org/).
 
 <a id="api"></a>
 ## API
@@ -76,6 +78,7 @@ in [CLI Arguments](#cliargs):
   localTime: false, // --localTime
   messageKey: 'msg', // --messageKey
   translateTime: false // --translateTime
+  search: 'foo == `bar`' // --search
 }
 ```
 

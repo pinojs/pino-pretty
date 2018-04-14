@@ -42,5 +42,16 @@ test('cli', (t) => {
     t.tearDown(() => child.kill())
   })
 
+  t.test('does search', (t) => {
+    t.plan(1)
+    const child = spawn(process.argv0, [bin, '-s', 'msg == `hello world`'])
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.is(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+    })
+    child.stdin.write(logLine)
+    t.tearDown(() => child.kill())
+  })
+
   t.end()
 })
