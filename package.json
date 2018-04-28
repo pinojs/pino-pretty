@@ -39,7 +39,7 @@
     "through2": "^2.0.3"
   },
   "devDependencies": {
-    "pino": "^4.16.0",
+    "pino": "^5.0.0-rc.1",
     "pre-commit": "^1.2.2",
     "snazzy": "^7.1.1",
     "standard": "^11.0.1",
