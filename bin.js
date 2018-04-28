@@ -16,6 +16,7 @@ args
   .option(['k', 'errorLikeObjectKeys'], 'Define which keys contain error objects (`-k err,error`)', 'err,error')
   .option(['m', 'messageKey'], 'Highlight the message under the specified key', CONSTANTS.MESSAGE_KEY)
   .option(['t', 'translateTime'], 'Display epoch timestamps as UTC ISO format or according to an optional format string (default ISO 8601)')
+  .option(['s', 'search'], 'specifiy a search pattern according to jmespath')
 
 args
   .example('cat log | pino-pretty', 'To prettify logs, simply pipe a log file through')
@@ -23,6 +24,7 @@ args
   .example('cat log | pino-pretty -t', 'To convert Epoch timestamps to ISO timestamps use the -t option')
   .example('cat log | pino-pretty -t "SYS:yyyy-mm-dd HH:MM:ss"', 'To convert Epoch timestamps to local timezone format use the -t option with "SYS:" prefixed format string')
   .example('cat log | pino-pretty -l', 'To flip level and time/date in standard output use the -l option')
+  .example('cat log | pino-pretty -s \'msg == `hello world`\'', 'Only prints messages with msg equals to \'hello world\'')
 
 const opts = args.parse(process.argv)
 const pretty = prettyFactory(opts)

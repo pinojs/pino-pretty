@@ -52,6 +52,8 @@ date and time string in `UTC`. The default pattern is `'yyyy-mm-dd HH:MM:ss.l o'
 If you want to translate to the local system's timezone, then you must prefix the format 
 string with `SYS:`, e.g. `'SYS:yyyy-mm-dd HH:MM:ss'`. See [`dateformat` documentation](https://www.npmjs.com/package/dateformat#mask-options)
 for more available pattern letters.
++ `--search` (`-s`): Specifiy a search pattern according to
+  [jmespath](http://jmespath.org/).
 
 <a id="api"></a>
 ## API
@@ -68,7 +70,8 @@ in [CLI Arguments](#cliargs):
   errorProps: '', // --errorProps
   levelFirst: false, // --levelFirst
   messageKey: 'msg', // --messageKey
-  translateTime: false // --translateTime
+  translateTime: false, // --translateTime
+  search: 'foo == `bar`' // --search
 }
 ```
 

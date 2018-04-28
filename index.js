@@ -2,7 +2,9 @@
 
 const chalk = require('chalk')
 const dateformat = require('dateformat')
+// remove jsonParser once Node 6 is not supported anymore
 const jsonParser = require('fast-json-parse')
+const jmespath = require('jmespath')
 
 const CONSTANTS = require('./lib/constants')
 
@@ -86,6 +88,8 @@ module.exports = function prettyFactory (options) {
 
   pretty.asMetaWrapper = asMetaWrapper
 
+  const search = opts.search
+
   return pretty
 
   function pretty (inputData) {
@@ -99,6 +103,10 @@ module.exports = function prettyFactory (options) {
       }
     } else {
       log = inputData
+    }
+
+    if (search && !jmespath.search(log, search)) {
+      return
     }
 
     const standardKeys = [

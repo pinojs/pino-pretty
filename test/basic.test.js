@@ -395,5 +395,29 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
+  t.test('filter some lines based on jmespath', (t) => {
+    t.plan(3)
+    const pretty = prettyFactory({ search: 'foo.bar' })
+    const expected = [
+      undefined,
+      undefined,
+      `[${epoch}] INFO (${pid} on ${hostname}): foo\n    foo: {\n      "bar": true\n    }\n`
+    ]
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.is(
+          formatted,
+          expected.shift()
+        )
+        cb()
+      }
+    }))
+    log.info('foo')
+    log.info({ something: 'else' }, 'foo')
+    // only this line will be formatted
+    log.info({ foo: { bar: true } }, 'foo')
+  })
+
   t.end()
 })
