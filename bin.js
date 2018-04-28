@@ -24,12 +24,14 @@ args
   .example('cat log | pino-pretty -t', 'To convert Epoch timestamps to ISO timestamps use the -t option')
   .example('cat log | pino-pretty -t "SYS:yyyy-mm-dd HH:MM:ss"', 'To convert Epoch timestamps to local timezone format use the -t option with "SYS:" prefixed format string')
   .example('cat log | pino-pretty -l', 'To flip level and time/date in standard output use the -l option')
-  .example('cat log | pino-pretty -s \'msg == `hello world`\'', 'Only prints messages with msg equals to \'hello world\'')
+  .example('cat log | pino-pretty -s "msg == \'hello world\'"', 'Only prints messages with msg equals to \'hello world\'')
 
 const opts = args.parse(process.argv)
 const pretty = prettyFactory(opts)
 const prettyTransport = through.obj(function (chunk, enc, cb) {
-  process.stdout.write(pretty(chunk.toString()))
+  const line = pretty(chunk.toString())
+  if (line === undefined) return cb()
+  process.stdout.write(line)
   cb()
 })
 

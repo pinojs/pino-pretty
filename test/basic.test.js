@@ -419,5 +419,14 @@ test('basic prettifier tests', (t) => {
     log.info({ foo: { bar: true } }, 'foo')
   })
 
+  t.test('handles `undefined` return values', (t) => {
+    t.plan(2)
+    const pretty = prettyFactory({search: 'msg == \'hello world\''})
+    let formatted = pretty(`{"msg":"nope", "time":${epoch}, "level":30, "v":1}`)
+    t.is(formatted, undefined)
+    formatted = pretty(`{"msg":"hello world", "time":${epoch}, "level":30, "v":1}`)
+    t.is(formatted, `[${epoch}] INFO: hello world\n`)
+  })
+
   t.end()
 })
