@@ -273,6 +273,7 @@ function asMetaWrapper (dest) {
     lastObj: null,
     lastLogger: null,
     write (chunk) {
+      if (chunk === undefined) return
       var chindings = this.lastLogger[parsed]
 
       if (!chindings) {
