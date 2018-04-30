@@ -371,8 +371,10 @@ test('basic prettifier tests', (t) => {
         cb()
       }
     })
-    const prettyStream = prettyFactory().asMetaWrapper(dest)
-    const log = pino({}, prettyStream)
+    const log = pino({
+      prettifier: prettyFactory,
+      prettyPrint: true
+    }, dest)
     log.info('foo')
   })
 
@@ -389,9 +391,12 @@ test('basic prettifier tests', (t) => {
         cb()
       }
     })
-
-    const prettyStream = prettyFactory({ levelFirst: true }).asMetaWrapper(dest)
-    const log = pino({}, prettyStream)
+    const log = pino({
+      prettifier: prettyFactory,
+      prettyPrint: {
+        levelFirst: true
+      }
+    }, dest)
     log.info('foo')
   })
 

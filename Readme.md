@@ -49,7 +49,7 @@ error like objects. Default: `err,error`.
 Default: `msg`.
 + `--translateTime` (`-t`): Translate the epoch time value into a human readable
 date and time string in `UTC`. The default pattern is `'yyyy-mm-dd HH:MM:ss.l o'`.
-If you want to translate to the local system's timezone, then you must prefix the format 
+If you want to translate to the local system's timezone, then you must prefix the format
 string with `SYS:`, e.g. `'SYS:yyyy-mm-dd HH:MM:ss'`. See [`dateformat` documentation](https://www.npmjs.com/package/dateformat#mask-options)
 for more available pattern letters.
 + `--search` (`-s`): Specifiy a search pattern according to
@@ -75,32 +75,10 @@ in [CLI Arguments](#cliargs):
 }
 ```
 
-See the [next subsection](#usemetadata) for information on how to use this
-directly with `pino`.
+See the [Pino's prettifier documentation](#usemetadata) for information on how
+to use this directly with `pino`.
 
-<a id="usemetadata"></a>
-### pretty.asMetaWrapper(writable)
-
-```js
-const factory = require('pino-pretty')
-const pino = require('pino')
-
-// writable is any Writable stream
-const writable = process.stdout
-const dest = factory({ colorize: true }).asMetaWrapper(writable)
-
-const logger = pino({}, dest)
-```
-
-The function returned by the factory has a `.asMetaWrapper(dest)` function attached
-which will return an object that can be supplied directly to Pino as a stream
-that is compatible with Pino's [metadata stream API][mdstream].
-This allows `pino-pretty` to skip the expensive task of parsing JSON log lines
-and instead work directly with Pino's log object.
-
-The default stream is `process.stdout`.
-
-[mdstream]: https://github.com/pinojs/pino/blob/fc4c83b/docs/API.md#metadata
+[#usemetadata]: https://getpino.io/#/docs/pretty
 
 <a id="license"><a>
 ## License
