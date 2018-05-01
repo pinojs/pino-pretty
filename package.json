@@ -30,7 +30,7 @@
     "test"
   ],
   "dependencies": {
-    "args": "^3.0.8",
+    "args": "^4.0.0",
     "chalk": "^2.3.2",
     "dateformat": "^3.0.3",
     "fast-json-parse": "^1.0.3",
