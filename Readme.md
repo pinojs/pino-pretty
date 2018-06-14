@@ -34,12 +34,29 @@ prettified logs will look like:
 $ npm install -g pino-pretty
 ```
 
+
+<a id="usage"></a>
+## Usage
+
+It's recommended to use `pino-pretty` with `pino` 
+by piping output to the CLI tool: 
+
+```sh
+pino app.js | pino-pretty
+```
+
 <a id="cliargs"></a>
-## CLI Arguments
+### CLI Arguments
 
 + `--colorize` (`-c`): Adds terminal color escape sequences to the output.
 + `--crlf` (`-f`): Appends carriage return and line feed, instead of just a line
 feed, to the formatted log line.
++ `--dateFormat` (`-d`): Sets the format string to apply when translating the date
+to human readable format (see: `--translateTime`). The default format string
+is `'yyyy-mm-dd HH:MM:ss.l o'`. For a list of available patter letters
+see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
+When the value is anything other than the default value, `--translateTime` is
+implied.
 + `--errorProps` (`-e`): When formatting an error object, display this list
 of properties. The list should be a comma separated list of properties Default: `''`.
 + `--levelFirst` (`-l`): Display the log level name before the logged date and time.
@@ -47,38 +64,72 @@ of properties. The list should be a comma separated list of properties Default: 
 error like objects. Default: `err,error`.
 + `--messageKey` (`-m`): Define the key that contains the main log message.
 Default: `msg`.
++ `--localTime` (`-n`): When translating the time to a human readable format,
+use the system timezone for displaying the time.
 + `--translateTime` (`-t`): Translate the epoch time value into a human readable
-date and time string in `UTC`. The default pattern is `'yyyy-mm-dd HH:MM:ss.l o'`.
-If you want to translate to the local system's timezone, then you must prefix the format
-string with `SYS:`, e.g. `'SYS:yyyy-mm-dd HH:MM:ss'`. See [`dateformat` documentation](https://www.npmjs.com/package/dateformat#mask-options)
-for more available pattern letters.
+date and time string. See `--dateFormat` for information on the output format.
 + `--search` (`-s`): Specifiy a search pattern according to
   [jmespath](http://jmespath.org/).
 
-<a id="api"></a>
-## API
+<a id="integration"></a>
+## Programatic Integration 
+
+For almost all cases it's recommended to use the CLI interface 
+whenever possible. When uses programatically, it's recommended to 
+install `pino-pretty`as a development dependency, in-process log 
+prettification is not recommended in production. 
+
+When installed, `pretty-print` will be used by `pino` as the default 
+prettifier.
+
+Install `pino-pretty` alongside `pino` and set the 
+`prettyPrint` option to `true`:
+
+```js
+const pino = require('pino')
+const logger = pino({
+  prettyPrint: true
+})
+
+logger.info('hi')
+```
+
+The `prettyPrint` option can also be an object containing `pretty-print`
+options:
+
+```js
+const pino = require('pino')
+const logger = pino({
+  prettyPrint: { colorize: true }
+})
+
+logger.info('hi')
+```
+
+See the [Options](#options) section for all possible options.
+
+<a id="options"></a>
+### Options
 
 `pino-pretty` exports a factory function that can be used to format log strings.
-It accepts an options argument with keys corresponding to the options described
-in [CLI Arguments](#cliargs):
+This factory function is used internally by pino, and accepts an options argument
+with keys corresponding to the options described in [CLI Arguments](#cliargs):
 
 ```js
 {
   colorize: false, // --colorize
   crlf: false, // --crlf
+  dateFormat: 'yyyy-mm-dd HH:MM:ss.l o', // --dateFormat
   errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys
   errorProps: '', // --errorProps
   levelFirst: false, // --levelFirst
+  localTime: false, // --localTime
   messageKey: 'msg', // --messageKey
-  translateTime: false, // --translateTime
+  translateTime: false // --translateTime
   search: 'foo == `bar`' // --search
 }
 ```
 
-See the [Pino's prettifier documentation](#usemetadata) for information on how
-to use this directly with `pino`.
-
-[#usemetadata]: https://getpino.io/#/docs/pretty
 
 <a id="license"><a>
 ## License
