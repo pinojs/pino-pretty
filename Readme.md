@@ -53,7 +53,7 @@ pino app.js | pino-pretty
 feed, to the formatted log line.
 + `--dateFormat` (`-d`): Sets the format string to apply when translating the date
 to human readable format (see: `--translateTime`). The default format string
-is `'yyyy-mm-dd HH:MM:ss.l o'`. For a list of available patter letters
+is `'yyyy-mm-dd HH:MM:ss.l o'`. For a list of available pattern letters
 see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
 When the value is anything other than the default value, `--translateTime` is
 implied.
@@ -72,12 +72,10 @@ date and time string. See `--dateFormat` for information on the output format.
   [jmespath](http://jmespath.org/).
 
 <a id="integration"></a>
-## Programatic Integration 
+## Programmatic Integration 
 
-For almost all cases it's recommended to use the CLI interface 
-whenever possible. When uses programatically, it's recommended to 
-install `pino-pretty`as a development dependency, in-process log 
-prettification is not recommended in production. 
+We recommend against using `pino-pretty` in production, and highly
+recommend installing `pino-pretty` as a development dependency.
 
 When installed, `pretty-print` will be used by `pino` as the default 
 prettifier.
