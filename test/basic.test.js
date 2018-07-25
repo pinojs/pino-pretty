@@ -350,7 +350,7 @@ test('basic prettifier tests', (t) => {
   t.test('handles customLogLevel', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
-    const log = pino({level: 'testCustom', levelVal: 35}, new Writable({
+    const log = pino({customLevels: {testCustom: 35}}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         t.match(formatted, /USERLVL/)
