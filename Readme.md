@@ -34,15 +34,26 @@ prettified logs will look like:
 $ npm install -g pino-pretty
 ```
 
+
+<a id="usage"></a>
+## Usage
+
+It's recommended to use `pino-pretty` with `pino` 
+by piping output to the CLI tool: 
+
+```sh
+pino app.js | pino-pretty
+```
+
 <a id="cliargs"></a>
-## CLI Arguments
+### CLI Arguments
 
 + `--colorize` (`-c`): Adds terminal color escape sequences to the output.
 + `--crlf` (`-f`): Appends carriage return and line feed, instead of just a line
 feed, to the formatted log line.
 + `--dateFormat` (`-d`): Sets the format string to apply when translating the date
 to human readable format (see: `--translateTime`). The default format string
-is `'yyyy-mm-dd HH:MM:ss.l o'`. For a list of available patter letters
+is `'yyyy-mm-dd HH:MM:ss.l o'`. For a list of available pattern letters
 see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
 When the value is anything other than the default value, `--translateTime` is
 implied.
@@ -60,12 +71,47 @@ date and time string. See `--dateFormat` for information on the output format.
 + `--search` (`-s`): Specifiy a search pattern according to
   [jmespath](http://jmespath.org/).
 
-<a id="api"></a>
-## API
+<a id="integration"></a>
+## Programmatic Integration 
+
+We recommend against using `pino-pretty` in production, and highly
+recommend installing `pino-pretty` as a development dependency.
+
+When installed, `pretty-print` will be used by `pino` as the default 
+prettifier.
+
+Install `pino-pretty` alongside `pino` and set the 
+`prettyPrint` option to `true`:
+
+```js
+const pino = require('pino')
+const logger = pino({
+  prettyPrint: true
+})
+
+logger.info('hi')
+```
+
+The `prettyPrint` option can also be an object containing `pretty-print`
+options:
+
+```js
+const pino = require('pino')
+const logger = pino({
+  prettyPrint: { colorize: true }
+})
+
+logger.info('hi')
+```
+
+See the [Options](#options) section for all possible options.
+
+<a id="options"></a>
+### Options
 
 `pino-pretty` exports a factory function that can be used to format log strings.
-It accepts an options argument with keys corresponding to the options described
-in [CLI Arguments](#cliargs):
+This factory function is used internally by pino, and accepts an options argument
+with keys corresponding to the options described in [CLI Arguments](#cliargs):
 
 ```js
 {
@@ -82,32 +128,6 @@ in [CLI Arguments](#cliargs):
 }
 ```
 
-See the [next subsection](#usemetadata) for information on how to use this
-directly with `pino`.
-
-<a id="usemetadata"></a>
-### pretty.asMetaWrapper(writable)
-
-```js
-const factory = require('pino-pretty')
-const pino = require('pino')
-
-// writable is any Writable stream
-const writable = process.stdout
-const dest = factory({ colorize: true }).asMetaWrapper(writable)
-
-const logger = pino({}, dest)
-```
-
-The function returned by the factory has a `.asMetaWrapper(dest)` function attached
-which will return an object that can be supplied directly to Pino as a stream
-that is compatible with Pino's [metadata stream API][mdstream].
-This allows `pino-pretty` to skip the expensive task of parsing JSON log lines
-and instead work directly with Pino's log object.
-
-The default stream is `process.stdout`.
-
-[mdstream]: https://github.com/pinojs/pino/blob/fc4c83b/docs/API.md#metadata
 
 <a id="license"><a>
 ## License

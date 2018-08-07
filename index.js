@@ -21,11 +21,9 @@ const levels = {
 const defaultOptions = {
   colorize: false,
   crlf: false,
-  dateFormat: CONSTANTS.DATE_FORMAT,
   errorLikeObjectKeys: ['err', 'error'],
   errorProps: '',
   levelFirst: false,
-  localTime: false,
   messageKey: CONSTANTS.MESSAGE_KEY,
   translateTime: false,
   useMetadata: false,
@@ -40,10 +38,18 @@ function isPinoLog (log) {
   return log && (log.hasOwnProperty('v') && log.v === 1)
 }
 
-function formatTime (epoch, formatString, localTime) {
+function formatTime (epoch, translateTime) {
   const instant = new Date(epoch)
-  if (localTime) return dateformat(instant, formatString)
-  return dateformat(instant, 'UTC:' + formatString)
+  if (translateTime === true) {
+    return dateformat(instant, 'UTC:' + CONSTANTS.DATE_FORMAT)
+  } else {
+    const upperFormat = translateTime.toUpperCase()
+    return (!upperFormat.startsWith('SYS:'))
+      ? dateformat(instant, 'UTC:' + translateTime)
+      : (upperFormat === 'SYS:STANDARD')
+        ? dateformat(instant, CONSTANTS.DATE_FORMAT)
+        : dateformat(instant, translateTime.slice(4))
+  }
 }
 
 function nocolor (input) {
@@ -57,10 +63,6 @@ module.exports = function prettyFactory (options) {
   const messageKey = opts.messageKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
-
-  if (opts.dateFormat.length > 0 && opts.dateFormat !== CONSTANTS.DATE_FORMAT) {
-    opts.translateTime = true
-  }
 
   const color = {
     default: nocolor,
@@ -83,8 +85,6 @@ module.exports = function prettyFactory (options) {
     color[10] = ctx.grey
     color.message = ctx.cyan
   }
-
-  pretty.asMetaWrapper = asMetaWrapper
 
   const search = opts.search
 
@@ -117,7 +117,7 @@ module.exports = function prettyFactory (options) {
     ]
 
     if (opts.translateTime) {
-      log.time = formatTime(log.time, opts.dateFormat, opts.localTime)
+      log.time = formatTime(log.time, opts.translateTime)
     }
 
     var line = `[${log.time}]`
@@ -249,43 +249,6 @@ module.exports = function prettyFactory (options) {
       }
 
       return result
-    }
-  }
-}
-
-function asMetaWrapper (dest) {
-  const parsed = Symbol('parsedChindings')
-
-  if (!dest) {
-    dest = process.stdout
-  } else if (!dest.write) {
-    throw new Error('the destination must be writable')
-  }
-
-  const pretty = this
-
-  return {
-    [Symbol.for('needsMetadata')]: true,
-    lastLevel: 0,
-    lastMsg: null,
-    lastObj: null,
-    lastLogger: null,
-    write (chunk) {
-      var chindings = this.lastLogger[parsed]
-
-      if (!chindings) {
-        chindings = JSON.parse('{"v":1' + this.lastLogger.chindings + '}')
-        this.lastLogger[parsed] = chindings
-      }
-
-      const obj = Object.assign({
-        level: this.lastLevel,
-        msg: this.lastMsg,
-        time: this.lastTime
-      }, chindings, this.lastObj)
-
-      const formatted = pretty(obj)
-      dest.write(formatted)
     }
   }
 }
