@@ -443,8 +443,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(obj)
         t.is(
           formatted,
-          `[${epoch}] INFO (${pid} on ${hostname}): foo
-    a: undefined\n`
+          `[${epoch}] INFO (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
