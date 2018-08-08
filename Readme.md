@@ -113,7 +113,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
 
 ```js
 {
-  colorize: false, // --colorize
+  colorize: chalk.supportsColor, // --colorize
   crlf: false, // --crlf
   errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys
   errorProps: '', // --errorProps
@@ -124,6 +124,8 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
 }
 ```
 
+The `colorize` default follows
+[`chalk.supportsColor](https://www.npmjs.com/package/chalk#chalksupportscolor).
 
 <a id="license"><a>
 ## License

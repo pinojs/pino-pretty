@@ -19,7 +19,7 @@ const levels = {
 }
 
 const defaultOptions = {
-  colorize: false,
+  colorize: chalk.supportsColor,
   crlf: false,
   errorLikeObjectKeys: ['err', 'error'],
   errorProps: '',
