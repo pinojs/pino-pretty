@@ -22,7 +22,6 @@ test('basic prettifier tests', (t) => {
   t.afterEach((done) => {
     Date.now = Date.originalNow
     delete Date.originalNow
-
     done()
   })
 
@@ -431,6 +430,26 @@ test('basic prettifier tests', (t) => {
     t.is(formatted, undefined)
     formatted = pretty(`{"msg":"hello world", "time":${epoch}, "level":30, "v":1}`)
     t.is(formatted, `[${epoch}] INFO: hello world\n`)
+  })
+
+  t.test('formats a line with an undefined field', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const obj = JSON.parse(chunk.toString())
+        // weird hack, but we should not crash
+        obj.a = undefined
+        const formatted = pretty(obj)
+        t.is(
+          formatted,
+          `[${epoch}] INFO (${pid} on ${hostname}): foo
+    a: undefined\n`
+        )
+        cb()
+      }
+    }))
+    log.info('foo')
   })
 
   t.end()
