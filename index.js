@@ -196,6 +196,10 @@ module.exports = function prettyFactory (options) {
     return line
 
     function joinLinesWithIndentation (value) {
+      if (!value) {
+        return
+      }
+
       const lines = value.split(/\r?\n/)
       for (var i = 1; i < lines.length; i++) {
         lines[i] = IDENT + lines[i]
