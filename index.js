@@ -196,10 +196,6 @@ module.exports = function prettyFactory (options) {
     return line
 
     function joinLinesWithIndentation (value) {
-      if (!value) {
-        return
-      }
-
       const lines = value.split(/\r?\n/)
       for (var i = 1; i < lines.length; i++) {
         lines[i] = IDENT + lines[i]
@@ -248,7 +244,9 @@ module.exports = function prettyFactory (options) {
             }
           }
         } else if (filteredKeys.indexOf(keys[i]) < 0) {
-          result += IDENT + keys[i] + ': ' + joinLinesWithIndentation(JSON.stringify(value[keys[i]], null, 2)) + EOL
+          if (value[keys[i]] !== undefined) {
+            result += IDENT + keys[i] + ': ' + joinLinesWithIndentation(JSON.stringify(value[keys[i]], null, 2)) + EOL
+          }
         }
       }
 
