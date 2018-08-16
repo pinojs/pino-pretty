@@ -1,6 +1,7 @@
 'use strict'
 
-const chalk = require('chalk')
+const kleur = require('kleur')
+const colorize = require('color-support')()
 const dateformat = require('dateformat')
 // remove jsonParser once Node 6 is not supported anymore
 const jsonParser = require('fast-json-parse')
@@ -19,7 +20,7 @@ const levels = {
 }
 
 const defaultOptions = {
-  colorize: chalk.supportsColor,
+  colorize,
   crlf: false,
   errorLikeObjectKeys: ['err', 'error'],
   errorProps: '',
@@ -57,7 +58,7 @@ function nocolor (input) {
 }
 
 module.exports = function prettyFactory (options) {
-  const opts = Object.assign({}, defaultOptions, options)
+  const opts = { ...defaultOptions, ...options }
   const EOL = opts.crlf ? '\r\n' : '\n'
   const IDENT = '    '
   const messageKey = opts.messageKey
@@ -74,16 +75,16 @@ module.exports = function prettyFactory (options) {
     10: nocolor,
     message: nocolor
   }
+
   if (opts.colorize) {
-    const ctx = new chalk.constructor({enabled: true, level: 3})
-    color.default = ctx.white
-    color[60] = ctx.bgRed
-    color[50] = ctx.red
-    color[40] = ctx.yellow
-    color[30] = ctx.green
-    color[20] = ctx.blue
-    color[10] = ctx.grey
-    color.message = ctx.cyan
+    color.default = kleur.white
+    color[60] = kleur.bgRed
+    color[50] = kleur.red
+    color[40] = kleur.yellow
+    color[30] = kleur.green
+    color[20] = kleur.blue
+    color[10] = kleur.grey
+    color.message = kleur.cyan
   }
 
   const search = opts.search
