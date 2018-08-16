@@ -58,7 +58,7 @@ function nocolor (input) {
 }
 
 module.exports = function prettyFactory (options) {
-  const opts = { ...defaultOptions, ...options }
+  const opts = Object.assign({}, defaultOptions, options)
   const EOL = opts.crlf ? '\r\n' : '\n'
   const IDENT = '    '
   const messageKey = opts.messageKey
