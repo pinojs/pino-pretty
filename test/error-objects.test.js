@@ -186,10 +186,12 @@ test('error like objects tests', (t) => {
   })
 
   t.test('handles errors with a null stack for Error object', (t) => {
-    t.plan(1)
+    t.plan(3)
     const pretty = prettyFactory()
     const expectedLines = [
-      '    null'
+      '    type: "Error"',
+      '    stack: null',
+      '    some: "property"'
     ]
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -205,6 +207,7 @@ test('error like objects tests', (t) => {
 
     const error = Error('error message')
     error.stack = null
+    error.some = 'property'
 
     log.error(error)
   })
