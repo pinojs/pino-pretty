@@ -48,7 +48,7 @@ test('error like objects tests', (t) => {
 
   t.test('errorProps recognizes user specified properties', (t) => {
     t.plan(3)
-    const pretty = prettyFactory({errorProps: 'statusCode,originalStack'})
+    const pretty = prettyFactory({ errorProps: 'statusCode,originalStack' })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
@@ -77,7 +77,7 @@ test('error like objects tests', (t) => {
     const expected = err.stack.split('\n')
     expected.unshift(err.message)
 
-    const log = pino({serializers: {err: serializers.err}}, new Writable({
+    const log = pino({ serializers: { err: serializers.err } }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
@@ -94,7 +94,7 @@ test('error like objects tests', (t) => {
       }
     }))
 
-    log.info({err})
+    log.info({ err })
   })
 
   t.test('prettifies Error in property within errorLikeObjectKeys when stack is not the last property', (t) => {
@@ -108,7 +108,7 @@ test('error like objects tests', (t) => {
     const expected = err.stack.split('\n')
     expected.unshift(err.message)
 
-    const log = pino({serializers: {err: serializers.err}}, new Writable({
+    const log = pino({ serializers: { err: serializers.err } }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
@@ -126,12 +126,12 @@ test('error like objects tests', (t) => {
       }
     }))
 
-    log.info({err})
+    log.info({ err })
   })
 
   t.test('errorProps flag with "*" (print all nested props)', function (t) {
     t.plan(9)
-    const pretty = prettyFactory({errorProps: '*'})
+    const pretty = prettyFactory({ errorProps: '*' })
     const expectedLines = [
       '    error stack',
       'statusCode: 500',
@@ -181,7 +181,7 @@ test('error like objects tests', (t) => {
       }
     }))
 
-    const error = {message: 'foo', stack: null}
+    const error = { message: 'foo', stack: null }
     log.error(error)
   })
 

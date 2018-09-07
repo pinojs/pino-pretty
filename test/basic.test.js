@@ -1,6 +1,6 @@
 'use strict'
 
-const Writable = require('stream').Writable
+const { Writable } = require('readable-stream')
 const os = require('os')
 const test = require('tap').test
 const pino = require('pino')
@@ -50,7 +50,7 @@ test('basic prettifier tests', (t) => {
 
   t.test('will add color codes', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({colorize: true})
+    const pretty = prettyFactory({ colorize: true })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
@@ -66,7 +66,7 @@ test('basic prettifier tests', (t) => {
 
   t.test('can swap date and level position', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({levelFirst: true})
+    const pretty = prettyFactory({ levelFirst: true })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
@@ -82,7 +82,7 @@ test('basic prettifier tests', (t) => {
 
   t.test('can use different message keys', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({messageKey: 'bar'})
+    const pretty = prettyFactory({ messageKey: 'bar' })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
@@ -93,12 +93,12 @@ test('basic prettifier tests', (t) => {
         cb()
       }
     }))
-    log.info({bar: 'baz'})
+    log.info({ bar: 'baz' })
   })
 
   t.test('will format time to UTC', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({translateTime: true})
+    const pretty = prettyFactory({ translateTime: true })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
@@ -180,7 +180,7 @@ test('basic prettifier tests', (t) => {
   t.test('handles missing pid, hostname and name', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
-    const log = pino({base: null}, new Writable({
+    const log = pino({ base: null }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         t.match(formatted, /\[.*\] INFO: hello world/)
@@ -264,7 +264,7 @@ test('basic prettifier tests', (t) => {
   t.test('works without time', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
-    const log = pino({timestamp: null}, new Writable({
+    const log = pino({ timestamp: null }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         t.is(formatted, `[undefined] INFO (${pid} on ${hostname}): hello world\n`)
@@ -284,7 +284,7 @@ test('basic prettifier tests', (t) => {
         cb()
       }
     }))
-    log.info({a: 'b'}, 'hello world')
+    log.info({ a: 'b' }, 'hello world')
   })
 
   t.test('prettifies nested properties', (t) => {
@@ -315,7 +315,7 @@ test('basic prettifier tests', (t) => {
   t.test('treats the name with care', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
-    const log = pino({name: 'matteo'}, new Writable({
+    const log = pino({ name: 'matteo' }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         t.is(formatted, `[${epoch}] INFO (matteo/${pid} on ${hostname}): hello world\n`)
@@ -349,7 +349,7 @@ test('basic prettifier tests', (t) => {
   t.test('handles customLogLevel', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
-    const log = pino({customLevels: {testCustom: 35}}, new Writable({
+    const log = pino({ customLevels: { testCustom: 35 } }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         t.match(formatted, /USERLVL/)
@@ -425,7 +425,7 @@ test('basic prettifier tests', (t) => {
 
   t.test('handles `undefined` return values', (t) => {
     t.plan(2)
-    const pretty = prettyFactory({search: 'msg == \'hello world\''})
+    const pretty = prettyFactory({ search: 'msg == \'hello world\'' })
     let formatted = pretty(`{"msg":"nope", "time":${epoch}, "level":30, "v":1}`)
     t.is(formatted, undefined)
     formatted = pretty(`{"msg":"hello world", "time":${epoch}, "level":30, "v":1}`)
