@@ -4,7 +4,7 @@ const fs = require('fs')
 const args = require('args')
 const pump = require('pump')
 const split = require('split2')
-const through = require('through2')
+const { Transform } = require('readable-stream')
 const prettyFactory = require('./')
 const CONSTANTS = require('./lib/constants')
 
@@ -28,14 +28,16 @@ args
 
 const opts = args.parse(process.argv)
 const pretty = prettyFactory(opts)
-const prettyTransport = through.obj(function (chunk, enc, cb) {
-  const line = pretty(chunk.toString())
-  if (line === undefined) return cb()
-  process.stdout.write(line)
-  cb()
+const prettyTransport = new Transform({
+  objectMode: true,
+  transform (chunk, enc, cb) {
+    const line = pretty(chunk.toString())
+    if (line === undefined) return cb()
+    cb(null, line)
+  }
 })
 
-pump(process.stdin, split(), prettyTransport)
+pump(process.stdin, split(), prettyTransport, process.stdout)
 
 // https://github.com/pinojs/pino/pull/358
 if (!process.stdin.isTTY && !fs.fstatSync(process.stdin.fd).isFile()) {
