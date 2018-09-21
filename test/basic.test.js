@@ -5,7 +5,16 @@ const os = require('os')
 const test = require('tap').test
 const pino = require('pino')
 const dateformat = require('dateformat')
-const prettyFactory = require('../')
+const _prettyFactory = require('../')
+
+function prettyFactory (opts) {
+  if (!opts) {
+    opts = { colorize: false }
+  } else if (!opts.hasOwnProperty('colorize')) {
+    opts.colorize = false
+  }
+  return _prettyFactory(opts)
+}
 
 // All dates are computed from 'Fri, 30 Mar 2018 17:35:28 GMT'
 const epoch = 1522431328992
@@ -449,6 +458,31 @@ test('basic prettifier tests', (t) => {
       }
     }))
     log.info('foo')
+  })
+
+  t.test('prettifies msg object', (t) => {
+    t.plan(6)
+    const expectedLines = [
+      '    msg: {',
+      '      "b": {',
+      '        "c": "d"',
+      '      }',
+      '    }'
+    ]
+    const pretty = prettyFactory()
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        const lines = formatted.split('\n')
+        t.is(lines.length, expectedLines.length + 2)
+        lines.shift(); lines.pop()
+        for (var i = 0; i < lines.length; i += 1) {
+          t.is(lines[i], expectedLines[i])
+        }
+        cb()
+      }
+    }))
+    log.info({ msg: { b: { c: 'd' } } })
   })
 
   t.end()

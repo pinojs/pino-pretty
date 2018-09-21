@@ -153,7 +153,7 @@ module.exports = function prettyFactory (options) {
 
     line += ': '
 
-    if (log[messageKey]) {
+    if (log[messageKey] && typeof log[messageKey] === 'string') {
       line += color.message(log[messageKey])
     }
 
@@ -190,7 +190,7 @@ module.exports = function prettyFactory (options) {
         }
       }
     } else {
-      line += filterObjects(log, messageKey, errorLikeObjectKeys)
+      line += filterObjects(log, typeof log[messageKey] === 'string' ? messageKey : undefined, errorLikeObjectKeys)
     }
 
     return line
@@ -207,7 +207,11 @@ module.exports = function prettyFactory (options) {
       errorLikeObjectKeys = errorLikeObjectKeys || []
 
       const keys = Object.keys(value)
-      const filteredKeys = [messageKey]
+      const filteredKeys = []
+
+      if (messageKey) {
+        filteredKeys.push(messageKey)
+      }
 
       if (excludeStandardKeys !== false) {
         Array.prototype.push.apply(filteredKeys, standardKeys)
