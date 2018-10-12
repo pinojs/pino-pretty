@@ -235,13 +235,13 @@ module.exports = function prettyFactory (options) {
             const line = arrayOfLines[j]
 
             if (/^\s*"stack"/.test(line)) {
-              const matches = /^(\s*"stack":)\s*"(.*)",?$/.exec(line)
+              const matches = /^(\s*"stack":)\s*(".*"),?$/.exec(line)
 
               if (matches && matches.length === 3) {
                 const indentSize = /^\s*/.exec(line)[0].length + 4
-                const indentation = Array(indentSize + 1).join(' ')
+                const indentation = ' '.repeat(indentSize)
 
-                result += matches[1] + '\n' + indentation + matches[2].replace(/\\n/g, '\n' + indentation)
+                result += matches[1] + '\n' + indentation + JSON.parse(matches[2]).replace(/\n/g, '\n' + indentation)
               }
             } else {
               result += line

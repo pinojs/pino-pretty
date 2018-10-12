@@ -97,6 +97,36 @@ test('error like objects tests', (t) => {
     log.info({ err })
   })
 
+  t.test('prettifies Error in property within errorLikeObjectKeys when stack has escaped characters', (t) => {
+    t.plan(8)
+    const pretty = prettyFactory({
+      errorLikeObjectKeys: ['err']
+    })
+
+    const err = Error('hello world')
+    err.stack = 'Error: hello world\n    at anonymous (C:\\project\\node_modules\\example\\index.js)'
+    const expected = err.stack.split('\n')
+    expected.unshift(err.message)
+
+    const log = pino({ serializers: { err: serializers.err } }, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        const lines = formatted.split('\n')
+        t.is(lines.length, expected.length + 6)
+        t.is(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): `)
+        t.match(lines[1], /\s{4}err: {$/)
+        t.match(lines[2], /\s{6}"type": "Error",$/)
+        t.match(lines[3], /\s{6}"message": "hello world",$/)
+        t.match(lines[4], /\s{6}"stack":$/)
+        t.match(lines[5], /\s{10}Error: hello world$/)
+        t.match(lines[6], /\s{10}at anonymous \(C:\\project\\node_modules\\example\\index.js\)$/)
+        cb()
+      }
+    }))
+
+    log.info({ err })
+  })
+
   t.test('prettifies Error in property within errorLikeObjectKeys when stack is not the last property', (t) => {
     t.plan(9)
     const pretty = prettyFactory({
