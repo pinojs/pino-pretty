@@ -67,6 +67,13 @@ test('error like objects tests', (t) => {
     log.error(error)
   })
 
+  t.test('prettifies ignores undefined errorLikeObject', (t) => {
+    const pretty = prettyFactory()
+    pretty({ err: undefined })
+    pretty({ error: undefined })
+    t.end()
+  })
+
   t.test('prettifies Error in property within errorLikeObjectKeys', (t) => {
     t.plan(8)
     const pretty = prettyFactory({

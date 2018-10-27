@@ -220,7 +220,7 @@ module.exports = function prettyFactory (options) {
       let result = ''
 
       for (var i = 0; i < keys.length; i += 1) {
-        if (errorLikeObjectKeys.indexOf(keys[i]) !== -1) {
+        if (errorLikeObjectKeys.indexOf(keys[i]) !== -1 && value[keys[i]] !== undefined) {
           const arrayOfLines = (
             IDENT + keys[i] + ': ' +
             joinLinesWithIndentation(JSON.stringify(value[keys[i]], null, 2)) +
