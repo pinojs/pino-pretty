@@ -485,5 +485,30 @@ test('basic prettifier tests', (t) => {
     log.info({ msg: { b: { c: 'd' } } })
   })
 
+  t.test('prettifies object with some undefined values', (t) => {
+    t.plan(1)
+    const dest = new Writable({
+      write (chunk, _, cb) {
+        t.is(
+          chunk + '',
+          `[${epoch}] INFO (${pid} on ${hostname}): \n    a: {\n      "b": "c"\n    }\n    n: null\n`
+        )
+        cb()
+      }
+    })
+    const log = pino({
+      prettifier: prettyFactory,
+      prettyPrint: true
+    }, dest)
+    log.info({
+      a: { b: 'c' },
+      s: Symbol.for('s'),
+      f: f => f,
+      c: class C {},
+      n: null,
+      err: { toJSON () {} }
+    })
+  })
+
   t.end()
 })

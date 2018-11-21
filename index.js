@@ -221,9 +221,11 @@ module.exports = function prettyFactory (options) {
 
       for (var i = 0; i < keys.length; i += 1) {
         if (errorLikeObjectKeys.indexOf(keys[i]) !== -1 && value[keys[i]] !== undefined) {
+          const lines = JSON.stringify(value[keys[i]], null, 2)
+          if (lines === undefined) continue
           const arrayOfLines = (
             IDENT + keys[i] + ': ' +
-            joinLinesWithIndentation(JSON.stringify(value[keys[i]], null, 2)) +
+            joinLinesWithIndentation(lines) +
             EOL
           ).split('\n')
 
@@ -249,7 +251,10 @@ module.exports = function prettyFactory (options) {
           }
         } else if (filteredKeys.indexOf(keys[i]) < 0) {
           if (value[keys[i]] !== undefined) {
-            result += IDENT + keys[i] + ': ' + joinLinesWithIndentation(JSON.stringify(value[keys[i]], null, 2)) + EOL
+            const lines = JSON.stringify(value[keys[i]], null, 2)
+            if (lines !== undefined) {
+              result += IDENT + keys[i] + ': ' + joinLinesWithIndentation(lines) + EOL
+            }
           }
         }
       }
