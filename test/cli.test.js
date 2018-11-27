@@ -14,7 +14,7 @@ test('cli', (t) => {
     const child = spawn(process.argv0, [bin])
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      t.is(data.toString(), `[${epoch}] INFO  (42 on foo): hello world\n`)
     })
     child.stdin.write(logLine)
     t.tearDown(() => child.kill())
@@ -25,7 +25,7 @@ test('cli', (t) => {
     const child = spawn(process.argv0, [bin, '-l'])
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), `INFO [${epoch}] (42 on foo): hello world\n`)
+      t.is(data.toString(), `INFO  [${epoch}] (42 on foo): hello world\n`)
     })
     child.stdin.write(logLine)
     t.tearDown(() => child.kill())
@@ -36,7 +36,7 @@ test('cli', (t) => {
     const child = spawn(process.argv0, [bin, '-t'])
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), `[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n`)
+      t.is(data.toString(), `[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n`)
     })
     child.stdin.write(logLine)
     t.tearDown(() => child.kill())
@@ -47,7 +47,7 @@ test('cli', (t) => {
     const child = spawn(process.argv0, [bin, '-s', 'msg == `hello world`'])
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      t.is(data.toString(), `[${epoch}] INFO  (42 on foo): hello world\n`)
     })
     child.stdin.write(logLine)
     t.tearDown(() => child.kill())
