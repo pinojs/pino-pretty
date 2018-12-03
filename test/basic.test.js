@@ -276,7 +276,7 @@ test('basic prettifier tests', (t) => {
     const log = pino({ timestamp: null }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.is(formatted, `[undefined] INFO  (${pid} on ${hostname}): hello world\n`)
+        t.is(formatted, `INFO  (${pid} on ${hostname}): hello world\n`)
         cb()
       }
     }))
