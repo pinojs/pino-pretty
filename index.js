@@ -5,6 +5,7 @@ const dateformat = require('dateformat')
 // remove jsonParser once Node 6 is not supported anymore
 const jsonParser = require('fast-json-parse')
 const jmespath = require('jmespath')
+const stringifySafe = require('fast-safe-stringify')
 
 const CONSTANTS = require('./lib/constants')
 
@@ -224,7 +225,7 @@ module.exports = function prettyFactory (options) {
 
       for (var i = 0; i < keys.length; i += 1) {
         if (errorLikeObjectKeys.indexOf(keys[i]) !== -1 && value[keys[i]] !== undefined) {
-          const lines = JSON.stringify(value[keys[i]], null, 2)
+          const lines = stringifySafe(value[keys[i]], null, 2)
           if (lines === undefined) continue
           const arrayOfLines = (
             IDENT + keys[i] + ': ' +
@@ -254,7 +255,7 @@ module.exports = function prettyFactory (options) {
           }
         } else if (filteredKeys.indexOf(keys[i]) < 0) {
           if (value[keys[i]] !== undefined) {
-            const lines = JSON.stringify(value[keys[i]], null, 2)
+            const lines = stringifySafe(value[keys[i]], null, 2)
             if (lines !== undefined) {
               result += IDENT + keys[i] + ': ' + joinLinesWithIndentation(lines) + EOL
             }

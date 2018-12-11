@@ -485,6 +485,35 @@ test('basic prettifier tests', (t) => {
     log.info({ msg: { b: { c: 'd' } } })
   })
 
+  t.test('prettifies msg object with circular references', (t) => {
+    t.plan(7)
+    const expectedLines = [
+      '    msg: {',
+      '      "b": {',
+      '        "c": "d"',
+      '      },',
+      '      "a": "[Circular]"',
+      '    }'
+    ]
+    const pretty = prettyFactory()
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        const lines = formatted.split('\n')
+        t.is(lines.length, expectedLines.length + 2)
+        lines.shift(); lines.pop()
+        for (var i = 0; i < lines.length; i += 1) {
+          t.is(lines[i], expectedLines[i])
+        }
+        cb()
+      }
+    }))
+
+    const msg = { b: { c: 'd' } }
+    msg.a = msg
+    log.info({ msg })
+  })
+
   t.test('prettifies object with some undefined values', (t) => {
     t.plan(1)
     const dest = new Writable({
