@@ -119,7 +119,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   errorProps: '', // --errorProps
   levelFirst: false, // --levelFirst
   messageKey: 'msg', // --messageKey
-  translateTime: false // --translateTime
+  translateTime: false, // --translateTime
   search: 'foo == `bar`' // --search
 }
 ```
