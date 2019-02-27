@@ -75,7 +75,7 @@ letters see the [`dateformat` documentation](https://www.npmjs.com/package/datef
 We recommend against using `pino-pretty` in production, and highly
 recommend installing `pino-pretty` as a development dependency.
 
-When installed, `pretty-print` will be used by `pino` as the default 
+When installed, `pino-pretty` will be used by `pino` as the default 
 prettifier.
 
 Install `pino-pretty` alongside `pino` and set the 
