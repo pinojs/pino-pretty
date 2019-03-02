@@ -108,54 +108,82 @@ module.exports = function prettyFactory (options) {
       return
     }
 
+    let tokens = [
+      { delimiter: '[', requiresAll: ['time'] },
+      { key: 'time' },
+      { delimiter: '] ', requiresAll: ['time'] },
+      { key: 'level' }
+    ]
+
+    let swapTimeTokens = [
+      { key: 'level' },
+      { delimiter: ' [', requiresAll: ['time'] },
+      { key: 'time' },
+      { delimiter: ']', requiresAll: ['time'] }
+    ]
+
+    if (opts.format) {
+      tokens = opts.format
+    } else {
+      if (opts.levelFirst) {
+        tokens = swapTimeTokens
+      }
+      tokens.push({ delimiter: ' (', requiresOne: ['name', 'pid', 'hostname'] })
+      tokens.push({ key: 'name' })
+      tokens.push({ delimiter: '/', requiresAll: ['name', 'pid'] })
+      tokens.push({ key: 'pid' })
+      tokens.push({ delimiter: ' on ', requiresAll: ['hostname'] })
+      tokens.push({ key: 'hostname' })
+      tokens.push({ delimiter: ')', requiresOne: ['name', 'pid', 'hostname'] })
+      tokens.push({ delimiter: ': ' })
+    }
+
+    var line = ''
     const standardKeys = [
-      'pid',
-      'hostname',
-      'name',
-      'level',
-      'time',
       'v'
     ]
 
-    if (opts.translateTime) {
-      log.time = formatTime(log.time, opts.translateTime)
-    }
-
-    var line = log.time ? `[${log.time}]` : ''
-
-    const coloredLevel = levels.hasOwnProperty(log.level)
-      ? color[log.level](levels[log.level])
-      : color.default(levels.default)
-    if (opts.levelFirst) {
-      line = `${coloredLevel} ${line}`
-    } else {
-      // If the line is not empty (timestamps are enabled) output it
-      // with a space after it - otherwise output the empty string
-      const lineOrEmpty = line && line + ' '
-      line = `${lineOrEmpty}${coloredLevel}`
-    }
-
-    if (log.name || log.pid || log.hostname) {
-      line += ' ('
-
-      if (log.name) {
-        line += log.name
+    tokens.forEach((token) => {
+      if (token.key) {
+        standardKeys.push(token.key)
+        switch (token.key) {
+          case 'time':
+            if (log.time) {
+              if (opts.translateTime) {
+                line += formatTime(log.time, opts.translateTime)
+              } else {
+                line += log.time
+              }
+            }
+            break
+          case 'level':
+            const coloredLevel = levels.hasOwnProperty(log.level)
+              ? color[log.level](levels[log.level])
+              : color.default(levels.default)
+            line += coloredLevel
+            break
+          default:
+            if (log.hasOwnProperty(token.key)) {
+              line += log[token.key]
+            }
+        }
+      } else if (token.delimiter) {
+        if (token.requiresOne) {
+          for (var i = 0; i < token.requiresOne.length; i++) {
+            if (log.hasOwnProperty(token.requiresOne[i])) {
+              line += token.delimiter
+              break
+            }
+          }
+        } else if (token.requiresAll) {
+          if (token.requiresAll.every(item => log.hasOwnProperty(item))) {
+            line += token.delimiter
+          }
+        } else {
+          line += token.delimiter
+        }
       }
-
-      if (log.name && log.pid) {
-        line += '/' + log.pid
-      } else if (log.pid) {
-        line += log.pid
-      }
-
-      if (log.hostname) {
-        line += ' on ' + log.hostname
-      }
-
-      line += ')'
-    }
-
-    line += ': '
+    })
 
     if (log[messageKey] && typeof log[messageKey] === 'string') {
       line += color.message(log[messageKey])

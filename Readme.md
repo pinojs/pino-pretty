@@ -117,10 +117,24 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   crlf: false, // --crlf
   errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys
   errorProps: '', // --errorProps
-  levelFirst: false, // --levelFirst
+  levelFirst: false, // --levelFirst, Ignored if `format` is provided
   messageKey: 'msg', // --messageKey
   translateTime: false, // --translateTime
-  search: 'foo == `bar`' // --search
+  search: 'foo == `bar`', // --search
+  format: [ // Configurable format of the log up to when the message is appended
+      { delimiter: '[', requiresAll: ['time'] },
+      { key: 'time' },
+      { delimiter: '] ', requiresAll: ['time'] },
+      { key: 'level' }
+      { delimiter: ' (', requiresOne: ['name', 'pid', 'hostname'] },
+      { key: 'name' },
+      { delimiter: '/', requiresAll: ['name', 'pid'] },
+      { key: 'pid' },
+      { delimiter: ' on ', requiresAll: ['hostname'] },
+      { key: 'hostname' },
+      { delimiter: ')', requiresOne: ['name', 'pid', 'hostname'] },
+      { delimiter: ': ' },
+  ]
 }
 ```
 
