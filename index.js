@@ -139,9 +139,14 @@ module.exports = function prettyFactory (options) {
     }
 
     var line = ''
-    const standardKeys = [
-      'v'
-    ]
+    let standardKeys = []
+    if (opts.ignoreKeys) {
+      standardKeys = opts.ignoreKeys
+    } else {
+      standardKeys = [
+        'v'
+      ]
+    }
 
     tokens.forEach((token) => {
       if (token.key) {
