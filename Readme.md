@@ -105,7 +105,7 @@ logger.info('hi')
 See the [Options](#options) section for all possible options.
 
 <a id="options"></a>
-## Options
+### Options
 
 `pino-pretty` exports a factory function that can be used to format log strings.
 This factory function is used internally by pino, and accepts an options argument
@@ -233,7 +233,9 @@ INFO [1522431328992] (42 on foo): hello world
 #### `search` (String)
 A [jmespath](http://jmespath.org/) query string to filter your logs.
 
+<a id="options-advanced"><a>
 ### Advanced Options
+
 <a id="options-ignore-keys"><a>
 #### `ignoreKeys` (Array<String>)
 
