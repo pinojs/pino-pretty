@@ -61,7 +61,7 @@ Default: `msg`.
 + `--translateTime` (`-t`): Translate the epoch time value into a human readable
 date and time string. This flag also can set the format string to apply when
 translating the date to human readable format. For a list of available pattern
-letters see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
+letters see the [`dateformat`](https://www.npmjs.com/package/dateformat) documentation.
   - The default format is `yyyy-mm-dd HH:MM:ss.l o` in UTC.
   - Require a `SYS:` prefix to translate time to the local system's timezone. A
     shortcut `SYS:standard` to translate time to `yyyy-mm-dd HH:MM:ss.l o` in
@@ -105,7 +105,7 @@ logger.info('hi')
 See the [Options](#options) section for all possible options.
 
 <a id="options"></a>
-### Options
+## Options
 
 `pino-pretty` exports a factory function that can be used to format log strings.
 This factory function is used internally by pino, and accepts an options argument
@@ -140,43 +140,49 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
 ```
 
 <a id="options-colorize"><a>
-#### colorize
-The `colorize` default follows
+#### `colorize` (Boolean)
+
+Default: `chalk.supportsColor`
+
+Will colorize the output using chalk.  The `colorize` default follows
 [`chalk.supportsColor](https://www.npmjs.com/package/chalk#chalksupportscolor).
 
-Provide a reference to any of the chalk colors [https://www.npmjs.com/package/chalk#colors](color)
-`default: color.default`
-
 <a id="options-crlf"><a>
-#### crlf
+#### `crlf` (Boolean)
+
+Default: `false`
+
 A boolean value to enable/disable adding both carriage return and line endings at the end of each line.  False will only include line endings
-`default: false`
 
 <a id="options-error-like-object-keys"><a>
-#### errorLikeObjectKeys
+#### `errorLikeObjectKeys` (Array<String>)
+
+Default: `['err','error']`
+
 Define the log keys that are associated with error like objects.
 
-`default: ['err','error']`
-
 <a id="options-error-props"><a>
-#### errorProps
-When formatting an error object, include the properties listed here.  To show all properties on the error object, set this to "['*']
+#### `errorProps` (Array<String>)
+
+Default: `[]`
+
+When formatting an error object, include the properties listed here.  To show all properties on the error object, set this to `['*']`
 ```javascript
 {
   errorProps: ['*']
 }
 ```
-`default: []`
 
 <a id="options-level-first"><a>
-#### levelFirst
+#### `levelFirst` (Boolean)
+
+Default: `false`
+
 Swaps the placement of the `time` and `level` keys in each log line.
 
 > This setting is ignored if the `format` property is set
 
-`default: false`
-
-##### false
+##### true
 ```bash
 INFO [1522431328992] (42 on foo): hello world
 ```
@@ -186,11 +192,17 @@ INFO [1522431328992] (42 on foo): hello world
 ```
 
 <a id="options-message-key"><a>
-#### messageKey
+#### `messageKey` (String)
+
+Default: `msg`
+
 The key in your log entry that will be used when appending the message to the first line
 
 <a id="options-translate-time"><a>
-#### translateTime
+#### `translateTime` (Boolean | String)
+
+Default: `false`
+
 Whether or not to translate the time from an epoch timestamp to a formated time string
 
 ##### true
@@ -217,18 +229,20 @@ Renders the epoch time
 INFO [1522431328992] (42 on foo): hello world
 ```
 
-#### search
+<a id="options-search"><a>
+#### `search` (String)
 A [jmespath](http://jmespath.org/) query string to filter your logs.
 
 ### Advanced Options
 <a id="options-ignore-keys"><a>
-#### ignoreKeys
+#### `ignoreKeys` (Array<String>)
+
+Default: `['v']`
+
 You can specify the log entry keys that should be ignored from output.  By default, all keys will be output except for the internal 'v' key entry.
 
-`default: ['v']`
-
 <a id="options-format"><a>
-#### format (Advanced)
+#### `format` (Array<Object>)
 Allows formatting of the first log line by specifying the placement of delimiters and keys.  This allows you to tap into the default formatting logic of pino-pretty so you can easily customize your log entries based on the properties that you include in your loggers.
 
 The pino logger will automatically attempt to bind the following keys to a log entry:
