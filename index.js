@@ -35,18 +35,18 @@ const defaultOptions = {
   translateTime: false,
   useMetadata: false,
   outputStream: process.stdout,
-  optionFile: path.join(process.cwd(), '.pino-prettyrc.json')
+  optionsFile: path.join(process.cwd(), '.pino-prettyrc.json')
 }
 
 module.exports = function prettyFactory (options) {
   const opts = Object.assign({}, defaultOptions, options)
   try {
-    const runConfiguration = require(opts.optionFile)
+    const runConfiguration = require(opts.optionsFile)
     Object.assign(opts, runConfiguration)
   } catch (error) {
     // Only throw an error if the options file path is not the default
-    if (defaultOptions.optionFile !== opts.optionFile) {
-      throw new Error('Failed to load runtime configuration file [' + opts.optionFile + ']')
+    if (defaultOptions.optionsFile !== opts.optionsFile) {
+      throw new Error('Failed to load runtime configuration file [' + opts.optionsFile + ']')
     }
   }
   const EOL = opts.crlf ? '\r\n' : '\n'
