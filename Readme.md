@@ -63,7 +63,7 @@ pino app.js | pino-pretty
 - `--messageKey` (`-m`): Define the key that contains the main log message.
   Default: `msg`.
 - `--timestampKey` (`-m`): Define the key that contains the log timestamp.
-  Default: `time`.  
+  Default: `time`.
 - `--translateTime` (`-t`): Translate the epoch time value into a human readable
   date and time string. This flag also can set the format string to apply when
   translating the date to human readable format. For a list of available pattern
@@ -75,6 +75,7 @@ pino app.js | pino-pretty
 - `--search` (`-s`): Specify a search pattern according to
   [jmespath](http://jmespath.org/).
 - `--ignore` (`-i`): Ignore one or several keys: (`-i time,hostname`)
+- `--option-file` (`-o`): Specify a path to a json file containing the pino-pretty options.  pino-pretty will attempt to read from  `process.cwd() + '/.pino-prettyrc.json'` if not specified
 
 <a id="integration"></a>
 ## Programmatic Integration
