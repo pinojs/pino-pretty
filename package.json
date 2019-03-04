@@ -9,7 +9,9 @@
   "scripts": {
     "lint": "standard | snazzy",
     "lint-ci": "standard",
+    "pretest": "echo {} > ./.pino-prettyrc.json",
     "test": "tap --no-cov 'test/**/*.test.js'",
+    "pretest-ci": "echo {} > ./.pino-prettyrc.json",
     "test-ci": "tap --cov 'test/**/*.test.js'"
   },
   "repository": {

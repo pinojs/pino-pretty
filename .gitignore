@@ -51,3 +51,7 @@ profile-*
 
 # VS Code
 .vscode/
+
+# Run Configuration
+.pino-prettyrc.json
+.pino-prettyrc.test.json
