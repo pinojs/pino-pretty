@@ -17,7 +17,7 @@ args
   .option(['m', 'messageKey'], 'Highlight the message under the specified key', CONSTANTS.MESSAGE_KEY)
   .option(['t', 'translateTime'], 'Display epoch timestamps as UTC ISO format or according to an optional format string (default ISO 8601)')
   .option(['s', 'search'], 'specifiy a search pattern according to jmespath')
-  .option(['o', 'option-file'], 'specify a path to a json file containing the pino-pretty options')
+  .option(['o', 'options-file'], 'specify a path to a json file containing the pino-pretty options')
 
 args
   .example('cat log | pino-pretty', 'To prettify logs, simply pipe a log file through')
