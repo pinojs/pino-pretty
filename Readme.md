@@ -127,13 +127,13 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
       { key: 'time' },
       { delimiter: '] ', requireAllKeys: ['time'] },
       { key: 'level' }
-      { delimiter: ' (', requireOneOfKey: ['name', 'pid', 'hostname'] },
+      { delimiter: ' (', requireOneOfKeys: ['name', 'pid', 'hostname'] },
       { key: 'name' },
       { delimiter: '/', requireAllKeys: ['name', 'pid'] },
       { key: 'pid' },
       { delimiter: ' on ', requireAllKeys: ['hostname'] },
       { key: 'hostname' },
-      { delimiter: ')', requireOneOfKey: ['name', 'pid', 'hostname'] },
+      { delimiter: ')', requireOneOfKeys: ['name', 'pid', 'hostname'] },
       { delimiter: ': ' },
   ]
 }
@@ -274,7 +274,7 @@ interface DelimiterToken {
   // The delimiter to include in the log output
   delimiter: string;
   // If specified, will require that at least one of the keys in the array are present for the delimiter to be in the output
-  requireOneOfKey?: string[]
+  requireOneOfKeys?: string[]
   // If specified, will require that all of the keys in the array are present for the delimiter to be in the output
   requireAllKeys?: string[]
 }
@@ -347,7 +347,7 @@ It starts to get fun when we add in some delimiter conditions.  Let's say that w
   format: [
     { key: 'level' },
     { delimiter: ' [app:log-test]' },
-    { delimiter: ' [', requireAllKeys: ['class'] }
+    { delimiter: ' [', requireAllKeys: ['class'] },
     { key: 'class' },
     { delimiter: ']', requireAllKeys: ['class'] }
   ]
@@ -381,11 +381,11 @@ Let's get crazy now and see how we can have it show the class or method within t
   format: [
     { key: 'level' },
     { delimiter: ' [app:log-test]' },
-    { delimiter: ' [', requireOneOfKeys: ['class', 'method'] }
+    { delimiter: ' [', requireOneOfKeyss: ['class', 'method'] },
     { key: 'class' },
-    { delimiter: ':', requireAllKeys: ['class'] }
+    { delimiter: ':', requireAllKeys: ['class', 'method'] },
     { key: 'method' },
-    { delimiter: ']', requireOneOfKeys: ['class', 'method'] }
+    { delimiter: ']', requireOneOfKeyss: ['class', 'method'] }
   ]
 }
 ```
@@ -421,7 +421,7 @@ That's it, with these options you can easily modify the log output with some sim
   { delimiter: '] ', requireAllKeys: ['time'] },
   { key: 'level' }
   // Will only render if any of the following keys are present 'name', 'pid', 'hostname'
-  { delimiter: ' (', requireOneOfKey: ['name', 'pid', 'hostname'] },
+  { delimiter: ' (', requireOneOfKeys: ['name', 'pid', 'hostname'] },
   { key: 'name' },
   // Will only render if any of the following keys are present 'name', 'pid'
   { delimiter: '/', requireAllKeys: ['name', 'pid'] },
@@ -430,7 +430,7 @@ That's it, with these options you can easily modify the log output with some sim
   { delimiter: ' on ', requireAllKeys: ['hostname'] },
   { key: 'hostname' },
   // Will only render if any of the following keys are present 'name', 'pid', 'hostname'
-  { delimiter: ')', requireOneOfKey: ['name', 'pid', 'hostname'] },
+  { delimiter: ')', requireOneOfKeys: ['name', 'pid', 'hostname'] },
   // Will always render
   { delimiter: ': ' }
 ]
