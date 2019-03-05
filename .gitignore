@@ -55,3 +55,4 @@ profile-*
 # Run Configuration
 .pino-prettyrc.json
 .pino-prettyrc.test.json
+test/.tmp*
