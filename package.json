@@ -40,6 +40,7 @@
     "jmespath": "^0.15.0",
     "pump": "^3.0.0",
     "readable-stream": "^3.0.6",
+    "rimraf": "^2.6.3",
     "split2": "^3.0.0"
   },
   "devDependencies": {
