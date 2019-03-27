@@ -68,6 +68,7 @@ letters see the [`dateformat` documentation](https://www.npmjs.com/package/datef
     system timezone.
 + `--search` (`-s`): Specifiy a search pattern according to
   [jmespath](http://jmespath.org/).
++ `--ignore` (`-i`): Ignore one or several keys: (`-i time,hostname`)
 
 <a id="integration"></a>
 ## Programmatic Integration 
