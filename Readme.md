@@ -66,7 +66,7 @@ letters see the [`dateformat` documentation](https://www.npmjs.com/package/datef
   - Require a `SYS:` prefix to translate time to the local system's timezone. A
     shortcut `SYS:standard` to translate time to `yyyy-mm-dd HH:MM:ss.l o` in
     system timezone.
-+ `--search` (`-s`): Specifiy a search pattern according to
++ `--search` (`-s`): Specify a search pattern according to
   [jmespath](http://jmespath.org/).
 + `--ignore` (`-i`): Ignore one or several keys: (`-i time,hostname`)
 
@@ -121,7 +121,8 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   levelFirst: false, // --levelFirst
   messageKey: 'msg', // --messageKey
   translateTime: false, // --translateTime
-  search: 'foo == `bar`' // --search
+  search: 'foo == `bar`', // --search
+  ignore: 'pid,hostname' // --ignore
 }
 ```
 

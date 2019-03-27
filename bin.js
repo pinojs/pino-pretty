@@ -16,7 +16,7 @@ args
   .option(['k', 'errorLikeObjectKeys'], 'Define which keys contain error objects (`-k err,error`)', 'err,error')
   .option(['m', 'messageKey'], 'Highlight the message under the specified key', CONSTANTS.MESSAGE_KEY)
   .option(['t', 'translateTime'], 'Display epoch timestamps as UTC ISO format or according to an optional format string (default ISO 8601)')
-  .option(['s', 'search'], 'Specifiy a search pattern according to jmespath')
+  .option(['s', 'search'], 'Specify a search pattern according to jmespath')
   .option(['i', 'ignore'], 'Ignore one or several keys: (`-i time,hostname`)')
 
 args
