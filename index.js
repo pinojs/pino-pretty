@@ -159,7 +159,10 @@ module.exports = function prettyFactory (options) {
       }
 
       if (log.hostname) {
-        line += ' on ' + log.hostname
+        if (line.slice(-1) !== '(') {
+          line += ' '
+        }
+        line += 'on ' + log.hostname
       }
 
       line += ')'

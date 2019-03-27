@@ -539,5 +539,19 @@ test('basic prettifier tests', (t) => {
     })
   })
 
+  t.test('ignores multiple keys', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ ignore: 'pid,hostname' })
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30, "v":1}`)
+    t.is(arst, `[${epoch}] INFO : hello world\n`)
+  })
+
+  t.test('ignores a single key', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ ignore: 'pid' })
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30, "v":1}`)
+    t.is(arst, `[${epoch}] INFO  (on imoo.local): hello world\n`)
+  })
+
   t.end()
 })
