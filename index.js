@@ -64,6 +64,7 @@ module.exports = function prettyFactory (options) {
   const messageKey = opts.messageKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
+  const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
 
   const color = {
     default: nocolor,
@@ -106,6 +107,15 @@ module.exports = function prettyFactory (options) {
 
     if (search && !jmespath.search(log, search)) {
       return
+    }
+
+    if (ignoreKeys) {
+      log = Object.keys(log)
+        .filter(key => !ignoreKeys.has(key))
+        .reduce((res, key) => {
+          res[key] = log[key]
+          return res
+        }, {})
     }
 
     const standardKeys = [
