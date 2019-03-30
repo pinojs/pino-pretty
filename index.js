@@ -2,10 +2,16 @@
 
 const chalk = require('chalk')
 const dateformat = require('dateformat')
-// remove jsonParser once Node 6 is not supported anymore
-const jsonParser = require('fast-json-parse')
 const jmespath = require('jmespath')
 const stringifySafe = require('fast-safe-stringify')
+const bourne = require('bourne')
+const jsonParser = input => {
+  try {
+    return {value: bourne.parse(input, {protoAction: 'remove'})}
+  } catch (err) {
+    return {err}
+  }
+}
 
 const CONSTANTS = require('./lib/constants')
 

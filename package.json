@@ -31,9 +31,9 @@
   ],
   "dependencies": {
     "args": "^5.0.0",
+    "bourne": "^1.1.2",
     "chalk": "^2.3.2",
     "dateformat": "^3.0.3",
-    "fast-json-parse": "^1.0.3",
     "fast-safe-stringify": "^2.0.6",
     "jmespath": "^0.15.0",
     "pump": "^3.0.0",
