@@ -5,7 +5,9 @@ const jmespath = require('jmespath')
 const stringifySafe = require('fast-safe-stringify')
 const colors = require('./lib/colors')
 const { MESSAGE_KEY } = require('./lib/constants')
-const { prettifyLevel, prettifyMessage, prettifyMetadata, prettifyTime } = require('./lib/utils')
+const { prettifyLevel, prettifyMessage, prettifyMetadata, prettifyTime, internals } = require('./lib/utils')
+const { joinLinesWithIndentation } = internals
+
 const bourne = require('bourne')
 const jsonParser = input => {
   try {
@@ -129,7 +131,7 @@ module.exports = function prettyFactory (options) {
 
     if (log.type === 'Error' && log.stack) {
       const stack = log.stack
-      line += IDENT + joinLinesWithIndentation(stack) + EOL
+      line += IDENT + joinLinesWithIndentation({ input: stack }) + EOL
 
       let propsForPrint
       if (errorProps && errorProps.length > 0) {
@@ -163,14 +165,6 @@ module.exports = function prettyFactory (options) {
 
     return line
 
-    function joinLinesWithIndentation (value) {
-      const lines = value.split(/\r?\n/)
-      for (var i = 1; i < lines.length; i++) {
-        lines[i] = IDENT + lines[i]
-      }
-      return lines.join(EOL)
-    }
-
     function filterObjects (value, messageKey, errorLikeObjectKeys, excludeStandardKeys) {
       errorLikeObjectKeys = errorLikeObjectKeys || []
 
@@ -193,7 +187,7 @@ module.exports = function prettyFactory (options) {
           if (lines === undefined) continue
           const arrayOfLines = (
             IDENT + keys[i] + ': ' +
-            joinLinesWithIndentation(lines) +
+            joinLinesWithIndentation({ input: lines }) +
             EOL
           ).split('\n')
 
@@ -221,7 +215,7 @@ module.exports = function prettyFactory (options) {
           if (value[keys[i]] !== undefined) {
             const lines = stringifySafe(value[keys[i]], null, 2)
             if (lines !== undefined) {
-              result += IDENT + keys[i] + ': ' + joinLinesWithIndentation(lines) + EOL
+              result += IDENT + keys[i] + ': ' + joinLinesWithIndentation({ input: lines }) + EOL
             }
           }
         }
