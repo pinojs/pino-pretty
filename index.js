@@ -64,6 +64,7 @@ module.exports = function prettyFactory (options) {
   const messageKey = opts.messageKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
+  const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
 
   const color = {
     default: nocolor,
@@ -108,6 +109,15 @@ module.exports = function prettyFactory (options) {
       return
     }
 
+    if (ignoreKeys) {
+      log = Object.keys(log)
+        .filter(key => !ignoreKeys.has(key))
+        .reduce((res, key) => {
+          res[key] = log[key]
+          return res
+        }, {})
+    }
+
     const standardKeys = [
       'pid',
       'hostname',
@@ -149,7 +159,10 @@ module.exports = function prettyFactory (options) {
       }
 
       if (log.hostname) {
-        line += ' on ' + log.hostname
+        if (line.slice(-1) !== '(') {
+          line += ' '
+        }
+        line += 'on ' + log.hostname
       }
 
       line += ')'
