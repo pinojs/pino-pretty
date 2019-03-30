@@ -53,5 +53,16 @@ test('cli', (t) => {
     t.tearDown(() => child.kill())
   })
 
+  t.test('does ignore multiple keys', (t) => {
+    t.plan(1)
+    const child = spawn(process.argv0, [bin, '-i', 'pid,hostname'])
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.is(data.toString(), `[1522431328992] INFO : hello world\n`)
+    })
+    child.stdin.write(logLine)
+    t.tearDown(() => child.kill())
+  })
+
   t.end()
 })
