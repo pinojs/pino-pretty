@@ -58,12 +58,9 @@ module.exports = function prettyFactory (options) {
       log = inputData
     }
 
-    // Short-circuit for primitive values.
-    if (log === null) {
-      return `null\n`
-    }
-    if (log === true) {
-      return `true\n`
+    // Short-circuit for spec allowed primitive values.
+    if ([null, true, false].includes(log)) {
+      return `${log}\n`
     }
 
     if (search && !jmespath.search(log, search)) {

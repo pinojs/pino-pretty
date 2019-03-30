@@ -335,11 +335,18 @@ test('basic prettifier tests', (t) => {
     log.info('hello world')
   })
 
-  t.test('handles `null` input', (t) => {
-    t.plan(1)
+  t.test('handles spec allowed primitives', (t) => {
     const pretty = prettyFactory()
-    const formatted = pretty(null)
+    let formatted = pretty(null)
     t.is(formatted, 'null\n')
+
+    formatted = pretty(true)
+    t.is(formatted, 'true\n')
+
+    formatted = pretty(false)
+    t.is(formatted, 'false\n')
+
+    t.end()
   })
 
   t.test('handles `undefined` input', (t) => {
@@ -347,13 +354,6 @@ test('basic prettifier tests', (t) => {
     const pretty = prettyFactory()
     const formatted = pretty(undefined)
     t.is(formatted, 'undefined\n')
-  })
-
-  t.test('handles `true` input', (t) => {
-    t.plan(1)
-    const pretty = prettyFactory()
-    const formatted = pretty(true)
-    t.is(formatted, 'true\n')
   })
 
   t.test('handles customLogLevel', (t) => {
