@@ -5,14 +5,14 @@ const jmespath = require('jmespath')
 const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY } = require('./lib/constants')
 const {
+  isObject,
+  prettifyErrorLog,
   prettifyLevel,
   prettifyMessage,
   prettifyMetadata,
   prettifyObject,
-  prettifyTime,
-  internals
+  prettifyTime
 } = require('./lib/utils')
-const { joinLinesWithIndentation } = internals
 
 const bourne = require('bourne')
 const jsonParser = input => {
@@ -33,10 +33,6 @@ const defaultOptions = {
   translateTime: false,
   useMetadata: false,
   outputStream: process.stdout
-}
-
-function isObject (input) {
-  return Object.prototype.toString.apply(input) === '[object Object]'
 }
 
 module.exports = function prettyFactory (options) {
@@ -84,15 +80,6 @@ module.exports = function prettyFactory (options) {
         }, {})
     }
 
-    const standardKeys = [
-      'pid',
-      'hostname',
-      'name',
-      'level',
-      'time',
-      'v'
-    ]
-
     const prettifiedLevel = prettifyLevel({ log, colorizer })
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer })
     const prettifiedMetadata = prettifyMetadata({ log })
@@ -133,42 +120,24 @@ module.exports = function prettyFactory (options) {
       line += EOL
     }
 
-    /// !!!!!!!!!!
-
     if (log.type === 'Error' && log.stack) {
-      const stack = log.stack
-      line += IDENT + joinLinesWithIndentation({ input: stack }) + EOL
-
-      let propsForPrint
-      if (errorProps && errorProps.length > 0) {
-        // don't need print these props for 'Error' object
-        const excludedProps = standardKeys.concat([messageKey, 'type', 'stack'])
-
-        if (errorProps[0] === '*') {
-          // print all log props excluding 'excludedProps'
-          propsForPrint = Object.keys(log).filter((prop) => excludedProps.indexOf(prop) < 0)
-        } else {
-          // print props from 'errorProps' only
-          // but exclude 'excludedProps'
-          propsForPrint = errorProps.filter((prop) => excludedProps.indexOf(prop) < 0)
-        }
-
-        for (var i = 0; i < propsForPrint.length; i++) {
-          const key = propsForPrint[i]
-          if (!log.hasOwnProperty(key)) continue
-          if (log[key] instanceof Object) {
-            // call 'filterObjects' with 'excludeStandardKeys' = false
-            // because nested property might contain property from 'standardKeys'
-            const prettifiedObject = prettifyObject({ input: log[key], errorLikeKeys: errorLikeObjectKeys, excludeLoggerKeys: false, eol: EOL, ident: IDENT })
-            line += `${key}: {${EOL}${prettifiedObject}}${EOL}`
-            continue
-          }
-          line += key + ': ' + log[key] + EOL
-        }
-      }
+      const prettifiedErrorLog = prettifyErrorLog({
+        log,
+        errorLikeKeys: errorLikeObjectKeys,
+        errorProperties: errorProps,
+        ident: IDENT,
+        eol: EOL
+      })
+      line += prettifiedErrorLog
     } else {
       const skipKeys = typeof log[messageKey] === 'string' ? [messageKey] : undefined
-      const prettifiedObject = prettifyObject({ input: log, skipKeys, errorLikeKeys: errorLikeObjectKeys, eol: EOL, ident: IDENT })
+      const prettifiedObject = prettifyObject({
+        input: log,
+        skipKeys,
+        errorLikeKeys: errorLikeObjectKeys,
+        eol: EOL,
+        ident: IDENT
+      })
       line += prettifiedObject
     }
 
