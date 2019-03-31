@@ -2,10 +2,16 @@
 
 const chalk = require('chalk')
 const jmespath = require('jmespath')
-const stringifySafe = require('fast-safe-stringify')
 const colors = require('./lib/colors')
-const { MESSAGE_KEY } = require('./lib/constants')
-const { prettifyLevel, prettifyMessage, prettifyMetadata, prettifyTime, internals } = require('./lib/utils')
+const { ERROR_LIKE_KEYS, MESSAGE_KEY } = require('./lib/constants')
+const {
+  prettifyLevel,
+  prettifyMessage,
+  prettifyMetadata,
+  prettifyObject,
+  prettifyTime,
+  internals
+} = require('./lib/utils')
 const { joinLinesWithIndentation } = internals
 
 const bourne = require('bourne')
@@ -20,7 +26,7 @@ const jsonParser = input => {
 const defaultOptions = {
   colorize: chalk.supportsColor,
   crlf: false,
-  errorLikeObjectKeys: ['err', 'error'],
+  errorLikeObjectKeys: ERROR_LIKE_KEYS,
   errorProps: '',
   levelFirst: false,
   messageKey: MESSAGE_KEY,
@@ -153,75 +159,19 @@ module.exports = function prettyFactory (options) {
           if (log[key] instanceof Object) {
             // call 'filterObjects' with 'excludeStandardKeys' = false
             // because nested property might contain property from 'standardKeys'
-            line += key + ': {' + EOL + filterObjects(log[key], '', errorLikeObjectKeys, false) + '}' + EOL
+            const prettifiedObject = prettifyObject({ input: log[key], errorLikeKeys: errorLikeObjectKeys, excludeLoggerKeys: false, eol: EOL, ident: IDENT })
+            line += `${key}: {${EOL}${prettifiedObject}}${EOL}`
             continue
           }
           line += key + ': ' + log[key] + EOL
         }
       }
     } else {
-      line += filterObjects(log, typeof log[messageKey] === 'string' ? messageKey : undefined, errorLikeObjectKeys)
+      const skipKeys = typeof log[messageKey] === 'string' ? [messageKey] : undefined
+      const prettifiedObject = prettifyObject({ input: log, skipKeys, errorLikeKeys: errorLikeObjectKeys, eol: EOL, ident: IDENT })
+      line += prettifiedObject
     }
 
     return line
-
-    function filterObjects (value, messageKey, errorLikeObjectKeys, excludeStandardKeys) {
-      errorLikeObjectKeys = errorLikeObjectKeys || []
-
-      const keys = Object.keys(value)
-      const filteredKeys = []
-
-      if (messageKey) {
-        filteredKeys.push(messageKey)
-      }
-
-      if (excludeStandardKeys !== false) {
-        Array.prototype.push.apply(filteredKeys, standardKeys)
-      }
-
-      let result = ''
-
-      for (var i = 0; i < keys.length; i += 1) {
-        if (errorLikeObjectKeys.indexOf(keys[i]) !== -1 && value[keys[i]] !== undefined) {
-          const lines = stringifySafe(value[keys[i]], null, 2)
-          if (lines === undefined) continue
-          const arrayOfLines = (
-            IDENT + keys[i] + ': ' +
-            joinLinesWithIndentation({ input: lines }) +
-            EOL
-          ).split('\n')
-
-          for (var j = 0; j < arrayOfLines.length; j += 1) {
-            if (j !== 0) {
-              result += '\n'
-            }
-
-            const line = arrayOfLines[j]
-
-            if (/^\s*"stack"/.test(line)) {
-              const matches = /^(\s*"stack":)\s*(".*"),?$/.exec(line)
-
-              if (matches && matches.length === 3) {
-                const indentSize = /^\s*/.exec(line)[0].length + 4
-                const indentation = ' '.repeat(indentSize)
-
-                result += matches[1] + '\n' + indentation + JSON.parse(matches[2]).replace(/\n/g, '\n' + indentation)
-              }
-            } else {
-              result += line
-            }
-          }
-        } else if (filteredKeys.indexOf(keys[i]) < 0) {
-          if (value[keys[i]] !== undefined) {
-            const lines = stringifySafe(value[keys[i]], null, 2)
-            if (lines !== undefined) {
-              result += IDENT + keys[i] + ': ' + joinLinesWithIndentation({ input: lines }) + EOL
-            }
-          }
-        }
-      }
-
-      return result
-    }
   }
 }
