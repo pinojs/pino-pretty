@@ -1,7 +1,7 @@
 'use strict'
 
 const tap = require('tap')
-const { internals } = require('../lib/utils')
+const { internals } = require('../../lib/utils')
 
 tap.test('#joinLinesWithIndentation', t => {
   t.test('joinLinesWithIndentation adds indentation to beginning of subsequent lines', async t => {
@@ -54,7 +54,7 @@ tap.test('#formatTime', t => {
     t.is(formattedTime, dateStr)
   })
 
-  t.test('translates date string if `translateTime` is `true`', async t  => {
+  t.test('translates date string if `translateTime` is `true`', async t => {
     const formattedTime = internals.formatTime(dateStr, true)
     t.is(formattedTime, '2019-04-06 17:30:00.000 +0000')
   })
