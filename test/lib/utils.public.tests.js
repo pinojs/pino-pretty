@@ -69,3 +69,66 @@ tap.test('prettifyMessage', t => {
 
   t.end()
 })
+
+tap.test('prettifyTime', t => {
+  const { prettifyTime } = utils
+
+  t.test('returns `undefined` if `time` or `timestamp` not in log', async t => {
+    const str = prettifyTime({ log: {} })
+    t.is(str, undefined)
+  })
+
+  t.test('returns prettified formatted time', async t => {
+    let log = { time: 1554642900000 }
+    let str = prettifyTime({ log, translateFormat: true })
+    t.is(str, '[2019-04-07 13:15:00.000 +0000]')
+
+    log = { timestamp: 1554642900000 }
+    str = prettifyTime({ log, translateFormat: true })
+    t.is(str, '[2019-04-07 13:15:00.000 +0000]')
+
+    log = { time: '2019-04-07T09:15:00.000-04:00' }
+    str = prettifyTime({ log, translateFormat: true })
+    t.is(str, '[2019-04-07 13:15:00.000 +0000]')
+
+    log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
+    str = prettifyTime({ log, translateFormat: true })
+    t.is(str, '[2019-04-07 13:15:00.000 +0000]')
+
+    log = { time: 1554642900000 }
+    str = prettifyTime({ log, translateFormat: 'd mmm yyyy H:MM' })
+    t.is(str, '[7 Apr 2019 13:15]')
+
+    log = { timestamp: 1554642900000 }
+    str = prettifyTime({ log, translateFormat: 'd mmm yyyy H:MM' })
+    t.is(str, '[7 Apr 2019 13:15]')
+
+    log = { time: '2019-04-07T09:15:00.000-04:00' }
+    str = prettifyTime({ log, translateFormat: 'd mmm yyyy H:MM' })
+    t.is(str, '[7 Apr 2019 13:15]')
+
+    log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
+    str = prettifyTime({ log, translateFormat: 'd mmm yyyy H:MM' })
+    t.is(str, '[7 Apr 2019 13:15]')
+  })
+
+  t.test('passes through value', async t => {
+    let log = { time: 1554642900000 }
+    let str = prettifyTime({ log })
+    t.is(str, '[1554642900000]')
+
+    log = { timestamp: 1554642900000 }
+    str = prettifyTime({ log })
+    t.is(str, '[1554642900000]')
+
+    log = { time: '2019-04-07T09:15:00.000-04:00' }
+    str = prettifyTime({ log })
+    t.is(str, '[2019-04-07T09:15:00.000-04:00]')
+
+    log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
+    str = prettifyTime({ log })
+    t.is(str, '[2019-04-07T09:15:00.000-04:00]')
+  })
+
+  t.end()
+})
