@@ -70,6 +70,52 @@ tap.test('prettifyMessage', t => {
   t.end()
 })
 
+tap.test('prettifyMetadata', t => {
+  const { prettifyMetadata } = utils
+
+  t.test('returns `undefined` if no metadata present', async t => {
+    const str = prettifyMetadata({ log: {} })
+    t.is(str, undefined)
+  })
+
+  t.test('works with only `name` present', async t => {
+    const str = prettifyMetadata({ log: { name: 'foo' } })
+    t.is(str, '(foo)')
+  })
+
+  t.test('works with only `pid` present', async t => {
+    const str = prettifyMetadata({ log: { pid: '1234' } })
+    t.is(str, '(1234)')
+  })
+
+  t.test('works with only `hostname` present', async t => {
+    const str = prettifyMetadata({ log: { hostname: 'bar' } })
+    t.is(str, '(on bar)')
+  })
+
+  t.test('works with only `name` & `pid` present', async t => {
+    const str = prettifyMetadata({ log: { name: 'foo', pid: '1234' } })
+    t.is(str, '(foo/1234)')
+  })
+
+  t.test('works with only `name` & `hostname` present', async t => {
+    const str = prettifyMetadata({ log: { name: 'foo', hostname: 'bar' } })
+    t.is(str, '(foo on bar)')
+  })
+
+  t.test('works with only `pid` & `hostname` present', async t => {
+    const str = prettifyMetadata({ log: { pid: '1234', hostname: 'bar' } })
+    t.is(str, '(1234 on bar)')
+  })
+
+  t.test('works with all three present', async t => {
+    const str = prettifyMetadata({ log: { name: 'foo', pid: '1234', hostname: 'bar' } })
+    t.is(str, '(foo/1234 on bar)')
+  })
+
+  t.end()
+})
+
 tap.test('prettifyTime', t => {
   const { prettifyTime } = utils
 
