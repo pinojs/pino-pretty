@@ -1,6 +1,6 @@
 'use strict'
 
-const {test} = require('tap')
+const { test } = require('tap')
 const getColorizer = require('../../lib/colors')
 
 test('returns default colorizer', async t => {
