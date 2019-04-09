@@ -41,7 +41,7 @@ tap.test('#formatTime', t => {
 
   t.test('translates epoch milliseconds to SYS:STANDARD', async t => {
     const formattedTime = internals.formatTime(epochMS, 'SYS:STANDARD')
-    t.match(formattedTime, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{4}/)
+    t.match(formattedTime, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [-+]?\d{4}/)
   })
 
   t.test('translates epoch milliseconds to SYS:<FORMAT>', async t => {
@@ -66,7 +66,7 @@ tap.test('#formatTime', t => {
 
   t.test('translates date string to SYS:STANDARD', async t => {
     const formattedTime = internals.formatTime(dateStr, 'SYS:STANDARD')
-    t.match(formattedTime, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{4}/)
+    t.match(formattedTime, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [-+]?\d{4}/)
   })
 
   t.test('translates date string to UTC:<FORMAT>', async t => {
