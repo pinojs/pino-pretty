@@ -236,7 +236,7 @@ test('error like objects tests', (t) => {
         const lines = formatted.split('\n')
         lines.shift(); lines.pop()
         for (var i = 0; i < lines.length; i += 1) {
-          t.is(lines[i], expectedLines[i])
+          t.true(expectedLines.includes(lines[i]))
         }
         cb()
       }
