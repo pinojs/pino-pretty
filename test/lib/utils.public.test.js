@@ -4,6 +4,30 @@ const tap = require('tap')
 const getColorizer = require('../../lib/colors')
 const utils = require('../../lib/utils')
 
+tap.test('prettifyErrorLog', t => {
+  const { prettifyErrorLog } = utils
+
+  t.test('returns string with default settings', async t => {
+    let err = Error('Something went wrong')
+    const str = prettifyErrorLog({ log: err })
+    t.true(str.startsWith('    Error: Something went wrong'))
+  })
+
+  t.test('returns string with custom ident', async t => {
+    let err = Error('Something went wrong')
+    const str = prettifyErrorLog({ log: err, ident: '  ' })
+    t.true(str.startsWith('  Error: Something went wrong'))
+  })
+
+  t.test('returns string with custom eol', async t => {
+    let err = Error('Something went wrong')
+    const str = prettifyErrorLog({ log: err, eol: '\r\n' })
+    t.true(str.startsWith(`    Error: Something went wrong\r\n`))
+  })
+
+  t.end()
+})
+
 tap.test('prettifyLevel', t => {
   const { prettifyLevel } = utils
 
@@ -111,6 +135,43 @@ tap.test('prettifyMetadata', t => {
   t.test('works with all three present', async t => {
     const str = prettifyMetadata({ log: { name: 'foo', pid: '1234', hostname: 'bar' } })
     t.is(str, '(foo/1234 on bar)')
+  })
+
+  t.end()
+})
+
+tap.test('prettifyObject', t => {
+  const { prettifyObject } = utils
+
+  t.test('returns empty string if no properties present', async t => {
+    const str = prettifyObject({ input: {} })
+    t.is(str, '')
+  })
+
+  t.test('works with single level properties', async t => {
+    const str = prettifyObject({ input: { foo: 'bar' } })
+    t.is(str, `    foo: "bar"\n`)
+  })
+
+  t.test('works with multiple level properties', async t => {
+    const str = prettifyObject({ input: { foo: { bar: 'baz' } } })
+    t.is(str, `    foo: {\n      "bar": "baz"\n    }\n`)
+  })
+
+  t.test('skips specified keys', async t => {
+    const str = prettifyObject({ input: { foo: 'bar', hello: 'world' }, skipKeys: ['foo'] })
+    t.is(str, `    hello: "world"\n`)
+  })
+
+  t.test('ignores predefined keys', async t => {
+    const str = prettifyObject({ input: { foo: 'bar', pid: 12345 } })
+    t.is(str, `    foo: "bar"\n`)
+  })
+
+  t.test('works with error props', async t => {
+    let err = Error('Something went wrong')
+    const str = prettifyObject({ input: { error: err } })
+    t.true(str.startsWith('    error:'))
   })
 
   t.end()
