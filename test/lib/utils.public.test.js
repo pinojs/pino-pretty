@@ -169,9 +169,15 @@ tap.test('prettifyObject', t => {
   })
 
   t.test('works with error props', async t => {
-    let err = Error('Something went wrong')
-    const str = prettifyObject({ input: { error: err } })
+    const err = Error('Something went wrong')
+    const serializedError = {
+      message: err.message,
+      stack: err.stack
+    }
+    const str = prettifyObject({ input: { error: serializedError } })
     t.true(str.startsWith('    error:'))
+    t.true(str.includes('     "message": "Something went wrong",'))
+    t.true(str.includes('         Error: Something went wrong'))
   })
 
   t.end()
