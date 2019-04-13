@@ -8,19 +8,19 @@ tap.test('prettifyErrorLog', t => {
   const { prettifyErrorLog } = utils
 
   t.test('returns string with default settings', async t => {
-    let err = Error('Something went wrong')
+    const err = Error('Something went wrong')
     const str = prettifyErrorLog({ log: err })
     t.true(str.startsWith('    Error: Something went wrong'))
   })
 
   t.test('returns string with custom ident', async t => {
-    let err = Error('Something went wrong')
+    const err = Error('Something went wrong')
     const str = prettifyErrorLog({ log: err, ident: '  ' })
     t.true(str.startsWith('  Error: Something went wrong'))
   })
 
   t.test('returns string with custom eol', async t => {
-    let err = Error('Something went wrong')
+    const err = Error('Something went wrong')
     const str = prettifyErrorLog({ log: err, eol: '\r\n' })
     t.true(str.startsWith(`    Error: Something went wrong\r\n`))
   })
