@@ -1,16 +1,21 @@
 <a id="intro"></a>
 # pino-pretty
+
 [![Build Status](https://travis-ci.org/pinojs/pino-pretty.svg?branch=master)](https://travis-ci.org/pinojs/pino-pretty)
 [![Coverage Status](https://coveralls.io/repos/github/pinojs/pino-pretty/badge.svg?branch=master)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
 
-This module provides a basic log prettifier for the [Pino](https://getpino.io/)
-logging library. It reads a standard Pino log line like:
+This module provides a basic [ndjson](http://ndjson.org/) formatter. If an
+incoming line looks like it could be a log line from an ndjson logger, in
+particular the [Pino](https://getpino.io/) logging library, then it will apply
+extra formatting by considering things like the log level and timestamp.
+
+A standard Pino log line like:
 
 ```
 {"level":30,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo","v":1}
 ```
 
-And formats it to:
+Will format to:
 
 ```
 [1522431328992] INFO (42 on foo): hello world
@@ -34,12 +39,11 @@ prettified logs will look like:
 $ npm install -g pino-pretty
 ```
 
-
 <a id="usage"></a>
 ## Usage
 
-It's recommended to use `pino-pretty` with `pino` 
-by piping output to the CLI tool: 
+It's recommended to use `pino-pretty` with `pino`
+by piping output to the CLI tool:
 
 ```sh
 pino app.js | pino-pretty
@@ -48,38 +52,38 @@ pino app.js | pino-pretty
 <a id="cliargs"></a>
 ### CLI Arguments
 
-+ `--colorize` (`-c`): Adds terminal color escape sequences to the output.
-+ `--crlf` (`-f`): Appends carriage return and line feed, instead of just a line
-feed, to the formatted log line.
-+ `--errorProps` (`-e`): When formatting an error object, display this list
-of properties. The list should be a comma separated list of properties Default: `''`.
-+ `--levelFirst` (`-l`): Display the log level name before the logged date and time.
-+ `--errorLikeObjectKeys` (`-k`): Define the log keys that are associated with
-error like objects. Default: `err,error`.
-+ `--messageKey` (`-m`): Define the key that contains the main log message.
-Default: `msg`.
-+ `--translateTime` (`-t`): Translate the epoch time value into a human readable
-date and time string. This flag also can set the format string to apply when
-translating the date to human readable format. For a list of available pattern
-letters see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
+- `--colorize` (`-c`): Adds terminal color escape sequences to the output.
+- `--crlf` (`-f`): Appends carriage return and line feed, instead of just a line
+  feed, to the formatted log line.
+- `--errorProps` (`-e`): When formatting an error object, display this list
+  of properties. The list should be a comma separated list of properties Default: `''`.
+- `--levelFirst` (`-l`): Display the log level name before the logged date and time.
+- `--errorLikeObjectKeys` (`-k`): Define the log keys that are associated with
+  error like objects. Default: `err,error`.
+- `--messageKey` (`-m`): Define the key that contains the main log message.
+  Default: `msg`.
+- `--translateTime` (`-t`): Translate the epoch time value into a human readable
+  date and time string. This flag also can set the format string to apply when
+  translating the date to human readable format. For a list of available pattern
+  letters see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
   - The default format is `yyyy-mm-dd HH:MM:ss.l o` in UTC.
   - Require a `SYS:` prefix to translate time to the local system's timezone. A
     shortcut `SYS:standard` to translate time to `yyyy-mm-dd HH:MM:ss.l o` in
     system timezone.
-+ `--search` (`-s`): Specify a search pattern according to
+- `--search` (`-s`): Specify a search pattern according to
   [jmespath](http://jmespath.org/).
-+ `--ignore` (`-i`): Ignore one or several keys: (`-i time,hostname`)
+- `--ignore` (`-i`): Ignore one or several keys: (`-i time,hostname`)
 
 <a id="integration"></a>
-## Programmatic Integration 
+## Programmatic Integration
 
 We recommend against using `pino-pretty` in production, and highly
 recommend installing `pino-pretty` as a development dependency.
 
-When installed, `pino-pretty` will be used by `pino` as the default 
+When installed, `pino-pretty` will be used by `pino` as the default
 prettifier.
 
-Install `pino-pretty` alongside `pino` and set the 
+Install `pino-pretty` alongside `pino` and set the
 `prettyPrint` option to `true`:
 
 ```js
@@ -109,7 +113,7 @@ See the [Options](#options) section for all possible options.
 ### Options
 
 `pino-pretty` exports a factory function that can be used to format log strings.
-This factory function is used internally by pino, and accepts an options argument
+This factory function is used internally by Pino, and accepts an options argument
 with keys corresponding to the options described in [CLI Arguments](#cliargs):
 
 ```js
