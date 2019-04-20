@@ -133,9 +133,11 @@ module.exports = function prettyFactory (options) {
 
     var line = log.time ? `[${log.time}]` : ''
 
-    const coloredLevel = levels.hasOwnProperty(log.level)
-      ? color[log.level](levels[log.level])
-      : color.default(levels.default)
+    const coloredLevel = log.level
+      ? levels.hasOwnProperty(log.level)
+        ? color[log.level](levels[log.level])
+        : color.default(levels.default)
+      : ''
     if (opts.levelFirst) {
       line = `${coloredLevel} ${line}`
     } else {
@@ -168,7 +170,7 @@ module.exports = function prettyFactory (options) {
       line += ')'
     }
 
-    line += ': '
+    line += line ? ': ' : ''
 
     if (log[messageKey] && typeof log[messageKey] === 'string') {
       line += color.message(log[messageKey])
