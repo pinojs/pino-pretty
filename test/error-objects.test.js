@@ -226,9 +226,9 @@ test('error like objects tests', (t) => {
     t.plan(3)
     const pretty = prettyFactory()
     const expectedLines = [
-      '    type: "Error"',
+      '    some: "property"',
       '    stack: null',
-      '    some: "property"'
+      '    type: "Error"'
     ]
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
