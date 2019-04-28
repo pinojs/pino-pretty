@@ -95,7 +95,8 @@ test('error like objects tests', (t) => {
         t.match(lines[3], /\s{6}"message": "hello world",/)
         t.match(lines[4], /\s{6}"stack":/)
         t.match(lines[5], /\s{6}Error: hello world/)
-        t.match(lines[6], /\s{10}(at Test.t.test)/)
+        // Node 12 labels the test `<anonymous>`
+        t.match(lines[6], /\s{10}(at Test.t.test|at Test.<anonymous>)/)
         cb()
       }
     }))
@@ -155,7 +156,8 @@ test('error like objects tests', (t) => {
         t.match(lines[3], /\s{6}"message": "hello world",/)
         t.match(lines[4], /\s{6}"stack":/)
         t.match(lines[5], /\s{6}Error: hello world/)
-        t.match(lines[6], /\s{10}(at Test.t.test)/)
+        // Node 12 labels the test `<anonymous>`
+        t.match(lines[6], /\s{10}(at Test.t.test|at Test.<anonymous>)/)
         t.match(lines[lines.length - 3], /\s{6}"anotherField": "dummy value"/)
         cb()
       }
