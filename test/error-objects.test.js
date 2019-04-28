@@ -89,14 +89,14 @@ test('error like objects tests', (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.is(lines.length, expected.length + 6)
-        t.is(lines[0], `[${epoch}] INFO  (${pid} on ${hostname}): `)
+        t.is(lines[0], `[${epoch}] INFO  (${pid} on ${hostname}):`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
         t.match(lines[4], /\s{6}"stack":/)
         t.match(lines[5], /\s{6}Error: hello world/)
-        // Node 6 starts stack with "at Error (native)"
-        t.match(lines[6], /\s{10}(at Test.t.test|at Error \(native\))/)
+        // Node 12 labels the test `<anonymous>`
+        t.match(lines[6], /\s{10}(at Test.t.test|at Test.<anonymous>)/)
         cb()
       }
     }))
@@ -120,7 +120,7 @@ test('error like objects tests', (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.is(lines.length, expected.length + 6)
-        t.is(lines[0], `[${epoch}] INFO  (${pid} on ${hostname}): `)
+        t.is(lines[0], `[${epoch}] INFO  (${pid} on ${hostname}):`)
         t.match(lines[1], /\s{4}err: {$/)
         t.match(lines[2], /\s{6}"type": "Error",$/)
         t.match(lines[3], /\s{6}"message": "hello world",$/)
@@ -150,14 +150,14 @@ test('error like objects tests', (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.is(lines.length, expected.length + 7)
-        t.is(lines[0], `[${epoch}] INFO  (${pid} on ${hostname}): `)
+        t.is(lines[0], `[${epoch}] INFO  (${pid} on ${hostname}):`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
         t.match(lines[4], /\s{6}"stack":/)
         t.match(lines[5], /\s{6}Error: hello world/)
-        // Node 6 starts stack with "at Error (native)"
-        t.match(lines[6], /\s{10}(at Test.t.test|at Error \(native\))/)
+        // Node 12 labels the test `<anonymous>`
+        t.match(lines[6], /\s{10}(at Test.t.test|at Test.<anonymous>)/)
         t.match(lines[lines.length - 3], /\s{6}"anotherField": "dummy value"/)
         cb()
       }
@@ -236,7 +236,7 @@ test('error like objects tests', (t) => {
         const lines = formatted.split('\n')
         lines.shift(); lines.pop()
         for (var i = 0; i < lines.length; i += 1) {
-          t.is(lines[i], expectedLines[i])
+          t.true(expectedLines.includes(lines[i]))
         }
         cb()
       }
