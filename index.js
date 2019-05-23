@@ -14,7 +14,7 @@ const {
   prettifyTime
 } = require('./lib/utils')
 
-const bourne = require('bourne')
+const bourne = require('@hapi/bourne')
 const jsonParser = input => {
   try {
     return { value: bourne.parse(input, { protoAction: 'remove' }) }
