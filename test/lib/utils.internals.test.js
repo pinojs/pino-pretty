@@ -46,7 +46,7 @@ tap.test('#formatTime', t => {
 
   t.test('translates epoch milliseconds to SYS:<FORMAT>', async t => {
     const formattedTime = internals.formatTime(epochMS, 'SYS:d mmm yyyy H:MM')
-    t.match(formattedTime, /\d{1} \w{3} \d{4} \d{2}:\d{2}/)
+    t.match(formattedTime, /\d{1} \w{3} \d{4} \d{1,2}:\d{2}/)
   })
 
   t.test('passes through date string if `translateTime` is `false`', async t => {
@@ -76,7 +76,7 @@ tap.test('#formatTime', t => {
 
   t.test('translates date string to SYS:<FORMAT>', async t => {
     const formattedTime = internals.formatTime(dateStr, 'SYS:d mmm yyyy H:MM')
-    t.match(formattedTime, /\d{1} \w{3} \d{4} \d{2}:\d{2}/)
+    t.match(formattedTime, /\d{1} \w{3} \d{4} \d{1,2}:\d{2}/)
   })
 
   t.end()
