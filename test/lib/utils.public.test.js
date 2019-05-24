@@ -191,6 +191,15 @@ tap.test('prettifyTime', t => {
     t.is(str, undefined)
   })
 
+  t.test('returns prettified formatted time from custom field', async t => {
+    let log = { customtime: 1554642900000 }
+    let str = prettifyTime({ log, translateFormat: true, timestampKey: 'customtime' })
+    t.is(str, '[2019-04-07 13:15:00.000 +0000]')
+
+    str = prettifyTime({ log, translateFormat: false, timestampKey: 'customtime' })
+    t.is(str, '[1554642900000]')
+  })
+
   t.test('returns prettified formatted time', async t => {
     let log = { time: 1554642900000 }
     let str = prettifyTime({ log, translateFormat: true })
