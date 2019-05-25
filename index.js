@@ -3,7 +3,7 @@
 const chalk = require('chalk')
 const jmespath = require('jmespath')
 const colors = require('./lib/colors')
-const { ERROR_LIKE_KEYS, MESSAGE_KEY } = require('./lib/constants')
+const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
 const {
   isObject,
   prettifyErrorLog,
@@ -30,6 +30,7 @@ const defaultOptions = {
   errorProps: '',
   levelFirst: false,
   messageKey: MESSAGE_KEY,
+  timestampKey: TIMESTAMP_KEY,
   translateTime: false,
   useMetadata: false,
   outputStream: process.stdout
@@ -40,6 +41,7 @@ module.exports = function prettyFactory (options) {
   const EOL = opts.crlf ? '\r\n' : '\n'
   const IDENT = '    '
   const messageKey = opts.messageKey
+  const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
@@ -83,7 +85,7 @@ module.exports = function prettyFactory (options) {
     const prettifiedLevel = prettifyLevel({ log, colorizer })
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer })
     const prettifiedMetadata = prettifyMetadata({ log })
-    const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime })
+    const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
 
     let line = ''
     if (opts.levelFirst && prettifiedLevel) {

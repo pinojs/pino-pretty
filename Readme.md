@@ -62,6 +62,8 @@ pino app.js | pino-pretty
   error like objects. Default: `err,error`.
 - `--messageKey` (`-m`): Define the key that contains the main log message.
   Default: `msg`.
+- `--timestampKey` (`-m`): Define the key that contains the log timestamp.
+  Default: `time`.  
 - `--translateTime` (`-t`): Translate the epoch time value into a human readable
   date and time string. This flag also can set the format string to apply when
   translating the date to human readable format. For a list of available pattern
@@ -124,6 +126,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   errorProps: '', // --errorProps
   levelFirst: false, // --levelFirst
   messageKey: 'msg', // --messageKey
+  timestampKey: 'time', // --timestampKey
   translateTime: false, // --translateTime
   search: 'foo == `bar`', // --search
   ignore: 'pid,hostname' // --ignore
