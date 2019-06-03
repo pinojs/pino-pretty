@@ -134,7 +134,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
 ```
 
 The `colorize` default follows
-[`chalk.supportsColor](https://www.npmjs.com/package/chalk#chalksupportscolor).
+[`chalk.supportsColor`](https://www.npmjs.com/package/chalk#chalksupportscolor).
 
 <a id="license"><a>
 ## License
