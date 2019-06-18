@@ -65,7 +65,7 @@ module.exports = function prettyFactory (options) {
     }
 
     // Short-circuit for spec allowed primitive values.
-    if ([null, true, false].includes(log)) {
+    if ([null, true, false].includes(log) || Number.isFinite(log)) {
       return `${log}\n`
     }
 

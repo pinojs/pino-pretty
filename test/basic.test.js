@@ -349,6 +349,26 @@ test('basic prettifier tests', (t) => {
     t.end()
   })
 
+  t.test('handles numbers', (t) => {
+    const pretty = prettyFactory()
+    let formatted = pretty(2)
+    t.is(formatted, '2\n')
+
+    formatted = pretty(-2)
+    t.is(formatted, '-2\n')
+
+    formatted = pretty(0.2)
+    t.is(formatted, '0.2\n')
+
+    formatted = pretty(Infinity)
+    t.is(formatted, 'Infinity\n')
+
+    formatted = pretty(NaN)
+    t.is(formatted, 'NaN\n')
+
+    t.end()
+  })
+
   t.test('handles `undefined` input', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
