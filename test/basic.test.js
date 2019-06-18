@@ -360,6 +360,12 @@ test('basic prettifier tests', (t) => {
     formatted = pretty(0.2)
     t.is(formatted, '0.2\n')
 
+    formatted = pretty(Infinity)
+    t.is(formatted, 'Infinity\n')
+
+    formatted = pretty(NaN)
+    t.is(formatted, 'NaN\n')
+
     t.end()
   })
 
