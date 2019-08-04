@@ -11,7 +11,7 @@ const {
 } = require('./lib/utils')
 
 const logBuilders = require('./lib/log-builders')
-const lineBuilders = require('./lib/line-builders')
+const { buildLine } = require('./lib/line-builders')
 
 const defaultOptions = {
   colorize: chalk.supportsColor,
@@ -67,13 +67,7 @@ module.exports = function prettyFactory (options) {
     context.log = log
     context.prettified = prettified
 
-    let lineParts = []
-
-    for (const lineBuilder of lineBuilders) {
-      lineBuilder(lineParts, context)
-    }
-
-    let line = lineParts.join('') || ''
+    let line = buildLine(context)
 
     return line
   }
