@@ -52,35 +52,60 @@ module.exports = function prettyFactory (options) {
   return pretty
 
   function pretty (inputData) {
-    let log
-    if (!isObject(inputData)) {
-      const parsed = jsonParser(inputData)
-      log = parsed.value
-      if (parsed.err) {
-        // pass through
-        return inputData + EOL
+    const logBuilders = [
+      (input) => {
+        if (!isObject(input)) {
+          const parsed = jsonParser(input)
+          if (parsed.err) {
+            // pass through
+            return { output: input + EOL, done: true }
+          } else {
+            return { output: parsed.value }
+          }
+        } else return { output: input }
+      },
+      (input) => {
+        // Short-circuit for spec allowed primitive values.
+        if ([null, true, false].includes(input) || Number.isFinite(input)) {
+          return { output: `${input}\n`, done: true }
+        } else {
+          return { output: input }
+        }
+      },
+      (input) => {
+        if (search && !jmespath.search(input, search)) {
+          return { output: undefined, done: true }
+        } else {
+          return { output: input }
+        }
+      },
+      (input) => {
+        if (ignoreKeys) {
+          const output = Object.keys(input)
+            .filter(key => !ignoreKeys.has(key))
+            .reduce((res, key) => {
+              res[key] = input[key]
+              return res
+            }, {})
+          return { output }
+        } else {
+          return { output: input }
+        }
       }
-    } else {
-      log = inputData
+    ]
+
+    let nextInput = inputData
+
+    for (const logBuilder of logBuilders) {
+      const result = logBuilder(nextInput)
+      if (result.done) {
+        return result.output
+      } else {
+        nextInput = result.output
+      }
     }
 
-    // Short-circuit for spec allowed primitive values.
-    if ([null, true, false].includes(log) || Number.isFinite(log)) {
-      return `${log}\n`
-    }
-
-    if (search && !jmespath.search(log, search)) {
-      return
-    }
-
-    if (ignoreKeys) {
-      log = Object.keys(log)
-        .filter(key => !ignoreKeys.has(key))
-        .reduce((res, key) => {
-          res[key] = log[key]
-          return res
-        }, {})
-    }
+    let log = nextInput
 
     const prettifiedLevel = prettifyLevel({ log, colorizer })
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer })
