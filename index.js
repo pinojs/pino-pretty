@@ -50,10 +50,12 @@ module.exports = function prettyFactory (options) {
 
     for (const logBuilder of logBuilders) {
       const result = logBuilder(nextInput, context)
-      if (result.done) {
-        return result.output
-      } else {
-        nextInput = result.output
+      if (result) {
+        if (result.done) {
+          return result.output
+        } else {
+          nextInput = result.output
+        }
       }
     }
 

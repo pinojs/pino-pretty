@@ -21,5 +21,18 @@ test('extensible log builders tests', (t) => {
     t.is(executed, true, `custom log builder was not executed: ${formatted}`)
   })
 
+  t.test('use input for custom log builders that return undefined result object', (t) => {
+    t.plan(1)
+    const builtInPretty = prettyFactory()
+    const customPretty = prettyFactory({
+      logBuilders: [
+        () => undefined
+      ]
+    })
+    const builtInOutput = builtInPretty(logLine)
+    const customOutput = customPretty(logLine)
+    t.is(customOutput, builtInOutput, `input did not pass through on undefined result`)
+  })
+
   t.end()
 })
