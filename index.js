@@ -28,8 +28,6 @@ const defaultOptions = {
 
 module.exports = function prettyFactory (options) {
   const opts = Object.assign({}, defaultOptions, options)
-  const EOL = opts.crlf ? '\r\n' : '\n'
-  const IDENT = '    '
   const messageKey = opts.messageKey
   const timestampKey = opts.timestampKey
 
@@ -37,8 +35,8 @@ module.exports = function prettyFactory (options) {
 
   const context = {
     opts,
-    EOL,
-    IDENT
+    EOL: opts.crlf ? '\r\n' : '\n',
+    IDENT: '    '
   }
 
   return pretty
