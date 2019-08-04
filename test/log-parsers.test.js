@@ -5,12 +5,12 @@ const prettyFactory = require('../')
 
 const logLine = '{"level":30,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo","v":1}\n'
 
-test('extensible log builders tests', (t) => {
-  t.test('custom log builders are executed', (t) => {
+test('extensible log parsers tests', (t) => {
+  t.test('custom log parsers are executed', (t) => {
     t.plan(1)
     let executed = false
     const pretty = prettyFactory({
-      logBuilders: [
+      logParsers: [
         (input) => {
           executed = true
           return { output: input }
@@ -18,14 +18,14 @@ test('extensible log builders tests', (t) => {
       ]
     })
     const formatted = pretty(logLine)
-    t.is(executed, true, `custom log builder was not executed: ${formatted}`)
+    t.is(executed, true, `custom log parser was not executed: ${formatted}`)
   })
 
-  t.test('use input for custom log builders that return undefined result object', (t) => {
+  t.test('use input for custom log parsers that return undefined result object', (t) => {
     t.plan(1)
     const builtInPretty = prettyFactory()
     const customPretty = prettyFactory({
-      logBuilders: [
+      logParsers: [
         () => undefined
       ]
     })

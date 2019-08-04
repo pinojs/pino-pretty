@@ -10,7 +10,7 @@ const {
   prettifyTime
 } = require('./lib/utils')
 
-const logBuilders = require('./lib/log-builders')
+const logParsers = require('./lib/log-parsers')
 const { buildLine } = require('./lib/line-builders')
 
 const defaultOptions = {
@@ -39,8 +39,8 @@ module.exports = function prettyFactory (options) {
     IDENT: '    '
   }
 
-  if (opts.logBuilders) {
-    logBuilders.push(...opts.logBuilders)
+  if (opts.logParsers) {
+    logParsers.push(...opts.logParsers)
   }
 
   return pretty
@@ -48,8 +48,8 @@ module.exports = function prettyFactory (options) {
   function pretty (inputData) {
     let nextInput = inputData
 
-    for (const logBuilder of logBuilders) {
-      const result = logBuilder(nextInput, context)
+    for (const logParser of logParsers) {
+      const result = logParser(nextInput, context)
       if (result) {
         if (result.done) {
           return result.output
