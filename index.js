@@ -1,11 +1,9 @@
 'use strict'
 
 const chalk = require('chalk')
-const jmespath = require('jmespath')
 const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
 const {
-  isObject,
   prettifyErrorLog,
   prettifyLevel,
   prettifyMessage,
@@ -14,14 +12,7 @@ const {
   prettifyTime
 } = require('./lib/utils')
 
-const bourne = require('@hapi/bourne')
-const jsonParser = input => {
-  try {
-    return { value: bourne.parse(input, { protoAction: 'remove' }) }
-  } catch (err) {
-    return { err }
-  }
-}
+const logBuilders = require('./lib/log-builders')
 
 const defaultOptions = {
   colorize: chalk.supportsColor,
@@ -44,60 +35,21 @@ module.exports = function prettyFactory (options) {
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
-  const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
 
   const colorizer = colors(opts.colorize)
-  const search = opts.search
+
+  const context = {
+    opts,
+    EOL
+  }
 
   return pretty
 
   function pretty (inputData) {
-    const logBuilders = [
-      (input) => {
-        if (!isObject(input)) {
-          const parsed = jsonParser(input)
-          if (parsed.err) {
-            // pass through
-            return { output: input + EOL, done: true }
-          } else {
-            return { output: parsed.value }
-          }
-        } else return { output: input }
-      },
-      (input) => {
-        // Short-circuit for spec allowed primitive values.
-        if ([null, true, false].includes(input) || Number.isFinite(input)) {
-          return { output: `${input}\n`, done: true }
-        } else {
-          return { output: input }
-        }
-      },
-      (input) => {
-        if (search && !jmespath.search(input, search)) {
-          return { output: undefined, done: true }
-        } else {
-          return { output: input }
-        }
-      },
-      (input) => {
-        if (ignoreKeys) {
-          const output = Object.keys(input)
-            .filter(key => !ignoreKeys.has(key))
-            .reduce((res, key) => {
-              res[key] = input[key]
-              return res
-            }, {})
-          return { output }
-        } else {
-          return { output: input }
-        }
-      }
-    ]
-
     let nextInput = inputData
 
     for (const logBuilder of logBuilders) {
-      const result = logBuilder(nextInput)
+      const result = logBuilder(nextInput, context)
       if (result.done) {
         return result.output
       } else {
@@ -114,11 +66,8 @@ module.exports = function prettyFactory (options) {
       prettifiedTime: prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
     }
 
-    const context = {
-      log,
-      prettified,
-      opts
-    }
+    context.log = log
+    context.prettified = prettified
 
     const lineBuilders = [
       (lineParts, { prettified, opts }) => {
@@ -165,12 +114,12 @@ module.exports = function prettyFactory (options) {
           lineParts.push(prettifiedMessage)
         }
       },
-      (lineParts) => {
+      (lineParts, { EOL }) => {
         if (lineParts.length > 0) {
           lineParts.push(EOL)
         }
       },
-      (lineParts, { log }) => {
+      (lineParts, { log, EOL }) => {
         if (log.type === 'Error' && log.stack) {
           const prettifiedErrorLog = prettifyErrorLog({
             log,
