@@ -129,12 +129,61 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   timestampKey: 'time', // --timestampKey
   translateTime: false, // --translateTime
   search: 'foo == `bar`', // --search
-  ignore: 'pid,hostname' // --ignore
+  ignore: 'pid,hostname', // --ignore
+  logParsers: undefined
 }
 ```
 
 The `colorize` default follows
 [`chalk.supportsColor`](https://www.npmjs.com/package/chalk#chalksupportscolor).
+
+Note: the `logParsers` option does not correspond to a CLI argument. It is
+available only for API usage, as described below.
+
+#### log parsers
+
+Log parsers are simple functions that parse the log. `pino-pretty` uses a number
+of built-in log parsers.
+
+The `logParsers` option accepts an array of functions, which are appended to the
+built-in log parser functions and therefore executed immediately after them. This
+provides an opportunity to further modify the formatted log output by supplying
+custom log parser functions.
+
+The log parser function reeives two parameters:`input` and `context`.
+* The `input` object represents the output of the previously-executed parsers
+* The `context` object has a number of properties that are helpful in custom
+  parsers, including the following:
+
+  - `opts`: the options passed to the formatter
+  - `EOL`: the actual end-of-line characters, as specified by the `crlf` option
+  - `IDENT`: the default indentation string
+
+The log parser function returns a result object with two properties: `output` and `done`.
+
+  - `output`: the parsed string
+  - `done`: a boolean value that causes the formatter to abort the parsing process, returning `output` as the final formatted output
+
+The following is an example of a typical log parser function:
+
+```js
+function (input, context) {
+  // parse/transform the input
+  const output = input.toLowerCase()
+  return { output }
+}
+```
+
+To short-circuit the parsing process and prevent subsequent log parsers from being executed, set `done` to `true`:
+
+```js
+function (input, context) {
+  return {
+    output: input.toLowerCase(),
+    done: true // short-circuit the log parsing process
+  }
+}
+```
 
 <a id="license"><a>
 ## License
