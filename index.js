@@ -39,6 +39,10 @@ module.exports = function prettyFactory (options) {
     IDENT: '    '
   }
 
+  if (opts.logBuilders) {
+    logBuilders.push(...opts.logBuilders)
+  }
+
   return pretty
 
   function pretty (inputData) {
