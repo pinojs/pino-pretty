@@ -107,66 +107,100 @@ module.exports = function prettyFactory (options) {
 
     let log = nextInput
 
-    const prettifiedLevel = prettifyLevel({ log, colorizer })
-    const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer })
-    const prettifiedMetadata = prettifyMetadata({ log })
-    const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
-
-    let line = ''
-    if (opts.levelFirst && prettifiedLevel) {
-      line = `${prettifiedLevel}`
+    const prettified = {
+      prettifiedLevel: prettifyLevel({ log, colorizer }),
+      prettifiedMessage: prettifyMessage({ log, messageKey, colorizer }),
+      prettifiedMetadata: prettifyMetadata({ log }),
+      prettifiedTime: prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
     }
 
-    if (prettifiedTime && line === '') {
-      line = `${prettifiedTime}`
-    } else if (prettifiedTime) {
-      line = `${line} ${prettifiedTime}`
+    const context = {
+      log,
+      prettified,
+      opts
     }
 
-    if (!opts.levelFirst && prettifiedLevel) {
-      if (line.length > 0) {
-        line = `${line} ${prettifiedLevel}`
-      } else {
-        line = prettifiedLevel
+    const lineBuilders = [
+      (lineParts, { prettified, opts }) => {
+        const { prettifiedLevel } = prettified
+        if (opts.levelFirst && prettifiedLevel) {
+          lineParts.push(prettifiedLevel)
+        }
+      },
+      (lineParts, { prettified }) => {
+        const { prettifiedTime } = prettified
+        if (prettifiedTime && lineParts.length === 0) {
+          lineParts.push(prettifiedTime)
+        } else if (prettifiedTime) {
+          lineParts.push(' ')
+          lineParts.push(prettifiedTime)
+        }
+      },
+      (lineParts, { prettified, opts }) => {
+        const { prettifiedLevel } = prettified
+        if (!opts.levelFirst && prettifiedLevel) {
+          if (lineParts.length > 0) {
+            lineParts.push(' ')
+          }
+          lineParts.push(prettifiedLevel)
+        }
+      },
+      (lineParts, { prettified }) => {
+        const { prettifiedMetadata } = prettified
+        if (prettifiedMetadata) {
+          lineParts.push(' ')
+          lineParts.push(prettifiedMetadata)
+          lineParts.push(':')
+        }
+      },
+      (lineParts) => {
+        if (lineParts.length > 0 && lineParts[lineParts.length - 1] !== ':') {
+          lineParts.push(':')
+        }
+      },
+      (lineParts, { prettified }) => {
+        const { prettifiedMessage } = prettified
+        if (prettifiedMessage) {
+          lineParts.push(' ')
+          lineParts.push(prettifiedMessage)
+        }
+      },
+      (lineParts) => {
+        if (lineParts.length > 0) {
+          lineParts.push(EOL)
+        }
+      },
+      (lineParts, { log }) => {
+        if (log.type === 'Error' && log.stack) {
+          const prettifiedErrorLog = prettifyErrorLog({
+            log,
+            errorLikeKeys: errorLikeObjectKeys,
+            errorProperties: errorProps,
+            ident: IDENT,
+            eol: EOL
+          })
+          lineParts.push(prettifiedErrorLog)
+        } else {
+          const skipKeys = typeof log[messageKey] === 'string' ? [messageKey] : undefined
+          const prettifiedObject = prettifyObject({
+            input: log,
+            skipKeys,
+            errorLikeKeys: errorLikeObjectKeys,
+            eol: EOL,
+            ident: IDENT
+          })
+          lineParts.push(prettifiedObject)
+        }
       }
+    ]
+
+    let lineParts = []
+
+    for (const lineBuilder of lineBuilders) {
+      lineBuilder(lineParts, context)
     }
 
-    if (prettifiedMetadata) {
-      line = `${line} ${prettifiedMetadata}:`
-    }
-
-    if (line.endsWith(':') === false && line !== '') {
-      line += ':'
-    }
-
-    if (prettifiedMessage) {
-      line = `${line} ${prettifiedMessage}`
-    }
-
-    if (line.length > 0) {
-      line += EOL
-    }
-
-    if (log.type === 'Error' && log.stack) {
-      const prettifiedErrorLog = prettifyErrorLog({
-        log,
-        errorLikeKeys: errorLikeObjectKeys,
-        errorProperties: errorProps,
-        ident: IDENT,
-        eol: EOL
-      })
-      line += prettifiedErrorLog
-    } else {
-      const skipKeys = typeof log[messageKey] === 'string' ? [messageKey] : undefined
-      const prettifiedObject = prettifyObject({
-        input: log,
-        skipKeys,
-        errorLikeKeys: errorLikeObjectKeys,
-        eol: EOL,
-        ident: IDENT
-      })
-      line += prettifiedObject
-    }
+    let line = lineParts.join('') || ''
 
     return line
   }
