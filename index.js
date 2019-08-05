@@ -11,7 +11,7 @@ const {
 } = require('./lib/utils')
 
 const logParsers = require('./lib/log-parsers')
-const { buildLine } = require('./lib/line-builders')
+const { buildLine, lineBuilders } = require('./lib/line-builders')
 
 const defaultOptions = {
   colorize: chalk.supportsColor,
@@ -41,6 +41,10 @@ module.exports = function prettyFactory (options) {
 
   if (opts.logParsers) {
     logParsers.push(...opts.logParsers)
+  }
+
+  if (opts.lineBuilders) {
+    lineBuilders.push(...opts.lineBuilders)
   }
 
   return pretty
