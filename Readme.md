@@ -130,15 +130,16 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   translateTime: false, // --translateTime
   search: 'foo == `bar`', // --search
   ignore: 'pid,hostname', // --ignore
-  logParsers: undefined
+  logParsers: undefined,
+  lineBuilders: undefined
 }
 ```
 
 The `colorize` default follows
 [`chalk.supportsColor`](https://www.npmjs.com/package/chalk#chalksupportscolor).
 
-Note: the `logParsers` option does not correspond to a CLI argument. It is
-available only for API usage, as described below.
+Note: the `logParsers` and `lineBuilders` options do not correspond to CLI arguments.
+They are available only for API usage, as described below.
 
 #### log parsers
 
@@ -162,9 +163,10 @@ The log parser function reeives two parameters:`input` and `context`.
 The log parser function returns a result object with two properties: `output` and `done`.
 
   - `output`: the parsed string
-  - `done`: a boolean value that causes the formatter to abort the parsing process, returning `output` as the final formatted output
+  - `done`: a boolean value that causes the formatter to abort the parsing process,
+    returning `output` as the final formatted output
 
-The following is an example of a typical log parser function:
+The following is an example of a minimal log parser function:
 
 ```js
 function (input, context) {
@@ -174,7 +176,8 @@ function (input, context) {
 }
 ```
 
-To short-circuit the parsing process and prevent subsequent log parsers from being executed, set `done` to `true`:
+To short-circuit the parsing process and prevent subsequent log parsers from being executed,
+set `done` to `true`:
 
 ```js
 function (input, context) {
@@ -183,6 +186,56 @@ function (input, context) {
     done: true // short-circuit the log parsing process
   }
 }
+```
+
+#### line builders
+
+Line builders are simple functions that prepare the final formatted line and are executed
+after the log parsers. `pino-pretty` uses a number of built-in line builders.
+
+The `lineBuilders` option accepts an array of functions, which are appended to the
+built-in line builder functions and therefore executed immediately after them. This
+provides an opportunity to further modify the formatted log output by supplying
+custom line builder functions.
+
+The log parser function reeives two parameters:`lineParts` and `context`.
+* The `lineParts` array contains the ordered list of strings that will eventually be joined
+* The `context` object is the same `context` object passed to the log parser functions,
+  though it also has a few additional properties that are helpful in custom line builders,
+  including the following:
+
+  - `log`: the final output produced by the log parsers
+  - `prettified`: a number of strings prettified before the line builders run, including
+    `prettifiedLevel`, `prettifiedMessage`, `prettifiedMetadata`, `prettifiedTime`
+
+The line builder function does not return a value. To change the output, modify the
+`lineParts` array.
+
+Note that if a log parser short-circuits the parsing process, the line builders will
+not be executed at all.
+
+The following is an example of a minimal line builder function:
+
+```js
+function (lineParts) {
+  // add a value to the array
+  lineParts.push('NEW VALUE')
+}
+```
+
+The following is an example of a more complex line builder function, based on one of
+the built-in line builders.
+
+```js
+function (lineParts, { prettified }) => {
+  const { prettifiedTime } = prettified
+  if (prettifiedTime) {
+    if (lineParts.length > 0) {
+      lineParts.push(' ')
+    }
+    lineParts.push(prettifiedTime)
+  }
+},
 ```
 
 <a id="license"><a>
