@@ -26,34 +26,37 @@ const defaultOptions = {
   outputStream: process.stdout
 }
 
-module.exports = function prettyFactory (options) {
-  const opts = Object.assign({}, defaultOptions, options)
-  const messageKey = opts.messageKey
-  const timestampKey = opts.timestampKey
+class Prettifier {
+  constructor (options) {
+    const opts = Object.assign({}, defaultOptions, options)
+    this.opts = opts
+    this.messageKey = opts.messageKey
+    this.timestampKey = opts.timestampKey
 
-  const colorizer = colors(opts.colorize)
+    this.colorizer = colors(opts.colorize)
 
-  const context = {
-    opts,
-    EOL: opts.crlf ? '\r\n' : '\n',
-    IDENT: '    '
+    this.context = {
+      opts,
+      EOL: opts.crlf ? '\r\n' : '\n',
+      IDENT: '    '
+    }
+
+    if (opts.logParsers) {
+      logParsers.push(...opts.logParsers)
+    }
+    this.logParsers = logParsers
+
+    if (opts.lineBuilders) {
+      lineBuilders.push(...opts.lineBuilders)
+    }
+    this.lineBuilders = lineBuilders
   }
 
-  if (opts.logParsers) {
-    logParsers.push(...opts.logParsers)
-  }
-
-  if (opts.lineBuilders) {
-    lineBuilders.push(...opts.lineBuilders)
-  }
-
-  return pretty
-
-  function pretty (inputData) {
+  prettify (inputData) {
     let nextInput = inputData
 
-    for (const logParser of logParsers) {
-      const result = logParser(nextInput, context)
+    for (const logParser of this.logParsers) {
+      const result = logParser(nextInput, this.context)
       if (result) {
         if (result.done) {
           return result.output
@@ -65,6 +68,8 @@ module.exports = function prettyFactory (options) {
 
     let log = nextInput
 
+    const { opts, colorizer, messageKey, timestampKey } = this
+
     const prettified = {
       prettifiedLevel: prettifyLevel({ log, colorizer }),
       prettifiedMessage: prettifyMessage({ log, messageKey, colorizer }),
@@ -72,11 +77,16 @@ module.exports = function prettyFactory (options) {
       prettifiedTime: prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
     }
 
-    context.log = log
-    context.prettified = prettified
+    this.context.log = log
+    this.context.prettified = prettified
 
-    let line = buildLine(context)
+    let line = buildLine(this.context)
 
     return line
   }
+}
+
+module.exports = function prettyFactory (options) {
+  const prettifier = new Prettifier(options)
+  return (inputData) => prettifier.prettify(inputData)
 }
