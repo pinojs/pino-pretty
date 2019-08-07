@@ -55,7 +55,8 @@ class Prettifier {
   prettify (inputData) {
     let nextInput = inputData
 
-    for (const logParser of this.logParsers) {
+    for (let index = 0; index < this.logParsers.length; index++) {
+      const logParser = this.logParsers[index]
       const result = logParser(nextInput, this.context)
       if (result) {
         if (result.done) {
