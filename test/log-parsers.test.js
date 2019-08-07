@@ -34,5 +34,28 @@ test('extensible log parsers tests', (t) => {
     t.is(customOutput, builtInOutput, `input did not pass through on undefined result`)
   })
 
+  t.test('manually specifying built-in loggers is same as default behavior', (t) => {
+    t.plan(1)
+    const builtInPretty = prettyFactory()
+    const customPretty = prettyFactory({
+      logParsers: ['json', 'primitives', 'search', 'ignore']
+    })
+    const builtInOutput = builtInPretty(logLine)
+    const customOutput = customPretty(logLine)
+    t.is(customOutput, builtInOutput, `custom with built-in is not the same as default`)
+  })
+
+  t.test('always use built-in json log parser as first step when using custom log parsers', (t) => {
+    t.plan(1)
+    let wasParsed = false
+    const customPretty = prettyFactory({
+      logParsers: [(log) => {
+        wasParsed = typeof log === 'object'
+      }]
+    })
+    customPretty(logLine)
+    t.is(wasParsed, true, `the json log parser wasn't executed`)
+  })
+
   t.end()
 })
