@@ -67,7 +67,7 @@ class Prettifier {
       }
     }
 
-    let log = nextInput
+    const log = nextInput
 
     const { opts, colorizer, messageKey, timestampKey } = this
 
@@ -81,7 +81,7 @@ class Prettifier {
     this.context.log = log
     this.context.prettified = prettified
 
-    let line = buildLine(this.context)
+    const line = buildLine(this.context)
 
     return line
   }
