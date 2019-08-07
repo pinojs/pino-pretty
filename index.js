@@ -10,7 +10,7 @@ const {
   prettifyTime
 } = require('./lib/utils')
 
-const logParsers = require('./lib/log-parsers')
+const { defaultLogParsingSequence } = require('./lib/log-parsers')
 const { buildLine, lineBuilders } = require('./lib/line-builders')
 
 const defaultOptions = {
@@ -41,6 +41,7 @@ class Prettifier {
       IDENT: '    '
     }
 
+    const logParsers = [...defaultLogParsingSequence]
     if (opts.logParsers) {
       logParsers.push(...opts.logParsers)
     }
