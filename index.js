@@ -30,14 +30,11 @@ class Prettifier {
   constructor (options) {
     const opts = Object.assign({}, defaultOptions, options)
 
-    this.messageKey = opts.messageKey
-    this.timestampKey = opts.timestampKey
-
-    this.colorizer = colors(opts.colorize)
-
     this.context = {
       EOL: opts.crlf ? '\r\n' : '\n',
       IDENT: '    ',
+      translateFormat: opts.translateTime,
+      colorizer: colors(opts.colorize),
       ...opts
     }
 
@@ -53,6 +50,14 @@ class Prettifier {
     }
     this.logParsers = logParsers
 
+    const prettifiers = [
+      { name: 'prettifiedLevel', prettifier: prettifyLevel },
+      { name: 'prettifiedMessage', prettifier: prettifyMessage },
+      { name: 'prettifiedMetadata', prettifier: prettifyMetadata },
+      { name: 'prettifiedTime', prettifier: prettifyTime }
+    ]
+    this.prettifiers = prettifiers
+
     if (opts.lineBuilders) {
       lineBuilders.push(...opts.lineBuilders)
     }
@@ -62,7 +67,7 @@ class Prettifier {
   prettify (inputData) {
     let nextInput = inputData
 
-    const { context, colorizer, logParsers } = this
+    const { context, logParsers, prettifiers } = this
 
     for (let index = 0; index < logParsers.length; index++) {
       const logParser = logParsers[index]
@@ -78,17 +83,14 @@ class Prettifier {
 
     const log = nextInput
 
-    const { messageKey, timestampKey } = context
-
-    const prettified = {
-      prettifiedLevel: prettifyLevel({ log, colorizer }),
-      prettifiedMessage: prettifyMessage({ log, messageKey, colorizer }),
-      prettifiedMetadata: prettifyMetadata({ log }),
-      prettifiedTime: prettifyTime({ log, translateFormat: context.translateTime, timestampKey })
+    const prettified = {}
+    for (let index = 0; index < prettifiers.length; index++) {
+      const { name, prettifier } = prettifiers[index]
+      prettified[name] = prettifier(log, context)
     }
+    context.prettified = prettified
 
     context.log = log
-    context.prettified = prettified
 
     const line = buildLine(context)
 

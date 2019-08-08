@@ -32,7 +32,7 @@ tap.test('prettifyLevel', t => {
   const { prettifyLevel } = utils
 
   t.test('returns `undefined` for unknown level', async t => {
-    const colorized = prettifyLevel({ log: {} })
+    const colorized = prettifyLevel({})
     t.is(colorized, undefined)
   })
 
@@ -40,7 +40,7 @@ tap.test('prettifyLevel', t => {
     const log = {
       level: 30
     }
-    const colorized = prettifyLevel({ log })
+    const colorized = prettifyLevel(log)
     t.is(colorized, 'INFO ')
   })
 
@@ -49,7 +49,7 @@ tap.test('prettifyLevel', t => {
       level: 30
     }
     const colorizer = getColorizer(true)
-    const colorized = prettifyLevel({ log, colorizer })
+    const colorized = prettifyLevel(log, { colorizer })
     t.is(colorized, '\u001B[32mINFO \u001B[39m')
   })
 
@@ -60,34 +60,34 @@ tap.test('prettifyMessage', t => {
   const { prettifyMessage } = utils
 
   t.test('returns `undefined` if `messageKey` not found', async t => {
-    const str = prettifyMessage({ log: {} })
+    const str = prettifyMessage({})
     t.is(str, undefined)
   })
 
   t.test('returns `undefined` if `messageKey` not string', async t => {
-    const str = prettifyMessage({ log: { msg: {} } })
+    const str = prettifyMessage({ msg: {} })
     t.is(str, undefined)
   })
 
   t.test('returns non-colorized value for default colorizer', async t => {
-    const str = prettifyMessage({ log: { msg: 'foo' } })
+    const str = prettifyMessage({ msg: 'foo' })
     t.is(str, 'foo')
   })
 
   t.test('returns non-colorized value for alternate `messageKey`', async t => {
-    const str = prettifyMessage({ log: { message: 'foo' }, messageKey: 'message' })
+    const str = prettifyMessage({ message: 'foo' }, { messageKey: 'message' })
     t.is(str, 'foo')
   })
 
   t.test('returns colorized value for color colorizer', async t => {
     const colorizer = getColorizer(true)
-    const str = prettifyMessage({ log: { msg: 'foo' }, colorizer })
+    const str = prettifyMessage({ msg: 'foo' }, { colorizer })
     t.is(str, '\u001B[36mfoo\u001B[39m')
   })
 
   t.test('returns colorized value for color colorizer for alternate `messageKey`', async t => {
     const colorizer = getColorizer(true)
-    const str = prettifyMessage({ log: { message: 'foo' }, messageKey: 'message', colorizer })
+    const str = prettifyMessage({ message: 'foo' }, { messageKey: 'message', colorizer })
     t.is(str, '\u001B[36mfoo\u001B[39m')
   })
 
@@ -98,42 +98,42 @@ tap.test('prettifyMetadata', t => {
   const { prettifyMetadata } = utils
 
   t.test('returns `undefined` if no metadata present', async t => {
-    const str = prettifyMetadata({ log: {} })
+    const str = prettifyMetadata({})
     t.is(str, undefined)
   })
 
   t.test('works with only `name` present', async t => {
-    const str = prettifyMetadata({ log: { name: 'foo' } })
+    const str = prettifyMetadata({ name: 'foo' })
     t.is(str, '(foo)')
   })
 
   t.test('works with only `pid` present', async t => {
-    const str = prettifyMetadata({ log: { pid: '1234' } })
+    const str = prettifyMetadata({ pid: '1234' })
     t.is(str, '(1234)')
   })
 
   t.test('works with only `hostname` present', async t => {
-    const str = prettifyMetadata({ log: { hostname: 'bar' } })
+    const str = prettifyMetadata({ hostname: 'bar' })
     t.is(str, '(on bar)')
   })
 
   t.test('works with only `name` & `pid` present', async t => {
-    const str = prettifyMetadata({ log: { name: 'foo', pid: '1234' } })
+    const str = prettifyMetadata({ name: 'foo', pid: '1234' })
     t.is(str, '(foo/1234)')
   })
 
   t.test('works with only `name` & `hostname` present', async t => {
-    const str = prettifyMetadata({ log: { name: 'foo', hostname: 'bar' } })
+    const str = prettifyMetadata({ name: 'foo', hostname: 'bar' })
     t.is(str, '(foo on bar)')
   })
 
   t.test('works with only `pid` & `hostname` present', async t => {
-    const str = prettifyMetadata({ log: { pid: '1234', hostname: 'bar' } })
+    const str = prettifyMetadata({ pid: '1234', hostname: 'bar' })
     t.is(str, '(1234 on bar)')
   })
 
   t.test('works with all three present', async t => {
-    const str = prettifyMetadata({ log: { name: 'foo', pid: '1234', hostname: 'bar' } })
+    const str = prettifyMetadata({ name: 'foo', pid: '1234', hostname: 'bar' })
     t.is(str, '(foo/1234 on bar)')
   })
 
@@ -187,68 +187,68 @@ tap.test('prettifyTime', t => {
   const { prettifyTime } = utils
 
   t.test('returns `undefined` if `time` or `timestamp` not in log', async t => {
-    const str = prettifyTime({ log: {} })
+    const str = prettifyTime({})
     t.is(str, undefined)
   })
 
   t.test('returns prettified formatted time from custom field', async t => {
     let log = { customtime: 1554642900000 }
-    let str = prettifyTime({ log, translateFormat: true, timestampKey: 'customtime' })
+    let str = prettifyTime(log, { translateFormat: true, timestampKey: 'customtime' })
     t.is(str, '[2019-04-07 13:15:00.000 +0000]')
 
-    str = prettifyTime({ log, translateFormat: false, timestampKey: 'customtime' })
+    str = prettifyTime(log, { translateFormat: false, timestampKey: 'customtime' })
     t.is(str, '[1554642900000]')
   })
 
   t.test('returns prettified formatted time', async t => {
     let log = { time: 1554642900000 }
-    let str = prettifyTime({ log, translateFormat: true })
+    let str = prettifyTime(log, { translateFormat: true })
     t.is(str, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { timestamp: 1554642900000 }
-    str = prettifyTime({ log, translateFormat: true })
+    str = prettifyTime(log, { translateFormat: true })
     t.is(str, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { time: '2019-04-07T09:15:00.000-04:00' }
-    str = prettifyTime({ log, translateFormat: true })
+    str = prettifyTime(log, { translateFormat: true })
     t.is(str, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
-    str = prettifyTime({ log, translateFormat: true })
+    str = prettifyTime(log, { translateFormat: true })
     t.is(str, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { time: 1554642900000 }
-    str = prettifyTime({ log, translateFormat: 'd mmm yyyy H:MM' })
+    str = prettifyTime(log, { translateFormat: 'd mmm yyyy H:MM' })
     t.is(str, '[7 Apr 2019 13:15]')
 
     log = { timestamp: 1554642900000 }
-    str = prettifyTime({ log, translateFormat: 'd mmm yyyy H:MM' })
+    str = prettifyTime(log, { translateFormat: 'd mmm yyyy H:MM' })
     t.is(str, '[7 Apr 2019 13:15]')
 
     log = { time: '2019-04-07T09:15:00.000-04:00' }
-    str = prettifyTime({ log, translateFormat: 'd mmm yyyy H:MM' })
+    str = prettifyTime(log, { translateFormat: 'd mmm yyyy H:MM' })
     t.is(str, '[7 Apr 2019 13:15]')
 
     log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
-    str = prettifyTime({ log, translateFormat: 'd mmm yyyy H:MM' })
+    str = prettifyTime(log, { translateFormat: 'd mmm yyyy H:MM' })
     t.is(str, '[7 Apr 2019 13:15]')
   })
 
   t.test('passes through value', async t => {
     let log = { time: 1554642900000 }
-    let str = prettifyTime({ log })
+    let str = prettifyTime(log)
     t.is(str, '[1554642900000]')
 
     log = { timestamp: 1554642900000 }
-    str = prettifyTime({ log })
+    str = prettifyTime(log)
     t.is(str, '[1554642900000]')
 
     log = { time: '2019-04-07T09:15:00.000-04:00' }
-    str = prettifyTime({ log })
+    str = prettifyTime(log)
     t.is(str, '[2019-04-07T09:15:00.000-04:00]')
 
     log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
-    str = prettifyTime({ log })
+    str = prettifyTime(log)
     t.is(str, '[2019-04-07T09:15:00.000-04:00]')
   })
 
