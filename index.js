@@ -3,9 +3,9 @@
 const chalk = require('chalk')
 const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
-const { builtInPrettifiers } = require('./lib/utils')
 
 const { defaultLogParsingSequence, builtInlogParsers } = require('./lib/log-parsers')
+const { defaultPrettificationSequence } = require('./lib/utils')
 const { buildLine, lineBuilders } = require('./lib/line-builders')
 
 const defaultOptions = {
@@ -30,6 +30,7 @@ class Prettifier {
       IDENT: '    ',
       translateFormat: opts.translateTime,
       colorizer: colors(opts.colorize),
+      prettified: {},
       ...opts
     }
 
@@ -43,10 +44,8 @@ class Prettifier {
     } else {
       logParsers.push(...defaultLogParsingSequence)
     }
+    logParsers.push(...defaultPrettificationSequence)
     this.logParsers = logParsers
-
-    const prettifiers = [...builtInPrettifiers]
-    this.prettifiers = prettifiers
 
     if (opts.lineBuilders) {
       lineBuilders.push(...opts.lineBuilders)
@@ -57,7 +56,7 @@ class Prettifier {
   prettify (inputData) {
     let nextInput = inputData
 
-    const { context, logParsers, prettifiers } = this
+    const { context, logParsers } = this
 
     for (let index = 0; index < logParsers.length; index++) {
       const logParser = logParsers[index]
@@ -71,16 +70,7 @@ class Prettifier {
       }
     }
 
-    const log = nextInput
-
-    const prettified = {}
-    for (let index = 0; index < prettifiers.length; index++) {
-      const { name, prettifier } = prettifiers[index]
-      prettified[name] = prettifier(log, context)
-    }
-    context.prettified = prettified
-
-    context.log = log
+    context.log = nextInput
 
     const line = buildLine(context)
 
