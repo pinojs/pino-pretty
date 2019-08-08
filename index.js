@@ -4,8 +4,12 @@ const chalk = require('chalk')
 const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
 
-const { defaultLogParsingSequence, builtInlogParsers } = require('./lib/log-parsers')
-const { defaultPrettificationSequence } = require('./lib/utils')
+const {
+  defaultLogParsingSequence,
+  defaultPrettificationSequence,
+  createLogProcessor,
+  JsonLogProcessor
+} = require('./lib/log-processors')
 const { buildLine, lineBuilders } = require('./lib/line-builders')
 
 const defaultOptions = {
@@ -34,18 +38,14 @@ class Prettifier {
       ...opts
     }
 
-    const logParsers = [builtInlogParsers.json]
+    const definitions = [new JsonLogProcessor()]
     if (opts.logParsers) {
-      for (let index = 0; index < opts.logParsers.length; index++) {
-        const item = opts.logParsers[index]
-        const logParser = typeof item === 'string' ? builtInlogParsers[item] : item
-        logParsers.push(logParser)
-      }
+      definitions.push(...opts.logParsers)
     } else {
-      logParsers.push(...defaultLogParsingSequence)
+      definitions.push(...defaultLogParsingSequence)
     }
-    logParsers.push(...defaultPrettificationSequence)
-    this.logParsers = logParsers
+    definitions.push(...defaultPrettificationSequence)
+    this.logProcessors = definitions.map(definition => createLogProcessor(definition))
 
     if (opts.lineBuilders) {
       lineBuilders.push(...opts.lineBuilders)
@@ -56,11 +56,11 @@ class Prettifier {
   prettify (inputData) {
     let nextInput = inputData
 
-    const { context, logParsers } = this
+    const { context, logProcessors } = this
 
-    for (let index = 0; index < logParsers.length; index++) {
-      const logParser = logParsers[index]
-      const result = logParser(nextInput, context)
+    for (let index = 0; index < logProcessors.length; index++) {
+      const logProcessor = logProcessors[index]
+      const result = logProcessor.parse(nextInput, context)
       if (result) {
         if (result.done) {
           return result.output
