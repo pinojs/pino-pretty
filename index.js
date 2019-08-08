@@ -3,12 +3,7 @@
 const chalk = require('chalk')
 const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
-const {
-  prettifyLevel,
-  prettifyMessage,
-  prettifyMetadata,
-  prettifyTime
-} = require('./lib/utils')
+const { builtInPrettifiers } = require('./lib/utils')
 
 const { defaultLogParsingSequence, builtInlogParsers } = require('./lib/log-parsers')
 const { buildLine, lineBuilders } = require('./lib/line-builders')
@@ -50,12 +45,7 @@ class Prettifier {
     }
     this.logParsers = logParsers
 
-    const prettifiers = [
-      { name: 'prettifiedLevel', prettifier: prettifyLevel },
-      { name: 'prettifiedMessage', prettifier: prettifyMessage },
-      { name: 'prettifiedMetadata', prettifier: prettifyMetadata },
-      { name: 'prettifiedTime', prettifier: prettifyTime }
-    ]
+    const prettifiers = [...builtInPrettifiers]
     this.prettifiers = prettifiers
 
     if (opts.lineBuilders) {
