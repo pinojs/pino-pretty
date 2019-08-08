@@ -2,6 +2,7 @@
 
 const test = require('tap').test
 const prettyFactory = require('../')
+const { defaultLogParsingSequence } = require('../lib/log-parsers')
 
 const logLine = '{"level":30,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo","v":1}\n'
 
@@ -38,7 +39,7 @@ test('extensible log parsers tests', (t) => {
     t.plan(1)
     const builtInPretty = prettyFactory()
     const customPretty = prettyFactory({
-      logParsers: ['json', 'primitives', 'search', 'ignore']
+      logParsers: defaultLogParsingSequence.map(logParser => logParser.name)
     })
     const builtInOutput = builtInPretty(logLine)
     const customOutput = customPretty(logLine)
