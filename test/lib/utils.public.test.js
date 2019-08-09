@@ -2,15 +2,13 @@
 
 const tap = require('tap')
 const getColorizer = require('../../lib/colors')
-const utils = require('../../lib/utils')
 const LevelLogProcessor = require('../../lib/processors/LevelLogProcessor')
 const MessageLogProcessor = require('../../lib/processors/MessageLogProcessor')
 const MetadataLogProcessor = require('../../lib/processors/MetadataLogProcessor')
 const TimeLogProcessor = require('../../lib/processors/TimeLogProcessor')
+const { prettifyErrorLog, prettifyObject } = require('../../lib/processors/ObjectOrErrorLogProcessor')
 
 tap.test('prettifyErrorLog', t => {
-  const { prettifyErrorLog } = utils
-
   t.test('returns string with default settings', async t => {
     const err = Error('Something went wrong')
     const str = prettifyErrorLog({ log: err })
@@ -162,8 +160,6 @@ tap.test('prettifyMetadata', t => {
 })
 
 tap.test('prettifyObject', t => {
-  const { prettifyObject } = utils
-
   t.test('returns empty string if no properties present', async t => {
     const str = prettifyObject({ input: {} })
     t.is(str, '')
