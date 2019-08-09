@@ -10,7 +10,7 @@ const {
   createLogProcessor,
   JsonLogProcessor
 } = require('./lib/log-processors')
-const { buildLine, lineBuilders } = require('./lib/line-builders')
+const { buildLine, builtInLineBuilders } = require('./lib/line-builders')
 
 const defaultOptions = {
   colorize: chalk.supportsColor,
@@ -47,6 +47,7 @@ class Prettifier {
     definitions.push(...defaultPrettificationSequence)
     this.logProcessors = definitions.map(definition => createLogProcessor(definition))
 
+    const lineBuilders = builtInLineBuilders
     if (opts.lineBuilders) {
       lineBuilders.push(...opts.lineBuilders)
     }
@@ -56,7 +57,7 @@ class Prettifier {
   prettify (inputData) {
     let nextInput = inputData
 
-    const { context, logProcessors } = this
+    const { context, logProcessors, lineBuilders } = this
 
     for (let index = 0; index < logProcessors.length; index++) {
       const logProcessor = logProcessors[index]
@@ -72,7 +73,7 @@ class Prettifier {
 
     context.log = nextInput
 
-    const line = buildLine(context)
+    const line = buildLine(lineBuilders, context)
 
     return line
   }
