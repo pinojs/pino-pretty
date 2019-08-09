@@ -2,10 +2,10 @@
 
 const tap = require('tap')
 const getColorizer = require('../../lib/colors')
-const LevelLogProcessor = require('../../lib/processors/LevelLogProcessor')
-const MessageLogProcessor = require('../../lib/processors/MessageLogProcessor')
-const MetadataLogProcessor = require('../../lib/processors/MetadataLogProcessor')
-const TimeLogProcessor = require('../../lib/processors/TimeLogProcessor')
+const { prettifyLevel } = require('../../lib/processors/LevelLogProcessor')
+const { prettifyMessage } = require('../../lib/processors/MessageLogProcessor')
+const { prettifyMetadata } = require('../../lib/processors/MetadataLogProcessor')
+const { prettifyTime } = require('../../lib/processors/TimeLogProcessor')
 const { prettifyErrorLog, prettifyObject } = require('../../lib/processors/ObjectOrErrorLogProcessor')
 
 tap.test('prettifyErrorLog', t => {
@@ -31,11 +31,9 @@ tap.test('prettifyErrorLog', t => {
 })
 
 tap.test('prettifyLevel', t => {
-  const levelLogProcessor = new LevelLogProcessor()
-
   t.test('returns `undefined` for unknown level', async t => {
     const prettified = {}
-    levelLogProcessor.parse({}, { prettified })
+    prettifyLevel({}, { prettified })
     t.is(prettified.prettifiedLevel, undefined)
   })
 
@@ -44,7 +42,7 @@ tap.test('prettifyLevel', t => {
       level: 30
     }
     const prettified = {}
-    levelLogProcessor.parse(log, { prettified })
+    prettifyLevel(log, { prettified })
     t.is(prettified.prettifiedLevel, 'INFO ')
   })
 
@@ -54,7 +52,7 @@ tap.test('prettifyLevel', t => {
     }
     const prettified = {}
     const colorizer = getColorizer(true)
-    levelLogProcessor.parse(log, { prettified, colorizer })
+    prettifyLevel(log, { prettified, colorizer })
     t.is(prettified.prettifiedLevel, '\u001B[32mINFO \u001B[39m')
   })
 
@@ -62,43 +60,41 @@ tap.test('prettifyLevel', t => {
 })
 
 tap.test('prettifyMessage', t => {
-  const messageLogProcessor = new MessageLogProcessor()
-
   t.test('returns `undefined` if `messageKey` not found', async t => {
     const prettified = {}
-    messageLogProcessor.parse({}, { prettified })
+    prettifyMessage({}, { prettified })
     t.is(prettified.prettifiedMessage, undefined)
   })
 
   t.test('returns `undefined` if `messageKey` not string', async t => {
     const prettified = {}
-    messageLogProcessor.parse({ msg: {} }, { prettified })
+    prettifyMessage({ msg: {} }, { prettified })
     t.is(prettified.prettifiedMessage, undefined)
   })
 
   t.test('returns non-colorized value for default colorizer', async t => {
     const prettified = {}
-    messageLogProcessor.parse({ msg: 'foo' }, { prettified })
+    prettifyMessage({ msg: 'foo' }, { prettified })
     t.is(prettified.prettifiedMessage, 'foo')
   })
 
   t.test('returns non-colorized value for alternate `messageKey`', async t => {
     const prettified = {}
-    messageLogProcessor.parse({ message: 'foo' }, { prettified, messageKey: 'message' })
+    prettifyMessage({ message: 'foo' }, { prettified, messageKey: 'message' })
     t.is(prettified.prettifiedMessage, 'foo')
   })
 
   t.test('returns colorized value for color colorizer', async t => {
     const prettified = {}
     const colorizer = getColorizer(true)
-    messageLogProcessor.parse({ msg: 'foo' }, { prettified, colorizer })
+    prettifyMessage({ msg: 'foo' }, { prettified, colorizer })
     t.is(prettified.prettifiedMessage, '\u001B[36mfoo\u001B[39m')
   })
 
   t.test('returns colorized value for color colorizer for alternate `messageKey`', async t => {
     const prettified = {}
     const colorizer = getColorizer(true)
-    messageLogProcessor.parse({ message: 'foo' }, { prettified, messageKey: 'message', colorizer })
+    prettifyMessage({ message: 'foo' }, { prettified, messageKey: 'message', colorizer })
     t.is(prettified.prettifiedMessage, '\u001B[36mfoo\u001B[39m')
   })
 
@@ -106,53 +102,51 @@ tap.test('prettifyMessage', t => {
 })
 
 tap.test('prettifyMetadata', t => {
-  const metadataLogProcessor = new MetadataLogProcessor()
-
   t.test('returns `undefined` if no metadata present', async t => {
     const prettified = {}
-    metadataLogProcessor.parse({}, { prettified })
+    prettifyMetadata({}, { prettified })
     t.is(prettified.prettifiedMetadata, undefined)
   })
 
   t.test('works with only `name` present', async t => {
     const prettified = {}
-    metadataLogProcessor.parse({ name: 'foo' }, { prettified })
+    prettifyMetadata({ name: 'foo' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(foo)')
   })
 
   t.test('works with only `pid` present', async t => {
     const prettified = {}
-    metadataLogProcessor.parse({ pid: '1234' }, { prettified })
+    prettifyMetadata({ pid: '1234' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(1234)')
   })
 
   t.test('works with only `hostname` present', async t => {
     const prettified = {}
-    metadataLogProcessor.parse({ hostname: 'bar' }, { prettified })
+    prettifyMetadata({ hostname: 'bar' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(on bar)')
   })
 
   t.test('works with only `name` & `pid` present', async t => {
     const prettified = {}
-    metadataLogProcessor.parse({ name: 'foo', pid: '1234' }, { prettified })
+    prettifyMetadata({ name: 'foo', pid: '1234' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(foo/1234)')
   })
 
   t.test('works with only `name` & `hostname` present', async t => {
     const prettified = {}
-    metadataLogProcessor.parse({ name: 'foo', hostname: 'bar' }, { prettified })
+    prettifyMetadata({ name: 'foo', hostname: 'bar' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(foo on bar)')
   })
 
   t.test('works with only `pid` & `hostname` present', async t => {
     const prettified = {}
-    metadataLogProcessor.parse({ pid: '1234', hostname: 'bar' }, { prettified })
+    prettifyMetadata({ pid: '1234', hostname: 'bar' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(1234 on bar)')
   })
 
   t.test('works with all three present', async t => {
     const prettified = {}
-    metadataLogProcessor.parse({ name: 'foo', pid: '1234', hostname: 'bar' }, { prettified })
+    prettifyMetadata({ name: 'foo', pid: '1234', hostname: 'bar' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(foo/1234 on bar)')
   })
 
@@ -201,86 +195,84 @@ tap.test('prettifyObject', t => {
 })
 
 tap.test('prettifyTime', t => {
-  const timeLogProcessor = new TimeLogProcessor()
-
   t.test('returns `undefined` if `time` or `timestamp` not in log', async t => {
     const prettified = {}
-    timeLogProcessor.parse({}, { prettified })
+    prettifyTime({}, { prettified })
     t.is(prettified.prettifiedTime, undefined)
   })
 
   t.test('returns prettified formatted time from custom field', async t => {
     let log = { customtime: 1554642900000 }
     let prettified = {}
-    timeLogProcessor.parse(log, { prettified, translateFormat: true, timestampKey: 'customtime' })
+    prettifyTime(log, { prettified, translateFormat: true, timestampKey: 'customtime' })
     t.is(prettified.prettifiedTime, '[2019-04-07 13:15:00.000 +0000]')
 
     prettified = {}
-    timeLogProcessor.parse(log, { prettified, translateFormat: false, timestampKey: 'customtime' })
+    prettifyTime(log, { prettified, translateFormat: false, timestampKey: 'customtime' })
     t.is(prettified.prettifiedTime, '[1554642900000]')
   })
 
   t.test('returns prettified formatted time', async t => {
     let log = { time: 1554642900000 }
     let prettified = {}
-    timeLogProcessor.parse(log, { prettified, translateFormat: true })
+    prettifyTime(log, { prettified, translateFormat: true })
     t.is(prettified.prettifiedTime, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { timestamp: 1554642900000 }
     prettified = {}
-    timeLogProcessor.parse(log, { prettified, translateFormat: true })
+    prettifyTime(log, { prettified, translateFormat: true })
     t.is(prettified.prettifiedTime, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { time: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    timeLogProcessor.parse(log, { prettified, translateFormat: true })
+    prettifyTime(log, { prettified, translateFormat: true })
     t.is(prettified.prettifiedTime, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    timeLogProcessor.parse(log, { prettified, translateFormat: true })
+    prettifyTime(log, { prettified, translateFormat: true })
     t.is(prettified.prettifiedTime, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { time: 1554642900000 }
     prettified = {}
-    timeLogProcessor.parse(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
+    prettifyTime(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
     t.is(prettified.prettifiedTime, '[7 Apr 2019 13:15]')
 
     log = { timestamp: 1554642900000 }
     prettified = {}
-    timeLogProcessor.parse(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
+    prettifyTime(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
     t.is(prettified.prettifiedTime, '[7 Apr 2019 13:15]')
 
     log = { time: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    timeLogProcessor.parse(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
+    prettifyTime(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
     t.is(prettified.prettifiedTime, '[7 Apr 2019 13:15]')
 
     log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    timeLogProcessor.parse(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
+    prettifyTime(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
     t.is(prettified.prettifiedTime, '[7 Apr 2019 13:15]')
   })
 
   t.test('passes through value', async t => {
     let log = { time: 1554642900000 }
     let prettified = {}
-    timeLogProcessor.parse(log, { prettified })
+    prettifyTime(log, { prettified })
     t.is(prettified.prettifiedTime, '[1554642900000]')
 
     log = { timestamp: 1554642900000 }
     prettified = {}
-    timeLogProcessor.parse(log, { prettified })
+    prettifyTime(log, { prettified })
     t.is(prettified.prettifiedTime, '[1554642900000]')
 
     log = { time: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    timeLogProcessor.parse(log, { prettified })
+    prettifyTime(log, { prettified })
     t.is(prettified.prettifiedTime, '[2019-04-07T09:15:00.000-04:00]')
 
     log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    timeLogProcessor.parse(log, { prettified })
+    prettifyTime(log, { prettified })
     t.is(prettified.prettifiedTime, '[2019-04-07T09:15:00.000-04:00]')
   })
 

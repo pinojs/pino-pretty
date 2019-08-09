@@ -8,7 +8,7 @@ const {
   defaultLogParsingSequence,
   createLogProcessor
 } = require('./lib/log-processors')
-const JsonLogProcessor = require('./lib/processors/JsonLogProcessor')
+const { JsonLogProcessor } = require('./lib/processors/JsonLogProcessor')
 const { buildLine } = require('./lib/line-builders')
 
 const defaultOptions = {
