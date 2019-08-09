@@ -4,6 +4,7 @@ const tap = require('tap')
 const getColorizer = require('../../lib/colors')
 const utils = require('../../lib/utils')
 const LevelLogProcessor = require('../../lib/processors/LevelLogProcessor')
+const MessageLogProcessor = require('../../lib/processors/MessageLogProcessor')
 
 tap.test('prettifyErrorLog', t => {
   const { prettifyErrorLog } = utils
@@ -61,43 +62,43 @@ tap.test('prettifyLevel', t => {
 })
 
 tap.test('prettifyMessage', t => {
-  const { prettifyMessage } = utils
+  const messageLogProcessor = new MessageLogProcessor()
 
   t.test('returns `undefined` if `messageKey` not found', async t => {
     const prettified = {}
-    prettifyMessage({}, { prettified })
+    messageLogProcessor.parse({}, { prettified })
     t.is(prettified.prettifiedMessage, undefined)
   })
 
   t.test('returns `undefined` if `messageKey` not string', async t => {
     const prettified = {}
-    prettifyMessage({ msg: {} }, { prettified })
+    messageLogProcessor.parse({ msg: {} }, { prettified })
     t.is(prettified.prettifiedMessage, undefined)
   })
 
   t.test('returns non-colorized value for default colorizer', async t => {
     const prettified = {}
-    prettifyMessage({ msg: 'foo' }, { prettified })
+    messageLogProcessor.parse({ msg: 'foo' }, { prettified })
     t.is(prettified.prettifiedMessage, 'foo')
   })
 
   t.test('returns non-colorized value for alternate `messageKey`', async t => {
     const prettified = {}
-    prettifyMessage({ message: 'foo' }, { prettified, messageKey: 'message' })
+    messageLogProcessor.parse({ message: 'foo' }, { prettified, messageKey: 'message' })
     t.is(prettified.prettifiedMessage, 'foo')
   })
 
   t.test('returns colorized value for color colorizer', async t => {
     const prettified = {}
     const colorizer = getColorizer(true)
-    prettifyMessage({ msg: 'foo' }, { prettified, colorizer })
+    messageLogProcessor.parse({ msg: 'foo' }, { prettified, colorizer })
     t.is(prettified.prettifiedMessage, '\u001B[36mfoo\u001B[39m')
   })
 
   t.test('returns colorized value for color colorizer for alternate `messageKey`', async t => {
     const prettified = {}
     const colorizer = getColorizer(true)
-    prettifyMessage({ message: 'foo' }, { prettified, messageKey: 'message', colorizer })
+    messageLogProcessor.parse({ message: 'foo' }, { prettified, messageKey: 'message', colorizer })
     t.is(prettified.prettifiedMessage, '\u001B[36mfoo\u001B[39m')
   })
 
