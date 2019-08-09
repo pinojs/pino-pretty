@@ -4,7 +4,7 @@ const test = require('tap').test
 const {
   LogProcessor,
   createLogProcessor,
-  builtInlogProcessors
+  builtInLogProcessors
 } = require('../lib/log-processors')
 
 test('createLogProcessor', (t) => {
@@ -31,9 +31,9 @@ test('createLogProcessor', (t) => {
 
   t.test('built-in log processor returned by name', (t) => {
     t.plan(1)
-    const definition = Object.keys(builtInlogProcessors)[0]
+    const definition = Object.keys(builtInLogProcessors)[0]
     const result = createLogProcessor(definition)
-    t.type(result, builtInlogProcessors[definition])
+    t.type(result, builtInLogProcessors[definition])
   })
 
   t.end()
