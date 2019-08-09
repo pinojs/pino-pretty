@@ -7,6 +7,7 @@ const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants
 const {
   defaultLogParsingSequence,
   createLogProcessor,
+  parseInput,
   State
 } = require('./lib/log-processors')
 const { JsonLogProcessor } = require('./lib/processors/JsonLogProcessor')
@@ -51,26 +52,17 @@ class Prettifier {
   }
 
   prettify (inputData) {
-    let nextInput = inputData
-
     const { context, logParsers, lineBuilders } = this
     const state = new State()
 
-    for (let index = 0; !state.stopped && index < logParsers.length; index++) {
-      const logParser = logParsers[index]
-      const result = logParser.parse(nextInput, context, state)
-      if (result) {
-        nextInput = result.output
-      }
-    }
+    const output = parseInput(logParsers, context, inputData, state)
     if (state.stopped) {
-      return nextInput
+      return output
     }
 
-    context.log = nextInput
+    context.log = output
 
     const line = buildLine(lineBuilders, context)
-
     return line
   }
 }
