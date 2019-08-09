@@ -8,10 +8,10 @@ const {
   defaultLogParsingSequence,
   createLogProcessor,
   parseInput,
+  buildLine,
   State
 } = require('./lib/log-processors')
 const { JsonLogProcessor } = require('./lib/processors/JsonLogProcessor')
-const { buildLine } = require('./lib/line-builders')
 
 const defaultOptions = {
   colorize: chalk.supportsColor,
