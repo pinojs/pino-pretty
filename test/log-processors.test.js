@@ -2,10 +2,10 @@
 
 const test = require('tap').test
 const {
-  LogProcessor,
   createLogProcessor,
   builtInLogProcessors
 } = require('../lib/log-processors')
+const LogProcessor = require('../lib/LogProcessor')
 
 test('createLogProcessor', (t) => {
   t.test('LogProcessor instance is returned as is', (t) => {
