@@ -3,6 +3,7 @@
 const tap = require('tap')
 const getColorizer = require('../../lib/colors')
 const utils = require('../../lib/utils')
+const LevelLogProcessor = require('../../lib/processors/LevelLogProcessor')
 
 tap.test('prettifyErrorLog', t => {
   const { prettifyErrorLog } = utils
@@ -29,11 +30,11 @@ tap.test('prettifyErrorLog', t => {
 })
 
 tap.test('prettifyLevel', t => {
-  const { prettifyLevel } = utils
+  const levelLogProcessor = new LevelLogProcessor()
 
   t.test('returns `undefined` for unknown level', async t => {
     const prettified = {}
-    prettifyLevel({}, { prettified })
+    levelLogProcessor.parse({}, { prettified })
     t.is(prettified.prettifiedLevel, undefined)
   })
 
@@ -42,7 +43,7 @@ tap.test('prettifyLevel', t => {
       level: 30
     }
     const prettified = {}
-    prettifyLevel(log, { prettified })
+    levelLogProcessor.parse(log, { prettified })
     t.is(prettified.prettifiedLevel, 'INFO ')
   })
 
@@ -52,7 +53,7 @@ tap.test('prettifyLevel', t => {
     }
     const prettified = {}
     const colorizer = getColorizer(true)
-    prettifyLevel(log, { prettified, colorizer })
+    levelLogProcessor.parse(log, { prettified, colorizer })
     t.is(prettified.prettifiedLevel, '\u001B[32mINFO \u001B[39m')
   })
 
