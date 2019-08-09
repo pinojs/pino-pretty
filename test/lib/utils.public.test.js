@@ -6,6 +6,7 @@ const utils = require('../../lib/utils')
 const LevelLogProcessor = require('../../lib/processors/LevelLogProcessor')
 const MessageLogProcessor = require('../../lib/processors/MessageLogProcessor')
 const MetadataLogProcessor = require('../../lib/processors/MetadataLogProcessor')
+const TimeLogProcessor = require('../../lib/processors/TimeLogProcessor')
 
 tap.test('prettifyErrorLog', t => {
   const { prettifyErrorLog } = utils
@@ -204,86 +205,86 @@ tap.test('prettifyObject', t => {
 })
 
 tap.test('prettifyTime', t => {
-  const { prettifyTime } = utils
+  const timeLogProcessor = new TimeLogProcessor()
 
   t.test('returns `undefined` if `time` or `timestamp` not in log', async t => {
     const prettified = {}
-    prettifyTime({}, { prettified })
+    timeLogProcessor.parse({}, { prettified })
     t.is(prettified.prettifiedTime, undefined)
   })
 
   t.test('returns prettified formatted time from custom field', async t => {
     let log = { customtime: 1554642900000 }
     let prettified = {}
-    prettifyTime(log, { prettified, translateFormat: true, timestampKey: 'customtime' })
+    timeLogProcessor.parse(log, { prettified, translateFormat: true, timestampKey: 'customtime' })
     t.is(prettified.prettifiedTime, '[2019-04-07 13:15:00.000 +0000]')
 
     prettified = {}
-    prettifyTime(log, { prettified, translateFormat: false, timestampKey: 'customtime' })
+    timeLogProcessor.parse(log, { prettified, translateFormat: false, timestampKey: 'customtime' })
     t.is(prettified.prettifiedTime, '[1554642900000]')
   })
 
   t.test('returns prettified formatted time', async t => {
     let log = { time: 1554642900000 }
     let prettified = {}
-    prettifyTime(log, { prettified, translateFormat: true })
+    timeLogProcessor.parse(log, { prettified, translateFormat: true })
     t.is(prettified.prettifiedTime, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { timestamp: 1554642900000 }
     prettified = {}
-    prettifyTime(log, { prettified, translateFormat: true })
+    timeLogProcessor.parse(log, { prettified, translateFormat: true })
     t.is(prettified.prettifiedTime, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { time: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    prettifyTime(log, { prettified, translateFormat: true })
+    timeLogProcessor.parse(log, { prettified, translateFormat: true })
     t.is(prettified.prettifiedTime, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    prettifyTime(log, { prettified, translateFormat: true })
+    timeLogProcessor.parse(log, { prettified, translateFormat: true })
     t.is(prettified.prettifiedTime, '[2019-04-07 13:15:00.000 +0000]')
 
     log = { time: 1554642900000 }
     prettified = {}
-    prettifyTime(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
+    timeLogProcessor.parse(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
     t.is(prettified.prettifiedTime, '[7 Apr 2019 13:15]')
 
     log = { timestamp: 1554642900000 }
     prettified = {}
-    prettifyTime(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
+    timeLogProcessor.parse(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
     t.is(prettified.prettifiedTime, '[7 Apr 2019 13:15]')
 
     log = { time: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    prettifyTime(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
+    timeLogProcessor.parse(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
     t.is(prettified.prettifiedTime, '[7 Apr 2019 13:15]')
 
     log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    prettifyTime(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
+    timeLogProcessor.parse(log, { prettified, translateFormat: 'd mmm yyyy H:MM' })
     t.is(prettified.prettifiedTime, '[7 Apr 2019 13:15]')
   })
 
   t.test('passes through value', async t => {
     let log = { time: 1554642900000 }
     let prettified = {}
-    prettifyTime(log, { prettified })
+    timeLogProcessor.parse(log, { prettified })
     t.is(prettified.prettifiedTime, '[1554642900000]')
 
     log = { timestamp: 1554642900000 }
     prettified = {}
-    prettifyTime(log, { prettified })
+    timeLogProcessor.parse(log, { prettified })
     t.is(prettified.prettifiedTime, '[1554642900000]')
 
     log = { time: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    prettifyTime(log, { prettified })
+    timeLogProcessor.parse(log, { prettified })
     t.is(prettified.prettifiedTime, '[2019-04-07T09:15:00.000-04:00]')
 
     log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
     prettified = {}
-    prettifyTime(log, { prettified })
+    timeLogProcessor.parse(log, { prettified })
     t.is(prettified.prettifiedTime, '[2019-04-07T09:15:00.000-04:00]')
   })
 
