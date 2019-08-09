@@ -6,7 +6,6 @@ const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants
 
 const {
   defaultLogParsingSequence,
-  defaultPrettificationSequence,
   createLogProcessor,
   JsonLogProcessor
 } = require('./lib/log-processors')
@@ -44,7 +43,6 @@ class Prettifier {
     } else {
       definitions.push(...defaultLogParsingSequence)
     }
-    definitions.push(...defaultPrettificationSequence)
     this.logProcessors = definitions.map(definition => createLogProcessor(definition))
 
     const lineBuilders = builtInLineBuilders
