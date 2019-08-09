@@ -5,6 +5,7 @@ const getColorizer = require('../../lib/colors')
 const utils = require('../../lib/utils')
 const LevelLogProcessor = require('../../lib/processors/LevelLogProcessor')
 const MessageLogProcessor = require('../../lib/processors/MessageLogProcessor')
+const MetadataLogProcessor = require('../../lib/processors/MetadataLogProcessor')
 
 tap.test('prettifyErrorLog', t => {
   const { prettifyErrorLog } = utils
@@ -106,53 +107,53 @@ tap.test('prettifyMessage', t => {
 })
 
 tap.test('prettifyMetadata', t => {
-  const { prettifyMetadata } = utils
+  const metadataLogProcessor = new MetadataLogProcessor()
 
   t.test('returns `undefined` if no metadata present', async t => {
     const prettified = {}
-    prettifyMetadata({}, { prettified })
+    metadataLogProcessor.parse({}, { prettified })
     t.is(prettified.prettifiedMetadata, undefined)
   })
 
   t.test('works with only `name` present', async t => {
     const prettified = {}
-    prettifyMetadata({ name: 'foo' }, { prettified })
+    metadataLogProcessor.parse({ name: 'foo' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(foo)')
   })
 
   t.test('works with only `pid` present', async t => {
     const prettified = {}
-    prettifyMetadata({ pid: '1234' }, { prettified })
+    metadataLogProcessor.parse({ pid: '1234' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(1234)')
   })
 
   t.test('works with only `hostname` present', async t => {
     const prettified = {}
-    prettifyMetadata({ hostname: 'bar' }, { prettified })
+    metadataLogProcessor.parse({ hostname: 'bar' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(on bar)')
   })
 
   t.test('works with only `name` & `pid` present', async t => {
     const prettified = {}
-    prettifyMetadata({ name: 'foo', pid: '1234' }, { prettified })
+    metadataLogProcessor.parse({ name: 'foo', pid: '1234' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(foo/1234)')
   })
 
   t.test('works with only `name` & `hostname` present', async t => {
     const prettified = {}
-    prettifyMetadata({ name: 'foo', hostname: 'bar' }, { prettified })
+    metadataLogProcessor.parse({ name: 'foo', hostname: 'bar' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(foo on bar)')
   })
 
   t.test('works with only `pid` & `hostname` present', async t => {
     const prettified = {}
-    prettifyMetadata({ pid: '1234', hostname: 'bar' }, { prettified })
+    metadataLogProcessor.parse({ pid: '1234', hostname: 'bar' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(1234 on bar)')
   })
 
   t.test('works with all three present', async t => {
     const prettified = {}
-    prettifyMetadata({ name: 'foo', pid: '1234', hostname: 'bar' }, { prettified })
+    metadataLogProcessor.parse({ name: 'foo', pid: '1234', hostname: 'bar' }, { prettified })
     t.is(prettified.prettifiedMetadata, '(foo/1234 on bar)')
   })
 
