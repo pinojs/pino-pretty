@@ -6,7 +6,8 @@ const { prettifyLevel } = require('../../lib/processors/LevelLogProcessor')
 const { prettifyMessage } = require('../../lib/processors/MessageLogProcessor')
 const { prettifyMetadata } = require('../../lib/processors/MetadataLogProcessor')
 const { prettifyTime } = require('../../lib/processors/TimeLogProcessor')
-const { prettifyErrorLog, prettifyObject } = require('../../lib/processors/ObjectOrErrorLogProcessor')
+const { prettifyErrorLog } = require('../../lib/processors/ErrorLogProcessor')
+const { prettifyObject } = require('../../lib/processors/ObjectLogProcessor')
 
 tap.test('prettifyErrorLog', t => {
   t.test('returns string with default settings', async t => {
