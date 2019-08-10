@@ -23,7 +23,8 @@ const defaultOptions = {
   timestampKey: TIMESTAMP_KEY,
   translateTime: false,
   useMetadata: false,
-  outputStream: process.stdout
+  outputStream: process.stdout,
+  skipObjectKeys: undefined
 }
 
 class Prettifier {
