@@ -40,29 +40,29 @@ class Prettifier {
     }
 
     const definitions = [new JsonLogProcessor()]
-    if (opts.logParsers) {
-      definitions.push(...opts.logParsers)
+    if (opts.processors) {
+      definitions.push(...opts.processors)
     } else {
       definitions.push(...defaultLogParsingSequence)
     }
-    const logProcessors = definitions.map(definition => createLogProcessor(definition))
+    const processors = definitions.map(definition => createLogProcessor(definition))
 
-    this.logParsers = logProcessors.filter(logProcessor => !!logProcessor.parse)
-    this.lineBuilders = logProcessors.filter(logProcessor => !!logProcessor.build)
+    this.parsers = processors.filter(logProcessor => !!logProcessor.parse)
+    this.builders = processors.filter(logProcessor => !!logProcessor.build)
   }
 
   prettify (inputData) {
-    const { context, logParsers, lineBuilders } = this
+    const { context, parsers, builders } = this
     const state = new State()
 
-    const output = parseInput(logParsers, context, inputData, state)
+    const output = parseInput(parsers, context, inputData, state)
     if (state.stopped) {
       return output
     }
 
     context.log = output
 
-    const line = buildLine(lineBuilders, context)
+    const line = buildLine(builders, context)
     return line
   }
 }

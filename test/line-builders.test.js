@@ -16,7 +16,7 @@ test('extensible line builders tests', (t) => {
       }
     }
     const pretty = prettyFactory({
-      logParsers: [new CustomLineBuilder()]
+      processors: [new CustomLineBuilder()]
     })
     const formatted = pretty(logLine)
     t.is(formatted.endsWith(CONTENT), true, `line builder did not append expected content`)

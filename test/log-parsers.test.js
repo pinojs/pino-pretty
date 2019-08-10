@@ -11,7 +11,7 @@ test('extensible log parsers tests', (t) => {
     t.plan(1)
     let executed = false
     const pretty = prettyFactory({
-      logParsers: [
+      processors: [
         (input) => {
           executed = true
           return { output: input }
@@ -26,7 +26,7 @@ test('extensible log parsers tests', (t) => {
     t.plan(1)
     const builtInPretty = prettyFactory()
     const customPretty = prettyFactory({
-      logParsers: [
+      processors: [
         ...defaultLogParsingSequence,
         () => undefined
       ]
@@ -47,7 +47,7 @@ test('extensible log parsers tests', (t) => {
       }, [])
     const builtInPretty = prettyFactory()
     const customPretty = prettyFactory({
-      logParsers: names
+      processors: names
     })
     const builtInOutput = builtInPretty(logLine)
     const customOutput = customPretty(logLine)
@@ -58,7 +58,7 @@ test('extensible log parsers tests', (t) => {
     t.plan(1)
     let wasParsed = false
     const customPretty = prettyFactory({
-      logParsers: [(log) => {
+      processors: [(log) => {
         wasParsed = typeof log === 'object'
       }]
     })
