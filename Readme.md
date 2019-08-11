@@ -63,7 +63,7 @@ pino app.js | pino-pretty
 - `--messageKey` (`-m`): Define the key that contains the main log message.
   Default: `msg`.
 - `--timestampKey` (`-m`): Define the key that contains the log timestamp.
-  Default: `time`.  
+  Default: `time`.
 - `--translateTime` (`-t`): Translate the epoch time value into a human readable
   date and time string. This flag also can set the format string to apply when
   translating the date to human readable format. For a list of available pattern
@@ -130,8 +130,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   translateTime: false, // --translateTime
   search: 'foo == `bar`', // --search
   ignore: 'pid,hostname', // --ignore
-  logParsers: undefined,
-  lineBuilders: undefined
+  processors: undefined
 }
 ```
 
@@ -141,102 +140,264 @@ The `colorize` default follows
 Note: the `logParsers` and `lineBuilders` options do not correspond to CLI arguments.
 They are available only for API usage, as described below.
 
-#### log parsers
+#### log processors
 
-Log parsers are simple functions that parse the log. `pino-pretty` uses a number
-of built-in log parsers.
+A log processor is an object that parses a log entry and builds the corresponding
+formatted line sent to the output stream. The log processing sequence is composed of
+a series of log processors, each of which handles a particular property or aspect of
+the input.
 
-The `logParsers` option accepts an array of functions, which are appended to the
-built-in log parser functions and therefore executed immediately after them. This
-provides an opportunity to further modify the formatted log output by supplying
-custom log parser functions.
+A log processor can be a `parser`, a `builder`, or both. Accordingly, the log
+processing sequence has two stages: a parsing stage and a building stage. All parsers
+are executed in order, and then all builders are executed in the same order. The
+output of the parsers is passed as input to the builders.
 
-The log parser function reeives two parameters:`input` and `context`.
-* The `input` object represents the output of the previously-executed parsers
-* The `context` object has a number of properties that are helpful in custom
-  parsers, including the following:
+A parser parses an entry and can change it before it is passed to subsequent parsers.
+It can also modify the `context` object, which makes it possible to pass data between
+parsers, or between the parse and build stages of a log processor that supports both
+stages.
 
-  - `opts`: the options passed to the formatter
+`pino-pretty` uses the following built-in log processors, in this order:
+
+* `json` (*parser*) - Parses the input `ndjson` string as an object, which is
+  subsequently passed to the remaining log processors.
+* `primitives` (*parser*) - If the parsed result of the `json` log processor is `null`,
+  a boolean value, or a number, the log processing sequence for the current line is
+  aborted (short-circuited) and the value is returned.
+* `search` (*parser*) - If the `search` property is specified, filters out entries that
+  do not match the `search` value, based on the `jmespath` library.
+* `ignore` (*parser*) - Removes the specified properties from the `input` object.
+* `time` (*parser*, *builder*) - Prettifies a timestamp if the given `input` object has
+  either `time`, `timestamp` or custom specified timestamp property.
+* `level` (*parser*, *builder*) - Checks if the passed in `input` object has a `level`
+  value and returns a prettified string for that level if so.
+* `metadata` (*parser*, *builder*) - Prettifies metadata that is usually present in a Pino
+  log line. It looks for fields `name`, `pid`, and `hostname` and returns a formatted
+  string using the fields it finds.
+* `semicolon` (*builder*) - Appends a semicolon to the output if values have already been
+  added to the output.
+* `message` (*parser*, *builder*) - Prettifies a message string if the given `input` object
+  has a `message` property.
+* `eol` (*builder*) - Adds an end-of-line to the output. Uses `\r\n` if the `crlf` option
+  is `true` or `\n` otherwise. Defaults to `\n`.
+* `error` (*builder*) - Given a log object that has a `type: 'Error'` key, prettifies the
+  object and returns the result.
+* `object` (*builder*) - Prettifies a standard object. Special care is taken when
+  processing the object to handle child objects that are attached to keys known to
+  contain error objects.
+
+The built-in log processing sequence can be replaced with a custom sequence comprised
+of a mix of built-in and custom log processors. To customize the log processing
+sequence, pass an array of log processors to the `processors` option. They will be
+executed in the order in which they are specified.
+
+To use a built-in log processor in the custom sequence, simply add a string specifying
+its name to the `processors` array. Any of the log processors in the list above can be
+used, except for the `json` log processor.
+
+Do not add the built-in `json` log processor to the custom sequence. The `json` log
+processor is always executed first, even when the `processors` option is specified. It
+cannot be removed or replaced. This is intended to ensure that any subsequent log
+processors in the sequence will always operate on an object consistently parsed from the
+original `ndjson` input.
+
+The default sequence is equivalent to specifying the `processors` option as follows:
+```js
+{
+  processors: [
+    // 'json', - the `json` log processor is always implicitly added at the beginning
+    'primitives',
+    'search',
+    'ignore',
+    'time',
+    'level',
+    'metadata',
+    'semicolon',
+    'message',
+    'eol',
+    'error',
+    'object'
+  ]
+}
+```
+
+By changing the order of the built-in log processors or excluding some of them, the
+output can changed. For example, to only show the time, level and actual message,
+while reversing the order of the time and level, the sequence can be specified as
+follows: `{ processors: ['level', 'time', 'message'] }`.
+
+Custom log processors can also be added to the log processing sequence. To add a
+custom log processor, use one of the following structures:
+
+* **parser** object
+  ```js
+  {
+    parse(input, context) {}
+  }
+  ```
+* **builder** object
+  ```js
+  {
+    build(lineParts, context) {}
+  }
+  ```
+* complete **parser** and **builder** object
+  ```js
+  {
+    parse(input, context) {}
+    build(lineParts, context) {}
+  }
+  ```
+* **parser** function
+  ```js
+  (input, context) => {}
+  ```
+
+Only declare the `parse` or `build` method that is needed. Declaring a method that
+does nothing will negatively affect performance.
+
+#### parsing
+
+The `parse` function receives three parameters:`input`, `context`, and `state`.
+
+* The `input` object represents the current log entry, possibly modified by the
+  previously-executed parsers.
+
+* The `context` object represents the options, settings, and other data used by the log
+  processors. The `options` object used to initialize Pino, is merged into the `context`
+  object, making those settings available to overy log processor.
+
+  The following properties are always available as well:
   - `EOL`: the actual end-of-line characters, as specified by the `crlf` option
   - `IDENT`: the default indentation string
+  - `translateFormat`: the time formatting string, as specified by the `translateTime`
+    option
+  - `colorizer`: the selected colorizer function that accepts a level value and
+    returns a colorized string
+  - `prettified`: an object that caches prettified text, whose properties are typically
+    set by a parser and consumed by a builder
 
-The log parser function returns a result object with two properties: `output` and `done`.
+* The `state` object has a `stop` method, which is used to abort the log processing
+  process for the current entry immediately after the current parser returns.
 
-  - `output`: the parsed string
-  - `done`: a boolean value that causes the formatter to abort the parsing process,
-    returning `output` as the final formatted output
+The return value of the parse function is passed to the next parse function in the
+sequence. The value returned from the last parse function is passed to the build
+function.
 
-The following is an example of a minimal log parser function:
+For most parsers, the return value should be a log entry object that will be used by
+the builders to construct the output line.
 
-```js
-function (input, context) {
-  // parse/transform the input
-  const output = input.toLowerCase()
-  return { output }
-}
-```
+In some cases, whether for performance or other reasons, it makes sense to return the
+result of a parser directly without performing any additional processing. The process
+can be short-circuited by calling the `stop` method of the `state` argument. No other
+parsers will be used, and the build stage will be skipped as well. The value returned
+by the parser that calls the `stop` function will be returned as the final formatted
+output.
 
-To short-circuit the parsing process and prevent subsequent log parsers from being executed,
-set `done` to `true`:
+#### building
 
-```js
-function (input, context) {
-  return {
-    output: input.toLowerCase(),
-    done: true // short-circuit the log parsing process
-  }
-}
-```
-
-#### line builders
-
-Line builders are simple functions that prepare the final formatted line and are executed
-after the log parsers. `pino-pretty` uses a number of built-in line builders.
-
-The `lineBuilders` option accepts an array of functions, which are appended to the
-built-in line builder functions and therefore executed immediately after them. This
-provides an opportunity to further modify the formatted log output by supplying
-custom line builder functions.
-
-The log parser function reeives two parameters:`lineParts` and `context`.
+The `build` function is a simple functions that prepares the final formatted line.
+It receives two parameters: `lineParts` and `context`.
 * The `lineParts` array contains the ordered list of strings that will eventually be joined
-* The `context` object is the same `context` object passed to the log parser functions,
-  though it also has a few additional properties that are helpful in custom line builders,
-  including the following:
+  after all the build functions have been executed.
+* The `context` object is the same `context` object passed to the parsers, with one
+  exception: the final output produced by the parsers is added to the object as the `log`
+  property.
 
-  - `log`: the final output produced by the log parsers
-  - `prettified`: a number of strings prettified before the line builders run, including
-    `prettifiedLevel`, `prettifiedMessage`, `prettifiedMetadata`, `prettifiedTime`
+  Also, when the built-in prettifying log processors are used, a number of prettified
+  strings are added to the `context.prettified` property: `prettifiedLevel`,
+  `prettifiedMessage`, `prettifiedMetadata`, and `prettifiedTime`.
 
-The line builder function does not return a value. To change the output, modify the
+The builder function does not return a value. To change the output, modify the
 `lineParts` array.
 
-Note that if a log parser short-circuits the parsing process, the line builders will
-not be executed at all.
+Note that if a parser short-circuits the parsing process, the builders will not be
+executed at all.
 
-The following is an example of a minimal line builder function:
+#### examples
 
-```js
-function (lineParts) {
-  // add a value to the array
-  lineParts.push('NEW VALUE')
-}
-```
+The following are a number of examples of parsers, builders, and combined log processors:
 
-The following is an example of a more complex line builder function, based on one of
-the built-in line builders.
+* **parser** - Perform a transformation on the input message:
 
-```js
-function (lineParts, { prettified }) => {
-  const { prettifiedTime } = prettified
-  if (prettifiedTime) {
-    if (lineParts.length > 0) {
-      lineParts.push(' ')
-    }
-    lineParts.push(prettifiedTime)
+  ```js
+  function (input) {
+    input.msg = input.msg.toLowerCase()
+    return input
   }
-},
-```
+  ```
+
+* **parser** - Short-circuit the parsing process and prevent subsequent log parsers from
+  being executed:
+
+  ```js
+  (input, context, state) => {
+    state.stop() // short-circuit the log parsing process
+    return input
+  }
+  ```
+
+* **parser** - Prepare a prettified string:
+
+  ```js
+  {
+    parse(input, { colorizer, inlineSection ) {
+      if(inlineSection && 'section' in input) {
+        context.prettified.section = `[${colorizer(input.section)}]`
+      }
+      return input
+    }
+  }
+  ```
+
+* **builder** - Add a value to the array:
+
+  ```js
+  function (lineParts) {
+    lineParts.push('NEW VALUE')
+  }
+  ```
+
+* **builder** - The following is an example of a more complex builder function, based
+  on one of the built-in builders:
+
+  ```js
+  {
+    build (lineParts, { prettified }) => {
+      const { prettifiedTime } = prettified
+      if (prettifiedTime) {
+        if (lineParts.length > 0) {
+          lineParts.push(' ')
+        }
+        lineParts.push(prettifiedTime)
+      }
+    }
+  }
+  ```
+
+* **parser** and **builder** - Parse a log entry and then use the result to build the
+  output line:
+
+  ```js
+  {
+    parse(input, { colorizer, inlineSection ) {
+      if(inlineSection && 'section' in input) {
+        context.prettified.section = ${colorizer(input.section)}
+      }
+      return input
+    }
+    build (lineParts, { prettified }) => {
+      const { section } = prettified
+      if (section) {
+        if (lineParts.length > 0) {
+          lineParts.push(' ')
+        }
+        lineParts.push(`[${section}]`)
+      }
+    }
+  }
+  ```
+
 
 <a id="license"><a>
 ## License
