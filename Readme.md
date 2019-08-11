@@ -298,7 +298,7 @@ output.
 
 #### building
 
-The `build` function is a simple functions that prepares the final formatted line.
+The `build` function is a simple function that prepares the final formatted line.
 It receives two parameters: `lineParts` and `context`.
 * The `lineParts` array contains the ordered list of strings that will eventually be joined
   after all the build functions have been executed.
