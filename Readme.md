@@ -319,7 +319,8 @@ The builder function does not return a value. To change the output, modify the
 Note that if a parser short-circuits the parsing process, the builders will not be
 executed at all.
 
-#### examples
+<a id="log-processors-examples"></a>
+#### Examples
 
 The following are a number of examples of parsers, builders, and combined log processors:
 
