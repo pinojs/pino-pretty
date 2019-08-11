@@ -160,7 +160,9 @@ stages.
 `pino-pretty` uses the following built-in log processors, in this order:
 
 * `json` (*parser*) - Parses the input `ndjson` string as an object, which is
-  subsequently passed to the remaining log processors.
+  subsequently passed to the remaining log processors. If the json parser fails to parse
+  the input, the log processing sequence for the current line is aborted (short-
+  circuited) and the original input is returned with an end-of-line.
 * `primitives` (*parser*) - If the parsed result of the `json` log processor is `null`,
   a boolean value, or a number, the log processing sequence for the current line is
   aborted (short-circuited) and the value is returned.
