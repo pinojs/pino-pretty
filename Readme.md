@@ -140,7 +140,8 @@ The `colorize` default follows
 Note: the `logParsers` and `lineBuilders` options do not correspond to CLI arguments.
 They are available only for API usage, as described below.
 
-#### log processors
+<a id="log-processors"></a>
+#### Log Processors
 
 A log processor is an object that parses a log entry and builds the corresponding
 formatted line sent to the output stream. The log processing sequence is composed of
