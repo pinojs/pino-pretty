@@ -298,7 +298,8 @@ parsers will be used, and the build stage will be skipped as well. The value ret
 by the parser that calls the `stop` function will be returned as the final formatted
 output.
 
-#### building
+<a id="log-processors-building"></a>
+#### Building
 
 The `build` function is a simple function that prepares the final formatted line.
 It receives two parameters: `lineParts` and `context`.
