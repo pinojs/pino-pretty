@@ -347,7 +347,7 @@ The following are a number of examples of parsers, builders, and combined log pr
 
   ```js
   {
-    parse(input, { colorizer, inlineSection ) {
+    parse(input, { colorizer, inlineSection }) {
       if(inlineSection && 'section' in input) {
         context.prettified.section = `[${colorizer(input.section)}]`
       }
