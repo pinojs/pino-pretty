@@ -381,8 +381,9 @@ The following are a number of examples of parsers, builders, and combined log pr
   }
   ```
 
-* **parser** and **builder** - Parse a log entry and then use the result to build the
-  output line:
+* **parser** and **builder** - Parse a log entry during the parsing stage, and use the
+  result to build the output line during the building stage (after all the parsers have
+  been executed):
 
   ```js
   {
