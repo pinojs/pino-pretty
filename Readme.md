@@ -259,7 +259,8 @@ custom log processor, use one of the following structures:
 Only declare the `parse` or `build` method that is needed. Declaring a method that
 does nothing will negatively affect performance.
 
-#### parsing
+<a id="log-processors-parsing"></a>
+#### Parsing
 
 The `parse` function receives three parameters:`input`, `context`, and `state`.
 
