@@ -267,7 +267,7 @@ The `parse` function receives three parameters:`input`, `context`, and `state`.
 
 * The `context` object represents the options, settings, and other data used by the log
   processors. The `options` object used to initialize Pino, is merged into the `context`
-  object, making those settings available to overy log processor.
+  object, making those settings available to every log processor.
 
   The following properties are always available as well:
   - `EOL`: the actual end-of-line characters, as specified by the `crlf` option
