@@ -252,5 +252,15 @@ tap.test('prettifyTime', t => {
     t.is(str, '[2019-04-07T09:15:00.000-04:00]')
   })
 
+  t.test('handles the 0 timestamp', async t => {
+    let log = { time: 0 }
+    let str = prettifyTime({ log })
+    t.is(str, '[0]')
+
+    log = { timestamp: 0 }
+    str = prettifyTime({ log })
+    t.is(str, '[0]')
+  })
+
   t.end()
 })
