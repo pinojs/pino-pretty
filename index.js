@@ -55,11 +55,11 @@ module.exports = function prettyFactory (options) {
     let log
     if (!isObject(inputData)) {
       const parsed = jsonParser(inputData)
-      log = parsed.value
-      if (parsed.err) {
+      if (parsed.err || !isObject(parsed.value)) {
         // pass through
         return inputData + EOL
       }
+      log = parsed.value
     } else {
       log = inputData
     }
