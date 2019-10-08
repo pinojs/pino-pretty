@@ -76,5 +76,22 @@ test('cli', (t) => {
     t.tearDown(() => child.kill())
   })
 
+  t.test('passes through stringified date as string', (t) => {
+    t.plan(1)
+    const child = spawn(process.argv0, [bin])
+    child.on('error', t.threw)
+
+    const date = JSON.stringify(new Date(epoch))
+
+    child.stdout.on('data', (data) => {
+      t.is(data.toString(), date + '\n')
+    })
+
+    child.stdin.write(date)
+    child.stdin.write('\n')
+
+    t.tearDown(() => child.kill())
+  })
+
   t.end()
 })
