@@ -36,7 +36,7 @@ test('cli', (t) => {
     const child = spawn(process.argv0, [bin, '-t'])
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), `[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n`)
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => child.kill())
@@ -70,7 +70,7 @@ test('cli', (t) => {
     const child = spawn(process.argv0, [bin, '-i', 'pid,hostname'])
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), `[1522431328992] INFO : hello world\n`)
+      t.is(data.toString(), '[1522431328992] INFO : hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => child.kill())

@@ -22,7 +22,7 @@ tap.test('prettifyErrorLog', t => {
   t.test('returns string with custom eol', async t => {
     const err = Error('Something went wrong')
     const str = prettifyErrorLog({ log: err, eol: '\r\n' })
-    t.true(str.startsWith(`    Error: Something went wrong\r\n`))
+    t.true(str.startsWith('    Error: Something went wrong\r\n'))
   })
 
   t.end()
@@ -150,22 +150,22 @@ tap.test('prettifyObject', t => {
 
   t.test('works with single level properties', async t => {
     const str = prettifyObject({ input: { foo: 'bar' } })
-    t.is(str, `    foo: "bar"\n`)
+    t.is(str, '    foo: "bar"\n')
   })
 
   t.test('works with multiple level properties', async t => {
     const str = prettifyObject({ input: { foo: { bar: 'baz' } } })
-    t.is(str, `    foo: {\n      "bar": "baz"\n    }\n`)
+    t.is(str, '    foo: {\n      "bar": "baz"\n    }\n')
   })
 
   t.test('skips specified keys', async t => {
     const str = prettifyObject({ input: { foo: 'bar', hello: 'world' }, skipKeys: ['foo'] })
-    t.is(str, `    hello: "world"\n`)
+    t.is(str, '    hello: "world"\n')
   })
 
   t.test('ignores predefined keys', async t => {
     const str = prettifyObject({ input: { foo: 'bar', pid: 12345 } })
-    t.is(str, `    foo: "bar"\n`)
+    t.is(str, '    foo: "bar"\n')
   })
 
   t.test('works with error props', async t => {
@@ -192,7 +192,7 @@ tap.test('prettifyTime', t => {
   })
 
   t.test('returns prettified formatted time from custom field', async t => {
-    let log = { customtime: 1554642900000 }
+    const log = { customtime: 1554642900000 }
     let str = prettifyTime({ log, translateFormat: true, timestampKey: 'customtime' })
     t.is(str, '[2019-04-07 13:15:00.000 +0000]')
 

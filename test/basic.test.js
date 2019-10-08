@@ -1,5 +1,7 @@
 'use strict'
 
+/* eslint no-prototype-builtins: 0 */
+
 const { Writable } = require('readable-stream')
 const os = require('os')
 const test = require('tap').test
