@@ -33,7 +33,8 @@ const defaultOptions = {
   timestampKey: TIMESTAMP_KEY,
   translateTime: false,
   useMetadata: false,
-  outputStream: process.stdout
+  outputStream: process.stdout,
+  customPrettifiers: []
 }
 
 module.exports = function prettyFactory (options) {
@@ -86,6 +87,14 @@ module.exports = function prettyFactory (options) {
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer })
     const prettifiedMetadata = prettifyMetadata({ log })
     const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
+    const customPrettifiedProps = []
+
+    if (opts.customPrettifiers.length) {
+      opts.customPrettifiers.forEach(prettifier => {
+        const { prettify, key } = prettifier
+        customPrettifiedProps.push(prettify({ log, key }))
+      })
+    }
 
     let line = ''
     if (opts.levelFirst && prettifiedLevel) {
@@ -118,6 +127,10 @@ module.exports = function prettyFactory (options) {
       line = `${line} ${prettifiedMessage}`
     }
 
+    if (customPrettifiedProps.length) {
+      line = `${line} ${customPrettifiedProps.join(' ')}`
+    }
+
     if (line.length > 0) {
       line += EOL
     }
@@ -132,7 +145,13 @@ module.exports = function prettyFactory (options) {
       })
       line += prettifiedErrorLog
     } else {
-      const skipKeys = typeof log[messageKey] === 'string' ? [messageKey] : undefined
+      const customPrettifiedKeys = opts.customPrettifiers.length
+        ? opts.customPrettifiers.map(({ key }) => key)
+        : []
+      const skipKeys = [
+        typeof log[messageKey] === 'string' && messageKey,
+        ...customPrettifiedKeys
+      ]
       const prettifiedObject = prettifyObject({
         input: log,
         skipKeys,
