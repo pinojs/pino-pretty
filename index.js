@@ -87,13 +87,10 @@ module.exports = function prettyFactory (options) {
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer })
     const prettifiedMetadata = prettifyMetadata({ log })
     const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
-    const customPrettifiedProps = []
+    const prettifiedProps = []
 
     if (opts.customPrettifiers.length) {
-      opts.customPrettifiers.forEach(prettifier => {
-        const { prettify, key } = prettifier
-        customPrettifiedProps.push(prettify({ log, key }))
-      })
+      opts.customPrettifiers.forEach(({ prettify, key }) => prettifiedProps.push(prettify({ log, key })))
     }
 
     let line = ''
@@ -127,8 +124,8 @@ module.exports = function prettyFactory (options) {
       line = `${line} ${prettifiedMessage}`
     }
 
-    if (customPrettifiedProps.length) {
-      line = `${line} ${customPrettifiedProps.join(' ')}`
+    if (prettifiedProps.length) {
+      line = `${line} ${prettifiedProps.join(' ')}`
     }
 
     if (line.length > 0) {
