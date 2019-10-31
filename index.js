@@ -90,7 +90,11 @@ module.exports = function prettyFactory (options) {
     const prettifiedProps = []
 
     if (opts.customPrettifiers.length) {
-      opts.customPrettifiers.forEach(({ prettify, key }) => prettifiedProps.push(prettify({ log, key })))
+      opts.customPrettifiers.forEach(({ prettify, key }) => {
+        if (log[key]) {
+          prettifiedProps.push(prettify({ log, key }))
+        }
+      })
     }
 
     let line = ''
@@ -143,7 +147,7 @@ module.exports = function prettyFactory (options) {
       line += prettifiedErrorLog
     } else {
       const customPrettifiedKeys = opts.customPrettifiers.length
-        ? opts.customPrettifiers.map(({ key }) => key)
+        ? opts.customPrettifiers.map(({ key }) => log[key] ? key : undefined)
         : []
       const skipKeys = [
         typeof log[messageKey] === 'string' && messageKey,
