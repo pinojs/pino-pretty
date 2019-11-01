@@ -1,7 +1,5 @@
 'use strict'
 
-/* eslint no-prototype-builtins: 0 */
-
 const { Writable } = require('readable-stream')
 const os = require('os')
 const test = require('tap').test
@@ -12,7 +10,7 @@ const _prettyFactory = require('../')
 function prettyFactory (opts) {
   if (!opts) {
     opts = { colorize: false }
-  } else if (!opts.hasOwnProperty('colorize')) {
+  } else if (!Object.prototype.hasOwnProperty.call(opts, 'colorize')) {
     opts.colorize = false
   }
   return _prettyFactory(opts)
