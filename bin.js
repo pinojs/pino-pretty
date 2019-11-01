@@ -2,11 +2,33 @@
 
 const fs = require('fs')
 const args = require('args')
+const path = require('path')
 const pump = require('pump')
 const split = require('split2')
 const { Transform } = require('readable-stream')
 const prettyFactory = require('./')
 const CONSTANTS = require('./lib/constants')
+const { isObject } = require('./lib/utils')
+
+const bourne = require('@hapi/bourne')
+const stripJsonComments = require('strip-json-comments')
+const parseJSON = input => {
+  return bourne.parse(stripJsonComments(input), { protoAction: 'remove' })
+}
+
+const JoyCon = require('joycon')
+const joycon = new JoyCon({
+  parseJSON,
+  files: [
+    'pino-pretty.config.js',
+    '.pino-prettyrc',
+    '.pino-prettyrc.json'
+  ]
+})
+joycon.addLoader({
+  test: /\.[^.]*rc$/,
+  loadSync: (path) => parseJSON(fs.readFileSync(path, 'utf-8'))
+})
 
 args
   .option(['c', 'colorize'], 'Force adding color sequences to the output')
@@ -30,9 +52,10 @@ args
   .example('cat log | pino-pretty -l', 'To flip level and time/date in standard output use the -l option')
   .example('cat log | pino-pretty -s "msg == \'hello world\'"', 'Only prints messages with msg equals to \'hello world\'')
   .example('cat log | pino-pretty -i pid,hostname', 'Prettify logs but don\'t print pid and hostname')
-  .example('cat log | pino-pretty --config=/path/to/config.json', 'Loads options from a json file')
+  .example('cat log | pino-pretty --config=/path/to/config.json', 'Loads options from a config file')
 
-const opts = args.parse(process.argv)
+const opts = args.parse(process.argv) || {}
+Object.assign(opts, loadConfig(opts.config))
 const pretty = prettyFactory(opts)
 const prettyTransport = new Transform({
   objectMode: true,
@@ -48,4 +71,27 @@ pump(process.stdin, split(), prettyTransport, process.stdout)
 // https://github.com/pinojs/pino/pull/358
 if (!process.stdin.isTTY && !fs.fstatSync(process.stdin.fd).isFile()) {
   process.once('SIGINT', function noOp () {})
+}
+
+function loadConfig (configPath) {
+  const options = {}
+  if (configPath) {
+    const filepath = path.resolve(configPath)
+    const filename = path.basename(filepath)
+    const parentDir = path.dirname(filepath)
+    Object.assign(options, {
+      files: [filename],
+      cwd: parentDir,
+      stopDir: path.dirname(parentDir)
+    })
+  }
+  const result = joycon.loadSync(options)
+  if (result.path && !isObject(result.data)) {
+    configPath = configPath || path.basename(result.path)
+    throw new Error(`Invalid runtime configuration file: ${configPath}`)
+  }
+  if (configPath && !result.data) {
+    throw new Error(`Failed to load runtime configuration file: ${configPath}`)
+  }
+  return result.data
 }

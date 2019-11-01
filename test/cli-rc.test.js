@@ -16,13 +16,67 @@ test('cli', (t) => {
 
   t.tearDown(() => rimraf(tmpDir, noop))
 
-  t.test('loads and applies .pino-prettyrc.json', (t) => {
+  t.test('loads and applies default config file: pino-pretty.config.js', (t) => {
     t.plan(1)
     // Set translateTime: true on run configuration
-    const rcFile = path.join(tmpDir, '.pino-prettyrc.json')
-    fs.writeFileSync(rcFile, JSON.stringify({ translateTime: true }, null, 4))
+    const configFile = path.join(tmpDir, 'pino-pretty.config.js')
+    fs.writeFileSync(configFile, 'module.exports = { translateTime: true }')
     // Validate that the time has been translated
     const child = spawn(process.argv0, [bin], { cwd: tmpDir })
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
+    })
+    child.stdin.write(logLine)
+    t.tearDown(() => {
+      fs.unlinkSync(configFile)
+      child.kill()
+    })
+  })
+
+  t.test('loads and applies default config file: .pino-prettyrc', (t) => {
+    t.plan(1)
+    // Set translateTime: true on run configuration
+    const configFile = path.join(tmpDir, '.pino-prettyrc')
+    fs.writeFileSync(configFile, JSON.stringify({ translateTime: true }, null, 4))
+    // Validate that the time has been translated
+    const child = spawn(process.argv0, [bin], { cwd: tmpDir })
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
+    })
+    child.stdin.write(logLine)
+    t.tearDown(() => {
+      fs.unlinkSync(configFile)
+      child.kill()
+    })
+  })
+
+  t.test('loads and applies default config file: .pino-prettyrc.json', (t) => {
+    t.plan(1)
+    // Set translateTime: true on run configuration
+    const configFile = path.join(tmpDir, '.pino-prettyrc.json')
+    fs.writeFileSync(configFile, JSON.stringify({ translateTime: true }, null, 4))
+    // Validate that the time has been translated
+    const child = spawn(process.argv0, [bin], { cwd: tmpDir })
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
+    })
+    child.stdin.write(logLine)
+    t.tearDown(() => {
+      fs.unlinkSync(configFile)
+      child.kill()
+    })
+  })
+
+  t.test('loads and applies custom config file: pino.config.test.json', (t) => {
+    t.plan(1)
+    // Set translateTime: true on run configuration
+    const configFile = path.join(tmpDir, 'pino.config.test.json')
+    fs.writeFileSync(configFile, JSON.stringify({ translateTime: true }, null, 4))
+    // Validate that the time has been translated
+    const child = spawn(process.argv0, [bin, '--config', configFile], { cwd: tmpDir })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
@@ -31,13 +85,13 @@ test('cli', (t) => {
     t.tearDown(() => child.kill())
   })
 
-  t.test('loads and applies .pino-prettyrc.test.json', (t) => {
+  t.test('loads and applies custom config file: pino.config.test.js', (t) => {
     t.plan(1)
     // Set translateTime: true on run configuration
-    const testRcFile = path.join(tmpDir, '.pino-prettyrc.test.json')
-    fs.writeFileSync(testRcFile, JSON.stringify({ translateTime: true }, null, 4))
+    const configFile = path.join(tmpDir, 'pino.config.test.js')
+    fs.writeFileSync(configFile, 'module.exports = { translateTime: true }')
     // Validate that the time has been translated
-    const child = spawn(process.argv0, [bin, '--config', testRcFile], { cwd: tmpDir })
+    const child = spawn(process.argv0, [bin, '--config', configFile], { cwd: tmpDir })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
@@ -48,10 +102,34 @@ test('cli', (t) => {
 
   t.test('throws on missing config file', (t) => {
     t.plan(2)
-    const child = spawn(process.argv0, [bin, '--config', '.missing.json'], { cwd: tmpDir })
+    const child = spawn(process.argv0, [bin, '--config', 'pino.config.missing.json'], { cwd: tmpDir })
     child.on('close', (code) => t.is(code, 1))
     child.stderr.on('data', (data) => {
-      t.contains(data.toString(), 'Error: Failed to load runtime configuration file [.missing.json]\n')
+      t.contains(data.toString(), 'Error: Failed to load runtime configuration file: pino.config.missing.json\n')
+    })
+    t.tearDown(() => child.kill())
+  })
+
+  t.test('throws on invalid default config file', (t) => {
+    t.plan(2)
+    const configFile = path.join(tmpDir, 'pino-pretty.config.js')
+    fs.writeFileSync(configFile, 'module.exports = () => {}')
+    const child = spawn(process.argv0, [bin], { cwd: tmpDir })
+    child.on('close', (code) => t.is(code, 1))
+    child.stderr.on('data', (data) => {
+      t.contains(data.toString(), 'Error: Invalid runtime configuration file: pino-pretty.config.js\n')
+    })
+    t.tearDown(() => child.kill())
+  })
+
+  t.test('throws on invalid custom config file', (t) => {
+    t.plan(2)
+    const configFile = path.join(tmpDir, 'pino.config.invalid.js')
+    fs.writeFileSync(configFile, 'module.exports = () => {}')
+    const child = spawn(process.argv0, [bin, '--config', 'pino.config.invalid.js'], { cwd: tmpDir })
+    child.on('close', (code) => t.is(code, 1))
+    child.stderr.on('data', (data) => {
+      t.contains(data.toString(), 'Error: Invalid runtime configuration file: pino.config.invalid.js\n')
     })
     t.tearDown(() => child.kill())
   })

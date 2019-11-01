@@ -3,7 +3,6 @@
 const chalk = require('chalk')
 const jmespath = require('jmespath')
 const colors = require('./lib/colors')
-const path = require('path')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
 const {
   isObject,
@@ -34,22 +33,11 @@ const defaultOptions = {
   timestampKey: TIMESTAMP_KEY,
   translateTime: false,
   useMetadata: false,
-  outputStream: process.stdout,
-  config: path.join(process.cwd(), '.pino-prettyrc.json')
+  outputStream: process.stdout
 }
 
 module.exports = function prettyFactory (options) {
   const opts = Object.assign({}, defaultOptions, options)
-  try {
-    const config = require(opts.config)
-    Object.assign(opts, config)
-  } catch (error) {
-    // Only throw an error if the options file path is not the default
-    if (defaultOptions.config !== opts.config) {
-      throw new Error(`Failed to load runtime configuration file [${opts.config}]`)
-    }
-  }
-
   const EOL = opts.crlf ? '\r\n' : '\n'
   const IDENT = '    '
   const messageKey = opts.messageKey
