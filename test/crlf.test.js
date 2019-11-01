@@ -1,7 +1,16 @@
 'use strict'
 
 const test = require('tap').test
-const prettyFactory = require('../')
+const _prettyFactory = require('../')
+
+function prettyFactory (opts) {
+  if (!opts) {
+    opts = { colorize: false }
+  } else if (!Object.prototype.hasOwnProperty.call(opts, 'colorize')) {
+    opts.colorize = false
+  }
+  return _prettyFactory(opts)
+}
 
 const logLine = '{"level":30,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo","v":1}\n'
 

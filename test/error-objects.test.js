@@ -5,7 +5,16 @@ const os = require('os')
 const test = require('tap').test
 const pino = require('pino')
 const serializers = pino.stdSerializers
-const prettyFactory = require('../')
+const _prettyFactory = require('../')
+
+function prettyFactory (opts) {
+  if (!opts) {
+    opts = { colorize: false }
+  } else if (!Object.prototype.hasOwnProperty.call(opts, 'colorize')) {
+    opts.colorize = false
+  }
+  return _prettyFactory(opts)
+}
 
 // All dates are computed from 'Fri, 30 Mar 2018 17:35:28 GMT'
 const epoch = 1522431328992
