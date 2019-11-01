@@ -46,5 +46,15 @@ test('cli', (t) => {
     t.tearDown(() => child.kill())
   })
 
+  t.test('throws on missing config file', (t) => {
+    t.plan(2)
+    const child = spawn(process.argv0, [bin, '--config', '.missing.json'], { cwd: tmpDir })
+    child.on('close', (code) => t.is(code, 1))
+    child.stderr.on('data', (data) => {
+      t.contains(data.toString(), 'Error: Failed to load runtime configuration file [.missing.json]\n')
+    })
+    t.tearDown(() => child.kill())
+  })
+
   t.end()
 })
