@@ -23,7 +23,8 @@ const joycon = new JoyCon({
     'pino-pretty.config.js',
     '.pino-prettyrc',
     '.pino-prettyrc.json'
-  ]
+  ],
+  stopDir: path.dirname(process.cwd())
 })
 joycon.addLoader({
   test: /\.[^.]*rc$/,
@@ -74,18 +75,8 @@ if (!process.stdin.isTTY && !fs.fstatSync(process.stdin.fd).isFile()) {
 }
 
 function loadConfig (configPath) {
-  const options = {}
-  if (configPath) {
-    const filepath = path.resolve(configPath)
-    const filename = path.basename(filepath)
-    const parentDir = path.dirname(filepath)
-    Object.assign(options, {
-      files: [filename],
-      cwd: parentDir,
-      stopDir: path.dirname(parentDir)
-    })
-  }
-  const result = joycon.loadSync(options)
+  const files = configPath ? [path.resolve(configPath)] : undefined
+  const result = joycon.loadSync(files)
   if (result.path && !isObject(result.data)) {
     configPath = configPath || path.basename(result.path)
     throw new Error(`Invalid runtime configuration file: ${configPath}`)
