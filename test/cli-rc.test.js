@@ -37,7 +37,7 @@ test('cli', (t) => {
     const testRcFile = path.join(tmpDir, '.pino-prettyrc.test.json')
     fs.writeFileSync(testRcFile, JSON.stringify({ translateTime: true }, null, 4))
     // Validate that the time has been translated
-    const child = spawn(process.argv0, [bin, '-o', testRcFile], { cwd: tmpDir })
+    const child = spawn(process.argv0, [bin, '--config', testRcFile], { cwd: tmpDir })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')

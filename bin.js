@@ -19,7 +19,7 @@ args
   .option(['t', 'translateTime'], 'Display epoch timestamps as UTC ISO format or according to an optional format string (default ISO 8601)')
   .option(['s', 'search'], 'Specify a search pattern according to jmespath')
   .option(['i', 'ignore'], 'Ignore one or several keys: (`-i time,hostname`)')
-  .option(['o', 'options-file'], 'specify a path to a json file containing the pino-pretty options')
+  .option('config', 'specify a path to a json file containing the pino-pretty options')
 
 args
   .example('cat log | pino-pretty', 'To prettify logs, simply pipe a log file through')
@@ -30,7 +30,7 @@ args
   .example('cat log | pino-pretty -l', 'To flip level and time/date in standard output use the -l option')
   .example('cat log | pino-pretty -s "msg == \'hello world\'"', 'Only prints messages with msg equals to \'hello world\'')
   .example('cat log | pino-pretty -i pid,hostname', 'Prettify logs but don\'t print pid and hostname')
-  .example('cat log | pino-pretty -o /path/to/options.json', 'Loads options from a json file')
+  .example('cat log | pino-pretty --config=/path/to/config.json', 'Loads options from a json file')
 
 const opts = args.parse(process.argv)
 const pretty = prettyFactory(opts)
