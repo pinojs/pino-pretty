@@ -34,7 +34,7 @@ const defaultOptions = {
   translateTime: false,
   useMetadata: false,
   outputStream: process.stdout,
-  customPrettifiers: []
+  customPrettifiers: {}
 }
 
 module.exports = function prettyFactory (options) {
@@ -45,6 +45,7 @@ module.exports = function prettyFactory (options) {
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
+  const customPrettifiers = opts.customPrettifiers
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
 
   const colorizer = colors(opts.colorize)
@@ -87,15 +88,6 @@ module.exports = function prettyFactory (options) {
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer })
     const prettifiedMetadata = prettifyMetadata({ log })
     const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
-    const prettifiedProps = []
-
-    if (opts.customPrettifiers.length) {
-      opts.customPrettifiers.forEach(({ prettify, key }) => {
-        if (log[key]) {
-          prettifiedProps.push(prettify({ log, key }))
-        }
-      })
-    }
 
     let line = ''
     if (opts.levelFirst && prettifiedLevel) {
@@ -128,10 +120,6 @@ module.exports = function prettyFactory (options) {
       line = `${line} ${prettifiedMessage}`
     }
 
-    if (prettifiedProps.length) {
-      line = `${line} ${prettifiedProps.join(' ')}`
-    }
-
     if (line.length > 0) {
       line += EOL
     }
@@ -146,16 +134,11 @@ module.exports = function prettyFactory (options) {
       })
       line += prettifiedErrorLog
     } else {
-      const customPrettifiedKeys = opts.customPrettifiers.length
-        ? opts.customPrettifiers.map(({ key }) => log[key] ? key : undefined)
-        : []
-      const skipKeys = [
-        typeof log[messageKey] === 'string' && messageKey,
-        ...customPrettifiedKeys
-      ]
+      const skipKeys = typeof log[messageKey] === 'string' ? [messageKey] : undefined
       const prettifiedObject = prettifyObject({
         input: log,
         skipKeys,
+        customPrettifiers,
         errorLikeKeys: errorLikeObjectKeys,
         eol: EOL,
         ident: IDENT
