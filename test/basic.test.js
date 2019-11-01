@@ -540,39 +540,25 @@ test('basic prettifier tests', (t) => {
   t.test('prettifies custom key', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
-      customPrettifiers: [{
-        prettify: ({ log, key }) => {
-          return `${log[key]}baz`
-        },
-        key: 'foo'
-      }, {
-        prettify: ({ log, key }) => {
-          return log[key].toUpperCase()
-        },
-        key: 'cow'
-      }]
+      customPrettifiers: {
+        foo: val => `${val}_baz\nmultiline`,
+        cow: val => val.toUpperCase()
+      }
     })
     const arst = pretty('{"msg":"hello world", "foo": "bar", "cow": "moo", "level":30, "v":1}')
-    t.is(arst, 'INFO : hello world barbaz MOO\n')
+    t.is(arst, 'INFO : hello world\n    foo: bar_baz\n    multiline\n    cow: MOO\n')
   })
 
   t.test('does not prettify custom key that does not exists', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
-      customPrettifiers: [{
-        prettify: ({ log, key }) => {
-          return `${log[key]}baz`
-        },
-        key: 'foo'
-      }, {
-        prettify: ({ log, key }) => {
-          return log[key].toUpperCase()
-        },
-        key: 'baz'
-      }]
+      customPrettifiers: {
+        foo: val => `${val}_baz`,
+        cow: val => val.toUpperCase()
+      }
     })
     const arst = pretty('{"msg":"hello world", "foo": "bar", "level":30, "v":1}')
-    t.is(arst, 'INFO : hello world barbaz\n')
+    t.is(arst, 'INFO : hello world\n    foo: bar_baz\n')
   })
 
   t.test('prettifies object with some undefined values', (t) => {
