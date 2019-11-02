@@ -63,7 +63,7 @@ pino app.js | pino-pretty
 - `--messageKey` (`-m`): Define the key that contains the main log message.
   Default: `msg`.
 - `--timestampKey` (`-m`): Define the key that contains the log timestamp.
-  Default: `time`.  
+  Default: `time`.
 - `--translateTime` (`-t`): Translate the epoch time value into a human readable
   date and time string. This flag also can set the format string to apply when
   translating the date to human readable format. For a list of available pattern
@@ -129,12 +129,28 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   timestampKey: 'time', // --timestampKey
   translateTime: false, // --translateTime
   search: 'foo == `bar`', // --search
-  ignore: 'pid,hostname' // --ignore
+  ignore: 'pid,hostname' // --ignore,
+  customPrettifiers: {}
 }
 ```
 
 The `colorize` default follows
 [`chalk.supportsColor`](https://www.npmjs.com/package/chalk#chalksupportscolor).
+
+`customPrettifiers` option provides the ability to add a custom prettify function
+for specific log properties. `customPrettifiers` is an object, where keys are log properties which will be prettified and value is the prettify function itself. For example, if log has contains `query` property,
+you can specify a prettifier for it:
+```js
+{
+  customPrettifiers: {
+    query: prettifyQuery
+  }
+}
+//...
+const prettifyQuery = value => {
+  // do some prettify magic
+}
+```
 
 <a id="license"><a>
 ## License
