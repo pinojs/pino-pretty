@@ -535,6 +535,30 @@ test('basic prettifier tests', (t) => {
     log.info({ msg })
   })
 
+  t.test('prettifies custom key', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({
+      customPrettifiers: {
+        foo: val => `${val}_baz\nmultiline`,
+        cow: val => val.toUpperCase()
+      }
+    })
+    const arst = pretty('{"msg":"hello world", "foo": "bar", "cow": "moo", "level":30, "v":1}')
+    t.is(arst, 'INFO : hello world\n    foo: bar_baz\n    multiline\n    cow: MOO\n')
+  })
+
+  t.test('does not prettify custom key that does not exists', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({
+      customPrettifiers: {
+        foo: val => `${val}_baz`,
+        cow: val => val.toUpperCase()
+      }
+    })
+    const arst = pretty('{"msg":"hello world", "foo": "bar", "level":30, "v":1}')
+    t.is(arst, 'INFO : hello world\n    foo: bar_baz\n')
+  })
+
   t.test('prettifies object with some undefined values', (t) => {
     t.plan(1)
     const dest = new Writable({

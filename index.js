@@ -33,7 +33,8 @@ const defaultOptions = {
   timestampKey: TIMESTAMP_KEY,
   translateTime: false,
   useMetadata: false,
-  outputStream: process.stdout
+  outputStream: process.stdout,
+  customPrettifiers: {}
 }
 
 module.exports = function prettyFactory (options) {
@@ -44,6 +45,7 @@ module.exports = function prettyFactory (options) {
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
+  const customPrettifiers = opts.customPrettifiers
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
 
   const colorizer = colors(opts.colorize)
@@ -136,6 +138,7 @@ module.exports = function prettyFactory (options) {
       const prettifiedObject = prettifyObject({
         input: log,
         skipKeys,
+        customPrettifiers,
         errorLikeKeys: errorLikeObjectKeys,
         eol: EOL,
         ident: IDENT
