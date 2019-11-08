@@ -140,7 +140,7 @@ The `colorize` default follows
 `customPrettifiers` option provides the ability to add a custom prettify function
 for specific log properties. `customPrettifiers` is an object, where keys are
 log properties which will be prettified and value is the prettify function itself.
-For example, if a log line contains a `query` propert
+For example, if a log line contains a `query` property,
 you can specify a prettifier for it:
 ```js
 {
