@@ -91,6 +91,11 @@ tap.test('prettifyMessage', t => {
     t.is(str, '\u001B[36mfoo\u001B[39m')
   })
 
+  t.test('returns message formatted by `messageFormat` option', async t => {
+    const str = prettifyMessage({ log: { msg: 'foo', context: 'appModule' }, messageFormat: '{context} - {msg}' })
+    t.is(str, 'appModule - foo')
+  })
+
   t.end()
 })
 
