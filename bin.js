@@ -55,8 +55,21 @@ args
   .example('cat log | pino-pretty -i pid,hostname', 'Prettify logs but don\'t print pid and hostname')
   .example('cat log | pino-pretty --config=/path/to/config.json', 'Loads options from a config file')
 
-const opts = args.parse(process.argv) || {}
-Object.assign(opts, loadConfig(opts.config))
+const DEFAULT_VALUE = '\0default'
+
+let opts = args.parse(process.argv, {
+  mri: {
+    default: {
+      messageKey: DEFAULT_VALUE,
+      timestampKey: DEFAULT_VALUE
+    }
+  }
+})
+// Remove default values
+opts = filter(opts, value => value !== DEFAULT_VALUE)
+const config = loadConfig(opts.config)
+// Override config with cli options
+opts = Object.assign({}, config, opts)
 const pretty = prettyFactory(opts)
 const prettyTransport = new Transform({
   objectMode: true,
@@ -85,4 +98,14 @@ function loadConfig (configPath) {
     throw new Error(`Failed to load runtime configuration file: ${configPath}`)
   }
   return result.data
+}
+
+function filter (obj, cb) {
+  return Object.keys(obj).reduce((acc, key) => {
+    const value = obj[key]
+    if (cb(value, key)) {
+      acc[key] = value
+    }
+    return acc
+  }, {})
 }
