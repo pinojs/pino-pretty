@@ -21,9 +21,9 @@ test('cli', (t) => {
     // Set translateTime: true on run configuration
     const configFile = path.join(tmpDir, 'pino-pretty.config.js')
     fs.writeFileSync(configFile, 'module.exports = { translateTime: true }')
-    // Validate that the time has been translated
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv0, [bin], { env, cwd: tmpDir })
+    // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
@@ -40,9 +40,9 @@ test('cli', (t) => {
     // Set translateTime: true on run configuration
     const configFile = path.join(tmpDir, '.pino-prettyrc')
     fs.writeFileSync(configFile, JSON.stringify({ translateTime: true }, null, 4))
-    // Validate that the time has been translated
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv0, [bin], { env, cwd: tmpDir })
+    // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
@@ -59,9 +59,9 @@ test('cli', (t) => {
     // Set translateTime: true on run configuration
     const configFile = path.join(tmpDir, '.pino-prettyrc.json')
     fs.writeFileSync(configFile, JSON.stringify({ translateTime: true }, null, 4))
-    // Validate that the time has been translated
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv0, [bin], { env, cwd: tmpDir })
+    // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
@@ -78,9 +78,9 @@ test('cli', (t) => {
     // Set translateTime: true on run configuration
     const configFile = path.join(tmpDir, 'pino-pretty.config.test.json')
     fs.writeFileSync(configFile, JSON.stringify({ translateTime: true }, null, 4))
-    // Validate that the time has been translated
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv0, [bin, '--config', configFile], { env, cwd: tmpDir })
+    // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
@@ -94,9 +94,9 @@ test('cli', (t) => {
     // Set translateTime: true on run configuration
     const configFile = path.join(tmpDir, 'pino-pretty.config.test.js')
     fs.writeFileSync(configFile, 'module.exports = { translateTime: true }')
-    // Validate that the time has been translated
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv0, [bin, '--config', configFile], { env, cwd: tmpDir })
+    // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
