@@ -77,6 +77,7 @@ pino app.js | pino-pretty
 - `--search` (`-s`): Specify a search pattern according to
   [jmespath](http://jmespath.org/).
 - `--ignore` (`-i`): Ignore one or several keys: (`-i time,hostname`)
+- `--config`: Specify a path to a config file containing the pino-pretty options.  pino-pretty will attempt to read from a `.pino-prettyrc` in your current directory (`process.cwd`) if not specified
 
 <a id="integration"></a>
 ## Programmatic Integration

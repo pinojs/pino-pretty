@@ -36,13 +36,16 @@
     "dateformat": "^3.0.3",
     "fast-safe-stringify": "^2.0.7",
     "jmespath": "^0.15.0",
+    "joycon": "^2.2.5",
     "pump": "^3.0.0",
     "readable-stream": "^3.4.0",
-    "split2": "^3.1.1"
+    "split2": "^3.1.1",
+    "strip-json-comments": "^3.0.1"
   },
   "devDependencies": {
     "pino": "^5.13.4",
     "pre-commit": "^1.2.2",
+    "rimraf": "^3.0.0",
     "snazzy": "^8.0.0",
     "standard": "^14.0.0",
     "tap": "^14.9.1"

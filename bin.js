@@ -2,11 +2,34 @@
 
 const fs = require('fs')
 const args = require('args')
+const path = require('path')
 const pump = require('pump')
 const split = require('split2')
 const { Transform } = require('readable-stream')
 const prettyFactory = require('./')
 const CONSTANTS = require('./lib/constants')
+const { isObject } = require('./lib/utils')
+
+const bourne = require('@hapi/bourne')
+const stripJsonComments = require('strip-json-comments')
+const parseJSON = input => {
+  return bourne.parse(stripJsonComments(input), { protoAction: 'remove' })
+}
+
+const JoyCon = require('joycon')
+const joycon = new JoyCon({
+  parseJSON,
+  files: [
+    'pino-pretty.config.js',
+    '.pino-prettyrc',
+    '.pino-prettyrc.json'
+  ],
+  stopDir: path.dirname(process.cwd())
+})
+joycon.addLoader({
+  test: /\.[^.]*rc$/,
+  loadSync: (path) => parseJSON(fs.readFileSync(path, 'utf-8'))
+})
 
 args
   .option(['c', 'colorize'], 'Force adding color sequences to the output')
@@ -20,6 +43,7 @@ args
   .option(['t', 'translateTime'], 'Display epoch timestamps as UTC ISO format or according to an optional format string (default ISO 8601)')
   .option(['s', 'search'], 'Specify a search pattern according to jmespath')
   .option(['i', 'ignore'], 'Ignore one or several keys: (`-i time,hostname`)')
+  .option('config', 'specify a path to a json file containing the pino-pretty options')
 
 args
   .example('cat log | pino-pretty', 'To prettify logs, simply pipe a log file through')
@@ -30,8 +54,23 @@ args
   .example('cat log | pino-pretty -l', 'To flip level and time/date in standard output use the -l option')
   .example('cat log | pino-pretty -s "msg == \'hello world\'"', 'Only prints messages with msg equals to \'hello world\'')
   .example('cat log | pino-pretty -i pid,hostname', 'Prettify logs but don\'t print pid and hostname')
+  .example('cat log | pino-pretty --config=/path/to/config.json', 'Loads options from a config file')
 
-const opts = args.parse(process.argv)
+const DEFAULT_VALUE = '\0default'
+
+let opts = args.parse(process.argv, {
+  mri: {
+    default: {
+      messageKey: DEFAULT_VALUE,
+      timestampKey: DEFAULT_VALUE
+    }
+  }
+})
+// Remove default values
+opts = filter(opts, value => value !== DEFAULT_VALUE)
+const config = loadConfig(opts.config)
+// Override config with cli options
+opts = Object.assign({}, config, opts)
 const pretty = prettyFactory(opts)
 const prettyTransport = new Transform({
   objectMode: true,
@@ -47,4 +86,27 @@ pump(process.stdin, split(), prettyTransport, process.stdout)
 // https://github.com/pinojs/pino/pull/358
 if (!process.stdin.isTTY && !fs.fstatSync(process.stdin.fd).isFile()) {
   process.once('SIGINT', function noOp () {})
+}
+
+function loadConfig (configPath) {
+  const files = configPath ? [path.resolve(configPath)] : undefined
+  const result = joycon.loadSync(files)
+  if (result.path && !isObject(result.data)) {
+    configPath = configPath || path.basename(result.path)
+    throw new Error(`Invalid runtime configuration file: ${configPath}`)
+  }
+  if (configPath && !result.data) {
+    throw new Error(`Failed to load runtime configuration file: ${configPath}`)
+  }
+  return result.data
+}
+
+function filter (obj, cb) {
+  return Object.keys(obj).reduce((acc, key) => {
+    const value = obj[key]
+    if (cb(value, key)) {
+      acc[key] = value
+    }
+    return acc
+  }, {})
 }
