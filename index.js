@@ -30,6 +30,7 @@ const defaultOptions = {
   errorProps: '',
   levelFirst: false,
   messageKey: MESSAGE_KEY,
+  messageFormat: false,
   timestampKey: TIMESTAMP_KEY,
   translateTime: false,
   useMetadata: false,
@@ -42,6 +43,7 @@ module.exports = function prettyFactory (options) {
   const EOL = opts.crlf ? '\r\n' : '\n'
   const IDENT = '    '
   const messageKey = opts.messageKey
+  const messageFormat = opts.messageFormat
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
@@ -75,6 +77,8 @@ module.exports = function prettyFactory (options) {
       return
     }
 
+    const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat })
+
     if (ignoreKeys) {
       log = Object.keys(log)
         .filter(key => !ignoreKeys.has(key))
@@ -85,7 +89,6 @@ module.exports = function prettyFactory (options) {
     }
 
     const prettifiedLevel = prettifyLevel({ log, colorizer })
-    const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer })
     const prettifiedMetadata = prettifyMetadata({ log })
     const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
 
