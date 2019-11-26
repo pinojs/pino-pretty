@@ -598,5 +598,34 @@ test('basic prettifier tests', (t) => {
     t.is(arst, `[${epoch}] INFO  (on ${hostname}): hello world\n`)
   })
 
+  t.test('prettifies trace caller', (t) => {
+    t.plan(1)
+    const traceCaller = (instance) => {
+      const { symbols: { asJsonSym } } = pino
+      const get = (target, name) => name === asJsonSym ? asJson : target[name]
+
+      function asJson (...args) {
+        args[0] = args[0] || {}
+        args[0].caller = '/tmp/script.js'
+        return instance[asJsonSym].apply(this, args)
+      }
+
+      return new Proxy(instance, { get })
+    }
+
+    const pretty = prettyFactory()
+    const log = traceCaller(pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.is(
+          formatted,
+          `[${epoch}] INFO  (${pid} on ${hostname}) </tmp/script.js>: foo\n`
+        )
+        cb()
+      }
+    })))
+    log.info('foo')
+  })
+
   t.end()
 })
