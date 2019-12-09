@@ -62,6 +62,8 @@ pino app.js | pino-pretty
   error like objects. Default: `err,error`.
 - `--messageKey` (`-m`): Define the key that contains the main log message.
   Default: `msg`.
+- `--levelKey` (`--levelKey`): Define the key that contains the level of the log.
+  Default: `level`.
 - `--messageFormat` (`-o`): Format output of message, e.g. `{level} - {pid}` will output message: `INFO - 1123`
   Default: `false`
 - `--timestampKey` (`-m`): Define the key that contains the log timestamp.
@@ -129,6 +131,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   errorProps: '', // --errorProps
   levelFirst: false, // --levelFirst
   messageKey: 'msg', // --messageKey
+  levelKey: 'level', // --levelKey
   messageFormat: false // --messageFormat
   timestampKey: 'time', // --timestampKey
   translateTime: false, // --translateTime
