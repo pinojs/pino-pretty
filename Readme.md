@@ -62,7 +62,7 @@ pino app.js | pino-pretty
   error like objects. Default: `err,error`.
 - `--messageKey` (`-m`): Define the key that contains the main log message.
   Default: `msg`.
-- `--messageFormat` (`-o`): Format output of message, e.g. `{level} - {pid}` will output message: `INFO - 1123`
+- `--messageFormat` (`-o`): Format output of message, e.g. `{level} - {pid} | url:{request.url}` will output message: `INFO - 1123 - url:localhost:3000/test`
   Default: `false`
 - `--timestampKey` (`-m`): Define the key that contains the log timestamp.
   Default: `time`.
