@@ -101,6 +101,11 @@ tap.test('prettifyMessage', t => {
     t.is(str, '{30}-30-{30-30}')
   })
 
+  t.test('`messageFormat` supports nested object', async t => {
+    const str = prettifyMessage({ log: { level: 30, request: { url: 'localhost/test' }, msg: 'foo' }, messageFormat: '{request.url} - param: {request.params.process} - {msg}' })
+    t.is(str, 'localhost/test - param:  - foo')
+  })
+
   t.end()
 })
 
