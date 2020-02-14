@@ -1,8 +1,9 @@
 <a id="intro"></a>
 # pino-pretty
 
-[![Build Status](https://travis-ci.org/pinojs/pino-pretty.svg?branch=master)](https://travis-ci.org/pinojs/pino-pretty)
-[![Coverage Status](https://coveralls.io/repos/github/pinojs/pino-pretty/badge.svg?branch=master)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
+[![NPM Package Version](https://badgen.net/npm/v/pino-pretty)](https://www.npmjs.com/package/pino-pretty)
+[![Build Status](https://badgen.net/travis/pinojs/pino-pretty/master)](https://travis-ci.org/pinojs/pino-pretty)
+[![Coverage Status](https://badgen.net/coveralls/c/github/pinojs/pino-pretty/master)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
 
 This module provides a basic [ndjson](http://ndjson.org/) formatter. If an
 incoming line looks like it could be a log line from an ndjson logger, in
