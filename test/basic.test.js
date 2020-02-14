@@ -105,6 +105,22 @@ test('basic prettifier tests', (t) => {
     log.info({ bar: 'baz' })
   })
 
+  t.test('can use different level keys', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ levelKey: 'bar' })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.is(
+          formatted,
+          `[${epoch}] WARN  (${pid} on ${hostname}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info({ msg: 'foo', bar: 'warn' })
+  })
+
   t.test('will format time to UTC', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ translateTime: true })
