@@ -67,7 +67,7 @@ pino app.js | pino-pretty
   Default: `level`.
 - `--messageFormat` (`-o`): Format output of message, e.g. `{level} - {pid}` will output message: `INFO - 1123`
   Default: `false`
-- `--timestampKey` (`-m`): Define the key that contains the log timestamp.
+- `--timestampKey` (`-a`): Define the key that contains the log timestamp.
   Default: `time`.
 - `--translateTime` (`-t`): Translate the epoch time value into a human readable
   date and time string. This flag also can set the format string to apply when
