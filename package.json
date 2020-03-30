@@ -8,9 +8,8 @@
   },
   "scripts": {
     "lint": "standard | snazzy",
-    "lint-ci": "standard",
     "test": "tap --no-cov 'test/**/*.test.js'",
-    "test-ci": "tap --cov 'test/**/*.test.js'"
+    "ci": "standard && tap --cov 'test/**/*.test.js'"
   },
   "repository": {
     "type": "git",

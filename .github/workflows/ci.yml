@@ -21,7 +21,5 @@ jobs:
           key: node-modules-${{ hashFiles('package.json') }}
       - name: Install dependencies
         run: npm install
-      - name: Run Linter
-        run: npm run lint-ci
       - name: Run Tests
-        run: npm run test-ci
+        run: npm run ci
