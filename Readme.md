@@ -1,8 +1,9 @@
 <a id="intro"></a>
+
 # pino-pretty
 
 [![NPM Package Version](https://badgen.net/npm/v/pino-pretty)](https://www.npmjs.com/package/pino-pretty)
-[![Build Status](https://badgen.net/travis/pinojs/pino-pretty/master)](https://travis-ci.org/pinojs/pino-pretty)
+[![Build Status](https://badgen.net/github/status/pinojs/pino-pretty/master/ci)](https://github.com/pinojs/pino-pretty)
 [![Coverage Status](https://badgen.net/coveralls/c/github/pinojs/pino-pretty/master)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
 
 This module provides a basic [ndjson](http://ndjson.org/) formatter. If an
@@ -23,6 +24,7 @@ Will format to:
 ```
 
 <a id="example"></a>
+
 ## Example
 
 Using the [example script][exscript] from the Pino module, and specifying
@@ -34,6 +36,7 @@ prettified logs will look like:
 [exscript]: https://github.com/pinojs/pino/blob/fc4c83b/example.js
 
 <a id="install"></a>
+
 ## Install
 
 ```sh
@@ -41,6 +44,7 @@ $ npm install -g pino-pretty
 ```
 
 <a id="usage"></a>
+
 ## Usage
 
 It's recommended to use `pino-pretty` with `pino`
@@ -51,6 +55,7 @@ pino app.js | pino-pretty
 ```
 
 <a id="cliargs"></a>
+
 ### CLI Arguments
 
 - `--colorize` (`-c`): Adds terminal color escape sequences to the output.
@@ -80,9 +85,10 @@ pino app.js | pino-pretty
 - `--search` (`-s`): Specify a search pattern according to
   [jmespath](http://jmespath.org/).
 - `--ignore` (`-i`): Ignore one or several keys: (`-i time,hostname`)
-- `--config`: Specify a path to a config file containing the pino-pretty options.  pino-pretty will attempt to read from a `.pino-prettyrc` in your current directory (`process.cwd`) if not specified
+- `--config`: Specify a path to a config file containing the pino-pretty options. pino-pretty will attempt to read from a `.pino-prettyrc` in your current directory (`process.cwd`) if not specified
 
 <a id="integration"></a>
+
 ## Programmatic Integration
 
 We recommend against using `pino-pretty` in production, and highly
@@ -118,6 +124,7 @@ logger.info('hi')
 See the [Options](#options) section for all possible options.
 
 <a id="options"></a>
+
 ### Options
 
 `pino-pretty` exports a factory function that can be used to format log strings.
@@ -150,6 +157,7 @@ for specific log properties. `customPrettifiers` is an object, where keys are
 log properties which will be prettified and value is the prettify function itself.
 For example, if a log line contains a `query` property,
 you can specify a prettifier for it:
+
 ```js
 {
   customPrettifiers: {
@@ -163,6 +171,7 @@ const prettifyQuery = value => {
 ```
 
 <a id="license"><a>
+
 ## License
 
 MIT License
