@@ -43,7 +43,7 @@
     "strip-json-comments": "^3.0.1"
   },
   "devDependencies": {
-    "pino": "^5.14.0",
+    "pino": "^6.0.0",
     "pre-commit": "^1.2.2",
     "rimraf": "^3.0.0",
     "snazzy": "^8.0.0",
