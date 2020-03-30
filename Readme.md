@@ -3,7 +3,7 @@
 # pino-pretty
 
 [![NPM Package Version](https://badgen.net/npm/v/pino-pretty)](https://www.npmjs.com/package/pino-pretty)
-[![Build Status](https://badgen.net/github/status/pinojs/pino-pretty/master/ci)](https://github.com/pinojs/pino-pretty)
+[![Build Status](https://badgen.net/github/status/pinojs/pino-pretty/master/ci)](https://github.com/pinojs/pino-pretty/actions?query=workflow%3ACI)
 [![Coverage Status](https://badgen.net/coveralls/c/github/pinojs/pino-pretty/master)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
 
 This module provides a basic [ndjson](http://ndjson.org/) formatter. If an
