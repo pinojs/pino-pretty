@@ -1,9 +1,9 @@
 <a id="intro"></a>
 # pino-pretty
 
-[![NPM Package Version](https://badgen.net/npm/v/pino-pretty)](https://www.npmjs.com/package/pino-pretty)
-[![Build Status](https://badgen.net/github/status/pinojs/pino-pretty/master/ci)](https://github.com/pinojs/pino-pretty/actions?query=workflow%3ACI)
-[![Coverage Status](https://badgen.net/coveralls/c/github/pinojs/pino-pretty/master)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
+[![NPM Package Version](https://img.shields.io/npm/v/pino-pretty)](https://www.npmjs.com/package/pino-pretty)
+[![Build Status](https://img.shields.io/github/workflow/status/pinojs/pino-pretty/CI)](https://github.com/pinojs/pino-pretty/actions?query=workflow%3ACI)
+[![Coverage Status](https://img.shields.io/coveralls/github/pinojs/pino-pretty)](https://codecov.io/gh/pinojs/pino-pretty)
 
 This module provides a basic [ndjson](http://ndjson.org/) formatter. If an
 incoming line looks like it could be a log line from an ndjson logger, in
