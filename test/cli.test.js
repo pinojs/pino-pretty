@@ -12,7 +12,7 @@ test('cli', (t) => {
   t.test('does basic reformatting', (t) => {
     t.plan(1)
     const env = { TERM: 'dumb' }
-    const child = spawn(process.argv0, [bin], { env })
+    const child = spawn(process.argv[0], [bin], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), `[${epoch}] INFO  (42 on foo): hello world\n`)
@@ -24,7 +24,7 @@ test('cli', (t) => {
   t.test('flips epoch and level', (t) => {
     t.plan(1)
     const env = { TERM: 'dumb' }
-    const child = spawn(process.argv0, [bin, '-l'], { env })
+    const child = spawn(process.argv[0], [bin, '-l'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), `INFO  [${epoch}] (42 on foo): hello world\n`)
@@ -36,7 +36,7 @@ test('cli', (t) => {
   t.test('translates time to default format', (t) => {
     t.plan(1)
     const env = { TERM: 'dumb' }
-    const child = spawn(process.argv0, [bin, '-t'], { env })
+    const child = spawn(process.argv[0], [bin, '-t'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
@@ -48,7 +48,7 @@ test('cli', (t) => {
   t.test('does search', (t) => {
     t.plan(1)
     const env = { TERM: 'dumb' }
-    const child = spawn(process.argv0, [bin, '-s', 'msg == `hello world`'], { env })
+    const child = spawn(process.argv[0], [bin, '-s', 'msg == `hello world`'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), `[${epoch}] INFO  (42 on foo): hello world\n`)
@@ -60,7 +60,7 @@ test('cli', (t) => {
   t.test('does search but finds only 1 out of 2', (t) => {
     t.plan(1)
     const env = { TERM: 'dumb' }
-    const child = spawn(process.argv0, [bin, '-s', 'msg == `hello world`'], { env })
+    const child = spawn(process.argv[0], [bin, '-s', 'msg == `hello world`'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), `[${epoch}] INFO  (42 on foo): hello world\n`)
@@ -73,7 +73,7 @@ test('cli', (t) => {
   t.test('does ignore multiple keys', (t) => {
     t.plan(1)
     const env = { TERM: 'dumb' }
-    const child = spawn(process.argv0, [bin, '-i', 'pid,hostname'], { env })
+    const child = spawn(process.argv[0], [bin, '-i', 'pid,hostname'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.is(data.toString(), '[1522431328992] INFO : hello world\n')
@@ -85,7 +85,7 @@ test('cli', (t) => {
   t.test('passes through stringified date as string', (t) => {
     t.plan(1)
     const env = { TERM: 'dumb' }
-    const child = spawn(process.argv0, [bin], { env })
+    const child = spawn(process.argv[0], [bin], { env })
     child.on('error', t.threw)
 
     const date = JSON.stringify(new Date(epoch))
