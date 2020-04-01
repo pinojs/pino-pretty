@@ -96,6 +96,11 @@ tap.test('prettifyMessage', t => {
     t.is(str, 'appModule - foo')
   })
 
+  t.test('returns message formatted by `messageFormat` option - missing prop', async t => {
+    const str = prettifyMessage({ log: { context: 'appModule' }, messageFormat: '{context} - {msg}' })
+    t.is(str, 'appModule - ')
+  })
+
   t.test('`messageFormat` supports nested curly brackets', async t => {
     const str = prettifyMessage({ log: { level: 30 }, messageFormat: '{{level}}-{level}-{{level}-{level}}' })
     t.is(str, '{30}-30-{30-30}')
@@ -170,6 +175,11 @@ tap.test('prettifyMetadata', t => {
   t.test('works with only `name`, `hostname`, & `caller` present', async t => {
     const str = prettifyMetadata({ log: { name: 'foo', hostname: 'bar', caller: 'baz' } })
     t.is(str, '(foo on bar) <baz>')
+  })
+
+  t.test('works with only `caller` present', async t => {
+    const str = prettifyMetadata({ log: { caller: 'baz' } })
+    t.is(str, '<baz>')
   })
 
   t.test('works with only `pid`, `hostname`, & `caller` present', async t => {

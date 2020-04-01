@@ -69,11 +69,6 @@ module.exports = function prettyFactory (options) {
       log = inputData
     }
 
-    // Short-circuit for spec allowed primitive values.
-    if ([null, true, false].includes(log) || Number.isFinite(log)) {
-      return `${log}\n`
-    }
-
     if (search && !jmespath.search(log, search)) {
       return
     }

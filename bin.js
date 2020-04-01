@@ -88,6 +88,7 @@ const prettyTransport = new Transform({
 pump(process.stdin, split(), prettyTransport, process.stdout)
 
 // https://github.com/pinojs/pino/pull/358
+/* istanbul ignore next */
 if (!process.stdin.isTTY && !fs.fstatSync(process.stdin.fd).isFile()) {
   process.once('SIGINT', function noOp () {})
 }
