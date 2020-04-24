@@ -1,7 +1,7 @@
 <a id="Systemd"></a>
 ## Systemd example
 
-If you run you Node.js process in [Systemd](https://www.freedesktop.org/wiki/Software/systemd/) and you examine your logs with [journalctl](https://www.freedesktop.org/software/systemd/man/journalctl.html) some data will be duplicated. You can use a combination of `Journalctl` options and `pino-pretty` options to shape the output.
+If you run your Node.js process via [Systemd](https://www.freedesktop.org/wiki/Software/systemd/) and you examine your logs with [journalctl](https://www.freedesktop.org/software/systemd/man/journalctl.html) some data will be duplicated. You can use a combination of `journalctl` options and `pino-pretty` options to shape the output.
 
 For example viewing the pretified logs of a process named `monitor` with `journalctl -u monitor -f | pino-pretty`, might output something like this:
 
