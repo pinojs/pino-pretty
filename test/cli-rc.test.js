@@ -130,6 +130,30 @@ test('cli', (t) => {
     })
   })
 
+  t.test('cli options with defaults can be overridden by config', (t) => {
+    t.plan(1)
+    // Set errorProps: '*' on run configuration
+    const configFile = path.join(tmpDir, 'pino-pretty.config.js')
+    fs.writeFileSync(configFile, `
+      module.exports = {
+          errorProps: '*'
+      }
+    `.trim())
+    // Set messageKey: 'new_msg' using command line option
+    const env = { TERM: 'dumb' }
+    const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
+    // Validate that the time has been translated and correct message key has been used
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.is(data.toString(), '[1594416696006] FATAL: There was an error starting the process.\n    QueryError: Error during sql query: syntax error at or near SELECTT\n        at /home/me/projects/example/sql.js\n        at /home/me/projects/example/index.js\nquerySql: SELECTT * FROM "test" WHERE id = $1;\nqueryArgs: 12\n')
+    })
+    child.stdin.write('{"level":60,"time":1594416696006,"msg":"There was an error starting the process.","type":"Error","stack":"QueryError: Error during sql query: syntax error at or near SELECTT\\n    at /home/me/projects/example/sql.js\\n    at /home/me/projects/example/index.js","querySql":"SELECTT * FROM \\"test\\" WHERE id = $1;","queryArgs":[12]}\n')
+    t.tearDown(() => {
+      fs.unlinkSync(configFile)
+      child.kill()
+    })
+  })
+
   t.test('throws on missing config file', (t) => {
     t.plan(2)
     const args = [bin, '--config', 'pino-pretty.config.missing.json']
