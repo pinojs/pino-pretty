@@ -74,6 +74,7 @@ module.exports = function prettyFactory (options) {
     }
 
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat })
+    const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
 
     if (ignoreKeys) {
       log = Object.keys(log)
@@ -86,7 +87,6 @@ module.exports = function prettyFactory (options) {
 
     const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey })
     const prettifiedMetadata = prettifyMetadata({ log })
-    const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
 
     let line = ''
     if (opts.levelFirst && prettifiedLevel) {
