@@ -643,5 +643,19 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
+  t.test('handles specified timestampKey', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ timestampKey: '@timestamp' })
+    const arst = pretty(`{"msg":"hello world", "@timestamp":${epoch}, "level":30}`)
+    t.is(arst, `[${epoch}] INFO : hello world\n    @timestamp: ${epoch}\n`)
+  })
+
+  t.test('handles using ignored timestampKey', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ timestampKey: '@timestamp', ignore: '@timestamp' })
+    const arst = pretty(`{"msg":"hello world", "@timestamp":${epoch}, "level":30}`)
+    t.is(arst, `[${epoch}] INFO : hello world\n`)
+  })
+
   t.end()
 })
