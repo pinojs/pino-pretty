@@ -34,9 +34,9 @@ joycon.addLoader({
 args
   .option(['c', 'colorize'], 'Force adding color sequences to the output')
   .option(['f', 'crlf'], 'Append CRLF instead of LF to formatted lines')
-  .option(['e', 'errorProps'], 'Comma separated list of properties on error objects to show (`*` for all properties)', '')
+  .option(['e', 'errorProps'], 'Comma separated list of properties on error objects to show (`*` for all properties) (defaults to ``)')
   .option(['l', 'levelFirst'], 'Display the log level as the first output field')
-  .option(['k', 'errorLikeObjectKeys'], 'Define which keys contain error objects (`-k err,error`)', 'err,error')
+  .option(['k', 'errorLikeObjectKeys'], 'Define which keys contain error objects (`-k err,error`) (defaults to `err,error`)')
   .option(['m', 'messageKey'], 'Highlight the message under the specified key', CONSTANTS.MESSAGE_KEY)
   .option('levelKey', 'Detect the log level under the specified key', CONSTANTS.LEVEL_KEY)
   .option(['o', 'messageFormat'], 'Format output of message')
@@ -75,6 +75,9 @@ opts = filter(opts, value => value !== DEFAULT_VALUE)
 const config = loadConfig(opts.config)
 // Override config with cli options
 opts = Object.assign({}, config, opts)
+// set defaults
+opts.errorLikeObjectKeys = opts.errorLikeObjectKeys || 'err,error'
+opts.errorProps = opts.errorProps || ''
 const pretty = prettyFactory(opts)
 const prettyTransport = new Transform({
   objectMode: true,
