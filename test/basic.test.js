@@ -614,6 +614,13 @@ test('basic prettifier tests', (t) => {
     t.is(arst, `[${epoch}] INFO  (on ${hostname}): hello world\n`)
   })
 
+  t.test('ignores time', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ ignore: 'time' })
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30, "v":1}`)
+    t.is(arst, `INFO  (${pid} on ${hostname}): hello world\n`)
+  })
+
   t.test('prettifies trace caller', (t) => {
     t.plan(1)
     const traceCaller = (instance) => {
@@ -641,20 +648,6 @@ test('basic prettifier tests', (t) => {
       }
     })))
     log.info('foo')
-  })
-
-  t.test('handles specified timestampKey', (t) => {
-    t.plan(1)
-    const pretty = prettyFactory({ timestampKey: '@timestamp' })
-    const arst = pretty(`{"msg":"hello world", "@timestamp":${epoch}, "level":30}`)
-    t.is(arst, `[${epoch}] INFO : hello world\n    @timestamp: ${epoch}\n`)
-  })
-
-  t.test('handles using ignored timestampKey', (t) => {
-    t.plan(1)
-    const pretty = prettyFactory({ timestampKey: '@timestamp', ignore: '@timestamp' })
-    const arst = pretty(`{"msg":"hello world", "@timestamp":${epoch}, "level":30}`)
-    t.is(arst, `[${epoch}] INFO : hello world\n`)
   })
 
   t.end()
