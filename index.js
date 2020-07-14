@@ -133,7 +133,7 @@ module.exports = function prettyFactory (options) {
       })
       line += prettifiedErrorLog
     } else {
-      const skipKeys = [messageKey, levelKey].filter(key => typeof log[key] === 'string')
+      const skipKeys = [messageKey, levelKey, timestampKey].filter(key => typeof log[key] === 'string' || typeof log[key] === 'number')
       const prettifiedObject = prettifyObject({
         input: log,
         skipKeys,

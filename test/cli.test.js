@@ -100,5 +100,18 @@ test('cli', (t) => {
     t.tearDown(() => child.kill())
   })
 
+  t.test('uses specified timestampKey', (t) => {
+    t.plan(1)
+    const env = { TERM: 'dumb' }
+    const child = spawn(process.argv[0], [bin, '--timestampKey', '@timestamp'], { env })
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.is(data.toString(), '[1522431328992] INFO : hello world\n')
+    })
+    const logLine = '{"level":30,"@timestamp":1522431328992,"msg":"hello world"}\n'
+    child.stdin.write(logLine)
+    t.tearDown(() => child.kill())
+  })
+
   t.end()
 })
