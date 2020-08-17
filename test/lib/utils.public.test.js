@@ -111,6 +111,16 @@ tap.test('prettifyMessage', t => {
     t.is(str, '567')
   })
 
+  t.test('returns nested key in object only if key is string', async t => {
+    const str = prettifyMessage({ log: { msg: 'foo', req: { headers: { id: '123' } } }, messageFormat: '{req.headers}' })
+    t.is(str, '')
+  })
+
+  t.test('returns nested key in object only if key is string 2', async t => {
+    const str = prettifyMessage({ log: { msg: 'foo', req: { headers: { id: '123' } } }, messageFormat: '{req}' })
+    t.is(str, '')
+  })
+
   t.end()
 })
 
