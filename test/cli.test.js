@@ -113,5 +113,25 @@ test('cli', (t) => {
     t.tearDown(() => child.kill())
   })
 
+  t.test('multiline: false', (t) => {
+    t.plan(1)
+
+    const logLineWithExtra = JSON.stringify(Object.assign(JSON.parse(logLine), {
+      extra: {
+        foo: 'bar',
+        number: 42
+      }
+    }))
+
+    const env = { TERM: 'dumb' }
+    const child = spawn(process.argv[0], [bin, '--multiline', 'false'], { env })
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.is(data.toString(), `[${epoch}] INFO  (42 on foo): hello world { extra: { foo: 'bar', number: 42 } }\n`)
+    })
+    child.stdin.write(logLineWithExtra)
+    t.tearDown(() => child.kill())
+  })
+
   t.end()
 })
