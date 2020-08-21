@@ -657,5 +657,19 @@ test('basic prettifier tests', (t) => {
     t.is(arst, `[${epoch}] INFO : hello world\n`)
   })
 
+  t.test('multiline: false', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ multiline: false, colorize: true })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.is(formatted, `[${epoch}] \u001B[32mINFO \u001B[39m (${pid} on ${hostname}): \u001B[36m{ b: { c: 'd' } }\u001B[39m \x1B[90m{ extra: { foo: 'bar', number: 42 } }\x1B[39m\n`)
+
+        cb()
+      }
+    }))
+    log.info({ msg: { b: { c: 'd' } }, extra: { foo: 'bar', number: 42 } })
+  })
+
   t.end()
 })
