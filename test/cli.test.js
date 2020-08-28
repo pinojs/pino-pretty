@@ -6,7 +6,7 @@ const test = require('tap').test
 
 const bin = require.resolve(path.join(__dirname, '..', 'bin.js'))
 const epoch = 1522431328992
-const logLine = '{"level":30,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo","v":1}\n'
+const logLine = '{"level":30,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
 
 test('cli', (t) => {
   t.test('does basic reformatting', (t) => {
