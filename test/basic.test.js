@@ -472,9 +472,9 @@ test('basic prettifier tests', (t) => {
   t.test('handles `undefined` return values', (t) => {
     t.plan(2)
     const pretty = prettyFactory({ search: 'msg == \'hello world\'' })
-    let formatted = pretty(`{"msg":"nope", "time":${epoch}, "level":30, "v":1}`)
+    let formatted = pretty(`{"msg":"nope", "time":${epoch}, "level":30}`)
     t.is(formatted, undefined)
-    formatted = pretty(`{"msg":"hello world", "time":${epoch}, "level":30, "v":1}`)
+    formatted = pretty(`{"msg":"hello world", "time":${epoch}, "level":30}`)
     t.is(formatted, `[${epoch}] INFO : hello world\n`)
   })
 
@@ -559,7 +559,7 @@ test('basic prettifier tests', (t) => {
         cow: val => val.toUpperCase()
       }
     })
-    const arst = pretty('{"msg":"hello world", "foo": "bar", "cow": "moo", "level":30, "v":1}')
+    const arst = pretty('{"msg":"hello world", "foo": "bar", "cow": "moo", "level":30}')
     t.is(arst, 'INFO : hello world\n    foo: bar_baz\n    multiline\n    cow: MOO\n')
   })
 
@@ -571,7 +571,7 @@ test('basic prettifier tests', (t) => {
         cow: val => val.toUpperCase()
       }
     })
-    const arst = pretty('{"msg":"hello world", "foo": "bar", "level":30, "v":1}')
+    const arst = pretty('{"msg":"hello world", "foo": "bar", "level":30}')
     t.is(arst, 'INFO : hello world\n    foo: bar_baz\n')
   })
 
@@ -603,21 +603,21 @@ test('basic prettifier tests', (t) => {
   t.test('ignores multiple keys', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'pid,hostname' })
-    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30, "v":1}`)
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.is(arst, `[${epoch}] INFO : hello world\n`)
   })
 
   t.test('ignores a single key', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'pid' })
-    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30, "v":1}`)
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.is(arst, `[${epoch}] INFO  (on ${hostname}): hello world\n`)
   })
 
   t.test('ignores time', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'time' })
-    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30, "v":1}`)
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.is(arst, `INFO  (${pid} on ${hostname}): hello world\n`)
   })
 
@@ -655,6 +655,19 @@ test('basic prettifier tests', (t) => {
     const pretty = prettyFactory({ timestampKey: '@timestamp' })
     const arst = pretty(`{"msg":"hello world", "@timestamp":${epoch}, "level":30}`)
     t.is(arst, `[${epoch}] INFO : hello world\n`)
+  })
+
+  t.test('keeps "v" key in log', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ ignore: 'time' })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.is(formatted, `INFO  (${pid} on ${hostname}):\n    v: 1\n`)
+        cb()
+      }
+    }))
+    log.info({ v: 1 })
   })
 
   t.end()
