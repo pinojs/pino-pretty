@@ -621,6 +621,20 @@ test('basic prettifier tests', (t) => {
     t.is(arst, `INFO  (${pid} on ${hostname}): hello world\n`)
   })
 
+  t.test('ignores time and level', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ ignore: 'time,level' })
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
+    t.is(arst, `(${pid} on ${hostname}): hello world\n`)
+  })
+
+  t.test('ignores all keys but message', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ ignore: 'time,level,name,pid,hostname' })
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
+    t.is(arst, 'hello world\n')
+  })
+
   t.test('prettifies trace caller', (t) => {
     t.plan(1)
     const traceCaller = (instance) => {
