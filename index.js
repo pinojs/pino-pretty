@@ -108,7 +108,11 @@ module.exports = function prettyFactory (options) {
     }
 
     if (prettifiedMetadata) {
-      line = `${line} ${prettifiedMetadata}:`
+      if (line.length > 0) {
+        line = `${line} ${prettifiedMetadata}:`
+      } else {
+        line = prettifiedMetadata
+      }
     }
 
     if (line.endsWith(':') === false && line !== '') {
@@ -116,7 +120,11 @@ module.exports = function prettyFactory (options) {
     }
 
     if (prettifiedMessage) {
-      line = `${line} ${prettifiedMessage}`
+      if (line.length > 0) {
+        line = `${line} ${prettifiedMessage}`
+      } else {
+        line = prettifiedMessage
+      }
     }
 
     if (line.length > 0) {
