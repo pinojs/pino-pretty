@@ -96,6 +96,11 @@ tap.test('prettifyMessage', t => {
     t.is(str, 'appModule - foo')
   })
 
+  t.test('returns message formatted by `messageFormat` option - missing prop', async t => {
+    const str = prettifyMessage({ log: { context: 'appModule' }, messageFormat: '{context} - {msg}' })
+    t.is(str, 'appModule - ')
+  })
+
   t.test('`messageFormat` supports nested curly brackets', async t => {
     const str = prettifyMessage({ log: { level: 30 }, messageFormat: '{{level}}-{level}-{{level}-{level}}' })
     t.is(str, '{30}-30-{30-30}')
@@ -147,9 +152,49 @@ tap.test('prettifyMetadata', t => {
     t.is(str, '(1234 on bar)')
   })
 
-  t.test('works with all three present', async t => {
+  t.test('works with only `name`, `pid`, & `hostname` present', async t => {
     const str = prettifyMetadata({ log: { name: 'foo', pid: '1234', hostname: 'bar' } })
     t.is(str, '(foo/1234 on bar)')
+  })
+
+  t.test('works with only `name` & `caller` present', async t => {
+    const str = prettifyMetadata({ log: { name: 'foo', caller: 'baz' } })
+    t.is(str, '(foo) <baz>')
+  })
+
+  t.test('works with only `pid` & `caller` present', async t => {
+    const str = prettifyMetadata({ log: { pid: '1234', caller: 'baz' } })
+    t.is(str, '(1234) <baz>')
+  })
+
+  t.test('works with only `hostname` & `caller` present', async t => {
+    const str = prettifyMetadata({ log: { hostname: 'bar', caller: 'baz' } })
+    t.is(str, '(on bar) <baz>')
+  })
+
+  t.test('works with only `name`, `pid`, & `caller` present', async t => {
+    const str = prettifyMetadata({ log: { name: 'foo', pid: '1234', caller: 'baz' } })
+    t.is(str, '(foo/1234) <baz>')
+  })
+
+  t.test('works with only `name`, `hostname`, & `caller` present', async t => {
+    const str = prettifyMetadata({ log: { name: 'foo', hostname: 'bar', caller: 'baz' } })
+    t.is(str, '(foo on bar) <baz>')
+  })
+
+  t.test('works with only `caller` present', async t => {
+    const str = prettifyMetadata({ log: { caller: 'baz' } })
+    t.is(str, '<baz>')
+  })
+
+  t.test('works with only `pid`, `hostname`, & `caller` present', async t => {
+    const str = prettifyMetadata({ log: { pid: '1234', hostname: 'bar', caller: 'baz' } })
+    t.is(str, '(1234 on bar) <baz>')
+  })
+
+  t.test('works with all four present', async t => {
+    const str = prettifyMetadata({ log: { name: 'foo', pid: '1234', hostname: 'bar', caller: 'baz' } })
+    t.is(str, '(foo/1234 on bar) <baz>')
   })
 
   t.end()

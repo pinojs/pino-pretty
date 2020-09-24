@@ -1,8 +1,9 @@
 <a id="intro"></a>
 # pino-pretty
 
-[![Build Status](https://travis-ci.org/pinojs/pino-pretty.svg?branch=master)](https://travis-ci.org/pinojs/pino-pretty)
-[![Coverage Status](https://coveralls.io/repos/github/pinojs/pino-pretty/badge.svg?branch=master)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
+[![NPM Package Version](https://img.shields.io/npm/v/pino-pretty)](https://www.npmjs.com/package/pino-pretty)
+[![Build Status](https://img.shields.io/github/workflow/status/pinojs/pino-pretty/CI)](https://github.com/pinojs/pino-pretty/actions?query=workflow%3ACI)
+[![Coverage Status](https://img.shields.io/coveralls/github/pinojs/pino-pretty)](https://codecov.io/gh/pinojs/pino-pretty)
 
 This module provides a basic [ndjson](http://ndjson.org/) formatter. If an
 incoming line looks like it could be a log line from an ndjson logger, in
@@ -62,9 +63,11 @@ pino app.js | pino-pretty
   error like objects. Default: `err,error`.
 - `--messageKey` (`-m`): Define the key that contains the main log message.
   Default: `msg`.
+- `--levelKey` (`--levelKey`): Define the key that contains the level of the log.
+  Default: `level`.
 - `--messageFormat` (`-o`): Format output of message, e.g. `{level} - {pid} - url:{request.url}` will output message: `INFO - 1123 - url:localhost:3000/test`
   Default: `false`
-- `--timestampKey` (`-m`): Define the key that contains the log timestamp.
+- `--timestampKey` (`-a`): Define the key that contains the log timestamp.
   Default: `time`.
 - `--translateTime` (`-t`): Translate the epoch time value into a human readable
   date and time string. This flag also can set the format string to apply when
@@ -129,6 +132,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   errorProps: '', // --errorProps
   levelFirst: false, // --levelFirst
   messageKey: 'msg', // --messageKey
+  levelKey: 'level', // --levelKey
   messageFormat: false // --messageFormat
   timestampKey: 'time', // --timestampKey
   translateTime: false, // --translateTime

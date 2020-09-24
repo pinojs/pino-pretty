@@ -1,6 +1,6 @@
 {
   "name": "pino-pretty",
-  "version": "3.5.0",
+  "version": "4.2.1",
   "description": "Prettifier for Pino log lines",
   "main": "index.js",
   "bin": {
@@ -8,9 +8,8 @@
   },
   "scripts": {
     "lint": "standard | snazzy",
-    "lint-ci": "standard",
-    "test": "tap --no-cov 'test/**/*.test.js'",
-    "test-ci": "tap --cov 'test/**/*.test.js'"
+    "test": "tap --100 'test/**/*.test.js'",
+    "ci": "standard && tap --100 'test/**/*.test.js'"
   },
   "repository": {
     "type": "git",
@@ -30,24 +29,24 @@
     "test"
   ],
   "dependencies": {
-    "@hapi/bourne": "^1.3.2",
+    "@hapi/bourne": "^2.0.0",
     "args": "^5.0.1",
-    "chalk": "^2.4.2",
+    "chalk": "^4.0.0",
     "dateformat": "^3.0.3",
     "fast-safe-stringify": "^2.0.7",
     "jmespath": "^0.15.0",
     "joycon": "^2.2.5",
     "pump": "^3.0.0",
-    "readable-stream": "^3.4.0",
+    "readable-stream": "^3.6.0",
     "split2": "^3.1.1",
-    "strip-json-comments": "^3.0.1"
+    "strip-json-comments": "^3.1.1"
   },
   "devDependencies": {
-    "pino": "^5.14.0",
+    "pino": "^6.0.0",
     "pre-commit": "^1.2.2",
-    "rimraf": "^3.0.0",
+    "rimraf": "^3.0.2",
     "snazzy": "^8.0.0",
-    "standard": "^14.0.0",
-    "tap": "^14.10.2"
+    "standard": "^14.3.3",
+    "tap": "^14.10.7"
   }
 }
