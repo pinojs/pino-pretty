@@ -16,7 +16,7 @@ journalctl -u monitor -f -o cat | pino-pretty
 ```
 the output now looks something like this:
 ```
-[1587706801902] INFO (6080 on nanopi): TT 21
+[1587706801902] INFO  (6080 on nanopi): TT 21
 ```
 Making the output even more human readble by using the pino-pretty options `-t` to format the timestamp and `-i pid, hostname` to filter out hostname and pid:
 ```
