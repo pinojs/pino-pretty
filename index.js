@@ -44,6 +44,7 @@ module.exports = function prettyFactory (options) {
   const IDENT = '    '
   const messageKey = opts.messageKey
   const levelKey = opts.levelKey
+  const levelLabel = opts.levelLabel
   const messageFormat = opts.messageFormat
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
@@ -73,7 +74,7 @@ module.exports = function prettyFactory (options) {
       return
     }
 
-    const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat })
+    const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel })
 
     if (ignoreKeys) {
       log = Object.keys(log)

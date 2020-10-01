@@ -39,6 +39,7 @@ args
   .option(['k', 'errorLikeObjectKeys'], 'Define which keys contain error objects (`-k err,error`) (defaults to `err,error`)')
   .option(['m', 'messageKey'], 'Highlight the message under the specified key', CONSTANTS.MESSAGE_KEY)
   .option('levelKey', 'Detect the log level under the specified key', CONSTANTS.LEVEL_KEY)
+  .option(['b', 'levelLabel'], 'Output the log level using the specified label', CONSTANTS.LEVEL_LABEL)
   .option(['o', 'messageFormat'], 'Format output of message')
   .option(['a', 'timestampKey'], 'Display the timestamp from the specified key', CONSTANTS.TIMESTAMP_KEY)
   .option(['t', 'translateTime'], 'Display epoch timestamps as UTC ISO format or according to an optional format string (default ISO 8601)')
@@ -50,6 +51,7 @@ args
   .example('cat log | pino-pretty', 'To prettify logs, simply pipe a log file through')
   .example('cat log | pino-pretty -m fooMessage', 'To highlight a string at a key other than \'msg\', use')
   .example('cat log | pino-pretty --levelKey fooLevel', 'To detect the log level at a key other than \'level\', use')
+  .example('cat log | pino-pretty --levelLabel fooLabel', 'To output the log level label using a key other than \'levelLabel\'')
   .example('cat log | pino-pretty -a fooTimestamp', 'To display timestamp from a key other than \'time\', use')
   .example('cat log | pino-pretty -t', 'To convert Epoch timestamps to ISO timestamps use the -t option')
   .example('cat log | pino-pretty -t "SYS:yyyy-mm-dd HH:MM:ss"', 'To convert Epoch timestamps to local timezone format use the -t option with "SYS:" prefixed format string')
@@ -65,6 +67,7 @@ let opts = args.parse(process.argv, {
     default: {
       messageKey: DEFAULT_VALUE,
       levelKey: DEFAULT_VALUE,
+      levelLabel: CONSTANTS.LEVEL_LABEL,
       timestampKey: DEFAULT_VALUE
     }
   }
