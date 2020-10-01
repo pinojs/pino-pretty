@@ -67,7 +67,6 @@ let opts = args.parse(process.argv, {
     default: {
       messageKey: DEFAULT_VALUE,
       levelKey: DEFAULT_VALUE,
-      levelLabel: CONSTANTS.LEVEL_LABEL,
       timestampKey: DEFAULT_VALUE
     }
   }
