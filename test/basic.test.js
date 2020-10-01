@@ -49,7 +49,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.is(
           formatted,
-          `[${epoch}] INFO  (${pid} on ${hostname}): foo\n`
+          `[${epoch}] INFO\t (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -65,7 +65,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.is(
           formatted,
-          `[${epoch}] \u001B[32mINFO \u001B[39m (${pid} on ${hostname}): \u001B[36mfoo\u001B[39m\n`
+          `[${epoch}] \u001B[32mINFO\u001B[39m\t (${pid} on ${hostname}): \u001B[36mfoo\u001B[39m\n`
         )
         cb()
       }
@@ -81,7 +81,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.is(
           formatted,
-          `INFO  [${epoch}] (${pid} on ${hostname}): foo\n`
+          `INFO\t [${epoch}] (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -97,7 +97,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.is(
           formatted,
-          `[${epoch}] INFO  (${pid} on ${hostname}): baz\n`
+          `[${epoch}] INFO\t (${pid} on ${hostname}): baz\n`
         )
         cb()
       }
@@ -113,7 +113,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.is(
           formatted,
-          `[${epoch}] WARN  (${pid} on ${hostname}): foo\n`
+          `[${epoch}] WARN\t (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -129,7 +129,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.is(
           formatted,
-          `[2018-03-30 17:35:28.992 +0000] INFO  (${pid} on ${hostname}): foo\n`
+          `[2018-03-30 17:35:28.992 +0000] INFO\t (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -147,7 +147,7 @@ test('basic prettifier tests', (t) => {
         const offset = dateformat(epoch, 'UTC:' + 'o')
         t.is(
           formatted,
-          `[${utcHour}:35:28 ${offset}] INFO  (${pid} on ${hostname}): foo\n`
+          `[${utcHour}:35:28 ${offset}] INFO\t (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -166,7 +166,7 @@ test('basic prettifier tests', (t) => {
         const offset = dateformat(epoch, 'o')
         t.is(
           formatted,
-          `[${localDate} ${localHour}:35:28.992 ${offset}] INFO  (${pid} on ${hostname}): foo\n`
+          `[${localDate} ${localHour}:35:28.992 ${offset}] INFO\t (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -187,7 +187,7 @@ test('basic prettifier tests', (t) => {
         const offset = dateformat(epoch, 'o')
         t.is(
           formatted,
-          `[${localDate} ${localHour}:35:28 ${offset}] INFO  (${pid} on ${hostname}): foo\n`
+          `[${localDate} ${localHour}:35:28 ${offset}] INFO\t (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -209,7 +209,7 @@ test('basic prettifier tests', (t) => {
     const log = pino({ base: null }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.match(formatted, /\[.*\] INFO : hello world/)
+        t.match(formatted, /\[.*\] INFO\t: hello world/)
         cb()
       }
     }))
@@ -221,7 +221,7 @@ test('basic prettifier tests', (t) => {
     const pretty = prettyFactory()
     const name = 'test'
     const msg = 'hello world'
-    const regex = new RegExp('\\[.*\\] INFO  \\(' + name + ' on ' + hostname + '\\): ' + msg)
+    const regex = new RegExp('\\[.*\\] INFO\t \\(' + name + ' on ' + hostname + '\\): ' + msg)
 
     const opts = {
       base: {
@@ -245,7 +245,7 @@ test('basic prettifier tests', (t) => {
     const pretty = prettyFactory()
     const name = 'test'
     const msg = 'hello world'
-    const regex = new RegExp('\\[.*\\] INFO  \\(' + name + '/' + pid + '\\): ' + msg)
+    const regex = new RegExp('\\[.*\\] INFO\t \\(' + name + '/' + pid + '\\): ' + msg)
 
     const opts = {
       base: {
@@ -268,7 +268,7 @@ test('basic prettifier tests', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const msg = 'hello world'
-    const regex = new RegExp('\\[.*\\] INFO  \\(' + process.pid + ' on ' + hostname + '\\): ' + msg)
+    const regex = new RegExp('\\[.*\\] INFO\t \\(' + process.pid + ' on ' + hostname + '\\): ' + msg)
 
     const opts = {
       base: {
@@ -293,7 +293,7 @@ test('basic prettifier tests', (t) => {
     const log = pino({ timestamp: null }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.is(formatted, `INFO  (${pid} on ${hostname}): hello world\n`)
+        t.is(formatted, `INFO\t (${pid} on ${hostname}): hello world\n`)
         cb()
       }
     }))
@@ -344,7 +344,7 @@ test('basic prettifier tests', (t) => {
     const log = pino({ name: 'matteo' }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.is(formatted, `[${epoch}] INFO  (matteo/${pid} on ${hostname}): hello world\n`)
+        t.is(formatted, `[${epoch}] INFO\t (matteo/${pid} on ${hostname}): hello world\n`)
         cb()
       }
     }))
@@ -411,7 +411,7 @@ test('basic prettifier tests', (t) => {
       write (chunk, enc, cb) {
         t.is(
           chunk.toString(),
-          `[${epoch}] INFO  (${pid} on ${hostname}): foo\n`
+          `[${epoch}] INFO\t (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -431,7 +431,7 @@ test('basic prettifier tests', (t) => {
       write (formatted, enc, cb) {
         t.is(
           formatted,
-          `INFO  [${epoch}] (${pid} on ${hostname}): foo\n`
+          `INFO\t [${epoch}] (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -451,7 +451,7 @@ test('basic prettifier tests', (t) => {
     const expected = [
       undefined,
       undefined,
-      `[${epoch}] INFO  (${pid} on ${hostname}): foo\n    foo: {\n      "bar": true\n    }\n`
+      `[${epoch}] INFO\t (${pid} on ${hostname}): foo\n    foo: {\n      "bar": true\n    }\n`
     ]
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -475,7 +475,7 @@ test('basic prettifier tests', (t) => {
     let formatted = pretty(`{"msg":"nope", "time":${epoch}, "level":30}`)
     t.is(formatted, undefined)
     formatted = pretty(`{"msg":"hello world", "time":${epoch}, "level":30}`)
-    t.is(formatted, `[${epoch}] INFO : hello world\n`)
+    t.is(formatted, `[${epoch}] INFO\t: hello world\n`)
   })
 
   t.test('formats a line with an undefined field', (t) => {
@@ -489,7 +489,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(obj)
         t.is(
           formatted,
-          `[${epoch}] INFO  (${pid} on ${hostname}): foo\n`
+          `[${epoch}] INFO\t (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -560,7 +560,7 @@ test('basic prettifier tests', (t) => {
       }
     })
     const arst = pretty('{"msg":"hello world", "foo": "bar", "cow": "moo", "level":30}')
-    t.is(arst, 'INFO : hello world\n    foo: bar_baz\n    multiline\n    cow: MOO\n')
+    t.is(arst, 'INFO\t: hello world\n    foo: bar_baz\n    multiline\n    cow: MOO\n')
   })
 
   t.test('does not prettify custom key that does not exists', (t) => {
@@ -572,7 +572,7 @@ test('basic prettifier tests', (t) => {
       }
     })
     const arst = pretty('{"msg":"hello world", "foo": "bar", "level":30}')
-    t.is(arst, 'INFO : hello world\n    foo: bar_baz\n')
+    t.is(arst, 'INFO\t: hello world\n    foo: bar_baz\n')
   })
 
   t.test('prettifies object with some undefined values', (t) => {
@@ -581,7 +581,7 @@ test('basic prettifier tests', (t) => {
       write (chunk, _, cb) {
         t.is(
           chunk + '',
-          `[${epoch}] INFO  (${pid} on ${hostname}):\n    a: {\n      "b": "c"\n    }\n    n: null\n`
+          `[${epoch}] INFO\t (${pid} on ${hostname}):\n    a: {\n      "b": "c"\n    }\n    n: null\n`
         )
         cb()
       }
@@ -604,21 +604,21 @@ test('basic prettifier tests', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'pid,hostname' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
-    t.is(arst, `[${epoch}] INFO : hello world\n`)
+    t.is(arst, `[${epoch}] INFO\t: hello world\n`)
   })
 
   t.test('ignores a single key', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'pid' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
-    t.is(arst, `[${epoch}] INFO  (on ${hostname}): hello world\n`)
+    t.is(arst, `[${epoch}] INFO\t (on ${hostname}): hello world\n`)
   })
 
   t.test('ignores time', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'time' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
-    t.is(arst, `INFO  (${pid} on ${hostname}): hello world\n`)
+    t.is(arst, `INFO\t (${pid} on ${hostname}): hello world\n`)
   })
 
   t.test('ignores time and level', (t) => {
@@ -656,7 +656,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.is(
           formatted,
-          `[${epoch}] INFO  (${pid} on ${hostname}) </tmp/script.js>: foo\n`
+          `[${epoch}] INFO\t (${pid} on ${hostname}) </tmp/script.js>: foo\n`
         )
         cb()
       }
@@ -668,7 +668,7 @@ test('basic prettifier tests', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ timestampKey: '@timestamp' })
     const arst = pretty(`{"msg":"hello world", "@timestamp":${epoch}, "level":30}`)
-    t.is(arst, `[${epoch}] INFO : hello world\n`)
+    t.is(arst, `[${epoch}] INFO\t: hello world\n`)
   })
 
   t.test('keeps "v" key in log', (t) => {
@@ -677,7 +677,7 @@ test('basic prettifier tests', (t) => {
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.is(formatted, `INFO  (${pid} on ${hostname}):\n    v: 1\n`)
+        t.is(formatted, `INFO\t (${pid} on ${hostname}):\n    v: 1\n`)
         cb()
       }
     }))
