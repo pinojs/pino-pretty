@@ -65,7 +65,9 @@ pino app.js | pino-pretty
   Default: `msg`.
 - `--levelKey` (`--levelKey`): Define the key that contains the level of the log.
   Default: `level`.
-- `--messageFormat` (`-o`): Format output of message, e.g. `{level} - {pid}` will output message: `INFO - 1123`
+- `--levelLabel` (`-b`): Output the log level using the specified label.
+  Default: `levelLabel`.
+- `--messageFormat` (`-o`): Format output of message, e.g. `{levelLabel} - {pid}` will output message: `INFO  - 1123`
   Default: `false`
 - `--timestampKey` (`-a`): Define the key that contains the log timestamp.
   Default: `time`.
