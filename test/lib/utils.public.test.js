@@ -101,6 +101,11 @@ tap.test('prettifyMessage', t => {
     t.is(str, 'appModule - ')
   })
 
+  t.test('returns message formatted by `messageFormat` option - levelLabel', async t => {
+    const str = prettifyMessage({ log: { msg: 'foo', context: 'appModule', level: 30 }, messageFormat: '[{level}] {levelLabel} {context} - {msg}' })
+    t.is(str, '[30] INFO  appModule - foo')
+  })
+
   t.test('`messageFormat` supports nested curly brackets', async t => {
     const str = prettifyMessage({ log: { level: 30 }, messageFormat: '{{level}}-{level}-{{level}-{level}}' })
     t.is(str, '{30}-30-{30-30}')
