@@ -70,7 +70,11 @@ module.exports = function prettyFactory (options) {
       log = inputData
     }
 
-    if (search && !jmespath.search(log, search)) {
+    try {
+      if (search && !jmespath.search(log, search)) {
+        return
+      }
+    } catch (error) {
       return
     }
 
