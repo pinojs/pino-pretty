@@ -75,7 +75,7 @@ module.exports = function prettyFactory (options) {
         return
       }
     } catch (error) {
-      console.error(`Unable to search current log ${JSON.stringify(log)} due to ${error}`);
+      console.error(`Unable to search current log ${JSON.stringify(log)} due to ${error}`)
       return
     }
 
