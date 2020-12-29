@@ -26,7 +26,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO\t (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => {
@@ -45,7 +45,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO\t (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => {
@@ -64,7 +64,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO\t (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => {
@@ -83,7 +83,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO\t (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => child.kill())
@@ -99,7 +99,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO\t (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => child.kill())
@@ -121,7 +121,7 @@ test('cli', (t) => {
     // Validate that the time has been translated and correct message key has been used
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO\t (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
     })
     child.stdin.write(logLine.replace(/"msg"/, '"new_msg"'))
     t.tearDown(() => {
@@ -145,7 +145,7 @@ test('cli', (t) => {
     // Validate that the time has been translated and correct message key has been used
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[1594416696006] FATAL\t: There was an error starting the process.\n    QueryError: Error during sql query: syntax error at or near SELECTT\n        at /home/me/projects/example/sql.js\n        at /home/me/projects/example/index.js\nquerySql: SELECTT * FROM "test" WHERE id = $1;\nqueryArgs: 12\n')
+      t.is(data.toString(), '[1594416696006] FATAL: There was an error starting the process.\n    QueryError: Error during sql query: syntax error at or near SELECTT\n        at /home/me/projects/example/sql.js\n        at /home/me/projects/example/index.js\nquerySql: SELECTT * FROM "test" WHERE id = $1;\nqueryArgs: 12\n')
     })
     child.stdin.write('{"level":60,"time":1594416696006,"msg":"There was an error starting the process.","type":"Error","stack":"QueryError: Error during sql query: syntax error at or near SELECTT\\n    at /home/me/projects/example/sql.js\\n    at /home/me/projects/example/index.js","querySql":"SELECTT * FROM \\"test\\" WHERE id = $1;","queryArgs":[12]}\n')
     t.tearDown(() => {
