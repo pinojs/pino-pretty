@@ -47,7 +47,7 @@ It's recommended to use `pino-pretty` with `pino`
 by piping output to the CLI tool:
 
 ```sh
-pino app.js | pino-pretty
+node app.js | pino-pretty
 ```
 
 <a id="cliargs"></a>
