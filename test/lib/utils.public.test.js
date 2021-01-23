@@ -233,6 +233,28 @@ tap.test('prettifyObject', t => {
     t.is(str, '    foo: "bar"\n')
   })
 
+  t.test('iterates input and return result from exclusion by ignored keys undefined', async t => {
+    const keysToIgnore = ['undefined']
+    const fixture = {
+      undefined: undefined,
+      void: void 0,
+      foo: { bar: 'baz' }
+    }
+    const res = prettifyObject({ input: fixture, skipKeys: keysToIgnore })
+    t.is(res, '    foo: {\n      "bar": "baz"\n    }\n')
+  })
+
+  t.test('iterates input and return result from exclusion by ignored keys foo', async t => {
+    const keysToIgnore = ['foo']
+    const fixture = {
+      undefined: undefined,
+      void: void 0,
+      foo: { bar: 'baz' }
+    }
+    const res = prettifyObject({ input: fixture, skipKeys: keysToIgnore })
+    t.is(res, '')
+  })
+
   t.test('works with error props', async t => {
     const err = Error('Something went wrong')
     const serializedError = {
