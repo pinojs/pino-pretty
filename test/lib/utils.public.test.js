@@ -237,7 +237,6 @@ tap.test('prettifyObject', t => {
     const keysToIgnore = ['undefined']
     const fixture = {
       undefined: undefined,
-      void: void 0,
       foo: { bar: 'baz' }
     }
     const res = prettifyObject({ input: fixture, skipKeys: keysToIgnore })
@@ -248,7 +247,6 @@ tap.test('prettifyObject', t => {
     const keysToIgnore = ['foo']
     const fixture = {
       undefined: undefined,
-      void: void 0,
       foo: { bar: 'baz' }
     }
     const res = prettifyObject({ input: fixture, skipKeys: keysToIgnore })
