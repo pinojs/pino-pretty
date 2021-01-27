@@ -26,7 +26,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => {
@@ -45,7 +45,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => {
@@ -64,7 +64,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => {
@@ -83,7 +83,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => child.kill())
@@ -99,7 +99,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.tearDown(() => child.kill())
@@ -121,7 +121,7 @@ test('cli', (t) => {
     // Validate that the time has been translated and correct message key has been used
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
+      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine.replace(/"msg"/, '"new_msg"'))
     t.tearDown(() => {
