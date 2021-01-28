@@ -684,5 +684,18 @@ test('basic prettifier tests', (t) => {
     log.info({ v: 1 })
   })
 
+  t.test('Hide object `{ key: "value" }` from output when flag `hideObject` is set', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ hideObject: true })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.is(formatted, `[${epoch}] INFO\t (${pid} on ${hostname}):\n`)
+        cb()
+      }
+    }))
+    log.info({ key: 'value' })
+  })
+
   t.end()
 })
