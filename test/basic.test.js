@@ -690,11 +690,11 @@ test('basic prettifier tests', (t) => {
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.is(formatted, `[${epoch}] INFO\t (${pid} on ${hostname}):\n`)
+        t.is(formatted, `[${epoch}] INFO\t (${pid} on ${hostname}): hello world\n`)
         cb()
       }
     }))
-    log.info({ key: 'value' })
+    log.info({ key: 'value' }, 'hello world')
   })
 
   t.end()
