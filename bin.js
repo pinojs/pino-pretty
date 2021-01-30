@@ -45,6 +45,7 @@ args
   .option(['t', 'translateTime'], 'Display epoch timestamps as UTC ISO format or according to an optional format string (default ISO 8601)')
   .option(['s', 'search'], 'Specify a search pattern according to jmespath')
   .option(['i', 'ignore'], 'Ignore one or several keys: (`-i time,hostname`)')
+  .option(['H', 'hideObject'], 'Hide objects from output (but not error object)')
   .option('config', 'specify a path to a json file containing the pino-pretty options')
 
 args

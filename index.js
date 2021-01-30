@@ -35,7 +35,8 @@ const defaultOptions = {
   translateTime: false,
   useMetadata: false,
   outputStream: process.stdout,
-  customPrettifiers: {}
+  customPrettifiers: {},
+  hideObject: false
 }
 
 module.exports = function prettyFactory (options) {
@@ -51,6 +52,7 @@ module.exports = function prettyFactory (options) {
   const errorProps = opts.errorProps.split(',')
   const customPrettifiers = opts.customPrettifiers
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
+  const hideObject = opts.hideObject
 
   const colorizer = colors(opts.colorize)
   const search = opts.search
@@ -141,7 +143,7 @@ module.exports = function prettyFactory (options) {
         eol: EOL
       })
       line += prettifiedErrorLog
-    } else {
+    } else if (!hideObject) {
       const skipKeys = [messageKey, levelKey, timestampKey].filter(key => typeof log[key] === 'string' || typeof log[key] === 'number')
       const prettifiedObject = prettifyObject({
         input: log,
