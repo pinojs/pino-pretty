@@ -166,6 +166,22 @@ const prettifyQuery = value => {
 }
 ```
 
+`messageFormat` option allows you to customize the message output. The format can be defined by a template `string` like this:
+```js
+{
+  messageFormat: '{levelLabel} - {pid} - url:{request.url}'
+}
+```
+But this option can also be defined as a `function` with this prototype:
+```js
+{
+  messageFormat: (log, messageKey, levelLabel) => {
+    // do some log message customization
+    return customized_message;
+  }
+}
+```
+
 <a id="license"><a>
 ## License
 

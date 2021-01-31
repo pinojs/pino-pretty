@@ -116,6 +116,18 @@ tap.test('prettifyMessage', t => {
     t.is(str, 'localhost/test - param:  - foo')
   })
 
+  t.test('`messageFormat` supports function definition', async t => {
+    const str = prettifyMessage({
+      log: { level: 30, request: { url: 'localhost/test' }, msg: 'incoming request' },
+      messageFormat: (log, messageKey, levelLabel) => {
+        let msg = log[messageKey]
+        if (msg === 'incoming request') msg = `--> ${log.request.url}`
+        return msg
+      }
+    })
+    t.is(str, '--> localhost/test')
+  })
+
   t.end()
 })
 
