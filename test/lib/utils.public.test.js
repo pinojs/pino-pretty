@@ -50,7 +50,7 @@ tap.test('prettifyLevel', t => {
     }
     const colorizer = getColorizer(true)
     const colorized = prettifyLevel({ log, colorizer })
-    t.is(colorized, '\u001B[32mINFO\u001B[39m')
+    t.is(colorized, '\u001B[34mINFO\u001B[39m')
   })
 
   t.end()

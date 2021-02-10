@@ -65,7 +65,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.is(
           formatted,
-          `[${epoch}] \u001B[32mINFO\u001B[39m (${pid} on ${hostname}): \u001B[36mfoo\u001B[39m\n`
+          `[${epoch}] \u001B[34mINFO\u001B[39m (${pid} on ${hostname}): \u001B[36mfoo\u001B[39m\n`
         )
         cb()
       }
@@ -395,7 +395,7 @@ test('basic prettifier tests', (t) => {
   t.test('handles customLogLevel', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
-    const log = pino({ customLevels: { testCustom: 35 } }, new Writable({
+    const log = pino({ customLevels: { testCustom: 36 } }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         t.match(formatted, /USERLVL/)

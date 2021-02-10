@@ -5,7 +5,10 @@ const getColorizer = require('../../lib/colors')
 
 test('returns default colorizer', async t => {
   const colorizer = getColorizer()
-  let colorized = colorizer(10)
+  let colorized = colorizer(5)
+  t.is(colorized, 'SILLY')
+
+  colorized = colorizer(10)
   t.is(colorized, 'TRACE')
 
   colorized = colorizer(20)
@@ -13,6 +16,9 @@ test('returns default colorizer', async t => {
 
   colorized = colorizer(30)
   t.is(colorized, 'INFO')
+
+  colorized = colorizer(35)
+  t.is(colorized, 'NOTICE')
 
   colorized = colorizer(40)
   t.is(colorized, 'WARN')
@@ -38,14 +44,20 @@ test('returns default colorizer', async t => {
 
 test('returns colorizing colorizer', async t => {
   const colorizer = getColorizer(true)
-  let colorized = colorizer(10)
+  let colorized = colorizer(5)
+  t.is(colorized, '\u001B[90mSILLY\u001B[39m')
+
+  colorized = colorizer(10)
   t.is(colorized, '\u001B[90mTRACE\u001B[39m')
 
   colorized = colorizer(20)
-  t.is(colorized, '\u001B[34mDEBUG\u001B[39m')
+  t.is(colorized, '\u001B[35mDEBUG\u001B[39m')
 
   colorized = colorizer(30)
-  t.is(colorized, '\u001B[32mINFO\u001B[39m')
+  t.is(colorized, '\u001B[34mINFO\u001B[39m')
+
+  colorized = colorizer(35)
+  t.is(colorized, '\u001B[32mNOTICE\u001B[39m')
 
   colorized = colorizer(40)
   t.is(colorized, '\u001B[33mWARN\u001B[39m')
@@ -60,7 +72,7 @@ test('returns colorizing colorizer', async t => {
   t.is(colorized, '\u001B[37mUSERLVL\u001B[39m')
 
   colorized = colorizer('info')
-  t.is(colorized, '\u001B[32mINFO\u001B[39m')
+  t.is(colorized, '\u001B[34mINFO\u001B[39m')
 
   colorized = colorizer('use-default')
   t.is(colorized, '\u001B[37mUSERLVL\u001B[39m')
