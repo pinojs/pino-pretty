@@ -208,6 +208,82 @@ tap.test('prettifyMetadata', t => {
 tap.test('prettifyObject', t => {
   const { prettifyObject } = utils
 
+  t.test('iterates input and return result from exclusion by ignored keys undefined', async t => {
+    const keysToIgnore = ['undefined']
+    const fixture = {
+      undefined: undefined,
+      foo: {
+        bar: 'baz'
+      }
+    }
+    const res = prettifyObject({
+      input: fixture,
+      skipKeys: keysToIgnore
+    })
+    t.is(res, '    foo: {\n      "bar": "baz"\n    }\n')
+  })
+
+  t.test('iterates input and return result from exclusion by ignored keys foo', async t => {
+    const keysToIgnore = ['foo']
+    const fixture = {
+      foo: {
+        bar: 'baz'
+      }
+    }
+    const res = prettifyObject({
+      input: fixture,
+      skipKeys: keysToIgnore
+    })
+    t.is(res, '')
+  })
+
+  t.test('iterates input and return result from exclusion by numeric keys by computation', async t => {
+    const keysToIgnore = [0, 1, 2, 3, -1, -2]
+    const fixture = {
+      0: 0,
+      [1 + 0]: 1 + 0,
+      [+2]: +2,
+      [0 + 3]: 0 + 3,
+      [~0]: ~0,
+      [~~1 - 3]: ~~1 - 3
+    }
+    const res = prettifyObject({
+      input: fixture,
+      skipKeys: keysToIgnore
+    })
+    t.is(res, '')
+  })
+
+  t.test('iterates input and return result from exclusion by primitive types', async t => {
+    const keysToIgnore = [
+      null,
+      Boolean,
+      Number,
+      String,
+      Function,
+      Object,
+      Array,
+      Symbol,
+      Date
+    ]
+    const fixture = {
+      null: null,
+      Boolean: Boolean,
+      Number: Number,
+      String: String,
+      Function: Function,
+      Object: Object,
+      Array: Array,
+      Symbol: Symbol,
+      Date: Date
+    }
+    const res = prettifyObject({
+      input: fixture,
+      skipKeys: keysToIgnore
+    })
+    t.is(res, '')
+  })
+
   t.test('returns empty string if no properties present', async t => {
     const str = prettifyObject({ input: {} })
     t.is(str, '')
