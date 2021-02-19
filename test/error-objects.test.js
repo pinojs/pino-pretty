@@ -194,7 +194,7 @@ test('error like objects tests', (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         lines.shift(); lines.pop()
-        for (var i = 0; i < lines.length; i += 1) {
+        for (let i = 0; i < lines.length; i += 1) {
           t.is(lines[i], expectedLines[i])
         }
         cb()
@@ -244,7 +244,7 @@ test('error like objects tests', (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         lines.shift(); lines.pop()
-        for (var i = 0; i < lines.length; i += 1) {
+        for (let i = 0; i < lines.length; i += 1) {
           t.true(expectedLines.includes(lines[i]))
         }
         cb()

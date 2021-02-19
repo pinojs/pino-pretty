@@ -329,7 +329,7 @@ test('basic prettifier tests', (t) => {
         const lines = formatted.split('\n')
         t.is(lines.length, expectedLines.length + 2)
         lines.shift(); lines.pop()
-        for (var i = 0; i < lines.length; i += 1) {
+        for (let i = 0; i < lines.length; i += 1) {
           t.is(lines[i], expectedLines[i])
         }
         cb()
@@ -513,7 +513,7 @@ test('basic prettifier tests', (t) => {
         const lines = formatted.split('\n')
         t.is(lines.length, expectedLines.length + 2)
         lines.shift(); lines.pop()
-        for (var i = 0; i < lines.length; i += 1) {
+        for (let i = 0; i < lines.length; i += 1) {
           t.is(lines[i], expectedLines[i])
         }
         cb()
@@ -539,7 +539,7 @@ test('basic prettifier tests', (t) => {
         const lines = formatted.split('\n')
         t.is(lines.length, expectedLines.length + 2)
         lines.shift(); lines.pop()
-        for (var i = 0; i < lines.length; i += 1) {
+        for (let i = 0; i < lines.length; i += 1) {
           t.is(lines[i], expectedLines[i])
         }
         cb()
