@@ -697,18 +697,38 @@ test('basic prettifier tests', (t) => {
     log.info({ key: 'value' }, 'hello world')
   })
 
-  t.test('multiline: false', (t) => {
+  t.test('Prints extra objects on one line with singleLine=true', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({ multiline: false, colorize: true })
+    const pretty = prettyFactory({
+      singleLine: true,
+      colorize: false,
+      customPrettifiers: {
+        upper: val => val.toUpperCase(),
+        undef: () => undefined
+      }
+    })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.is(formatted, `[${epoch}] \u001B[32mINFO \u001B[39m (${pid} on ${hostname}): \u001B[36m{ b: { c: 'd' } }\u001B[39m \x1B[90m{ extra: { foo: 'bar', number: 42 } }\x1B[39m\n`)
+        t.is(formatted, `[${epoch}] INFO (${pid} on ${hostname}): message {"extra":{"foo":"bar","number":42},"upper":"FOOBAR"}\n`)
 
         cb()
       }
     }))
-    log.info({ msg: { b: { c: 'd' } }, extra: { foo: 'bar', number: 42 } })
+    log.info({ msg: 'message', extra: { foo: 'bar', number: 42 }, upper: 'foobar', undef: 'this will not show up' })
+  })
+
+  t.test('Does not print empty object with singleLine=true', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ singleLine: true, colorize: false })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.is(formatted, `[${epoch}] INFO (${pid} on ${hostname}): message \n`)
+        cb()
+      }
+    }))
+    log.info({ msg: 'message' })
   })
 
   t.end()

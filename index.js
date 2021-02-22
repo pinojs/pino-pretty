@@ -36,7 +36,8 @@ const defaultOptions = {
   useMetadata: false,
   outputStream: process.stdout,
   customPrettifiers: {},
-  hideObject: false
+  hideObject: false,
+  singleLine: false
 }
 
 module.exports = function prettyFactory (options) {
@@ -53,6 +54,7 @@ module.exports = function prettyFactory (options) {
   const customPrettifiers = opts.customPrettifiers
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
   const hideObject = opts.hideObject
+  const singleLine = opts.singleLine
 
   const colorizer = colors(opts.colorize)
   const search = opts.search
@@ -131,7 +133,7 @@ module.exports = function prettyFactory (options) {
     }
 
     if (line.length > 0) {
-      line += EOL
+      line += (singleLine ? ' ' : EOL)
     }
 
     if (log.type === 'Error' && log.stack) {
@@ -151,7 +153,8 @@ module.exports = function prettyFactory (options) {
         customPrettifiers,
         errorLikeKeys: errorLikeObjectKeys,
         eol: EOL,
-        ident: IDENT
+        ident: IDENT,
+        singleLine
       })
       line += prettifiedObject
     }

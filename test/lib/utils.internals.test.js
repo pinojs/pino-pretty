@@ -1,6 +1,7 @@
 'use strict'
 
 const tap = require('tap')
+const stringifySafe = require('fast-safe-stringify')
 const { internals } = require('../../lib/utils')
 
 tap.test('#joinLinesWithIndentation', t => {
@@ -77,6 +78,19 @@ tap.test('#formatTime', t => {
   t.test('translates date string to SYS:<FORMAT>', async t => {
     const formattedTime = internals.formatTime(dateStr, 'SYS:d mmm yyyy H:MM')
     t.match(formattedTime, /\d{1} \w{3} \d{4} \d{1,2}:\d{2}/)
+  })
+
+  t.end()
+})
+
+tap.test('#prettifyError', t => {
+  t.test('prettifies error', t => {
+    const error = Error('Bad error!')
+    const lines = stringifySafe(error, Object.getOwnPropertyNames(error), 2)
+
+    const prettyError = internals.prettifyError({ keyName: 'errorKey', lines, ident: '    ', eol: '\n' })
+    t.match(prettyError, /\s*errorKey: {\n\s*"stack":[\s\S]*"message": "Bad error!"/)
+    t.end()
   })
 
   t.end()

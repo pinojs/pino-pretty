@@ -113,6 +113,66 @@ test('error like objects tests', (t) => {
     log.info({ err })
   })
 
+  t.test('prettifies Error in property with singleLine=true', (t) => {
+    // singleLine=true doesn't apply to errors
+    t.plan(8)
+    const pretty = prettyFactory({
+      singleLine: true,
+      errorLikeObjectKeys: ['err']
+    })
+
+    const err = Error('hello world')
+    const expected = [
+      '{"extra":{"a":1,"b":2}}',
+      err.message,
+      ...err.stack.split('\n')
+    ]
+
+    const log = pino({ serializers: { err: serializers.err } }, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        const lines = formatted.split('\n')
+        t.is(lines.length, expected.length + 5)
+        t.is(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): {"extra":{"a":1,"b":2}}`)
+        t.match(lines[1], /\s{4}err: {/)
+        t.match(lines[2], /\s{6}"type": "Error",/)
+        t.match(lines[3], /\s{6}"message": "hello world",/)
+        t.match(lines[4], /\s{6}"stack":/)
+        t.match(lines[5], /\s{6}Error: hello world/)
+        // Node 12 labels the test `<anonymous>`
+        t.match(lines[6], /\s{10}(at Test.t.test|at Test.<anonymous>)/)
+        cb()
+      }
+    }))
+
+    log.info({ err, extra: { a: 1, b: 2 } })
+  })
+
+  t.test('prettifies Error in property within errorLikeObjectKeys with custom function', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({
+      errorLikeObjectKeys: ['err'],
+      customPrettifiers: {
+        err: val => `error is ${val.message}`
+      }
+    })
+
+    const err = Error('hello world')
+    err.stack = 'Error: hello world\n    at anonymous (C:\\project\\node_modules\\example\\index.js)'
+    const expected = err.stack.split('\n')
+    expected.unshift(err.message)
+
+    const log = pino({ serializers: { err: serializers.err } }, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.is(formatted, `[${epoch}] INFO (${pid} on ${hostname}):\n    err: error is hello world\n`)
+        cb()
+      }
+    }))
+
+    log.info({ err })
+  })
+
   t.test('prettifies Error in property within errorLikeObjectKeys when stack has escaped characters', (t) => {
     t.plan(8)
     const pretty = prettyFactory({
