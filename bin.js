@@ -46,6 +46,7 @@ args
   .option(['s', 'search'], 'Specify a search pattern according to jmespath')
   .option(['i', 'ignore'], 'Ignore one or several keys: (`-i time,hostname`)')
   .option(['H', 'hideObject'], 'Hide objects from output (but not error object)')
+  .option(['S', 'singleLine'], 'Print all non-error objects on a single line')
   .option('config', 'specify a path to a json file containing the pino-pretty options')
 
 args
