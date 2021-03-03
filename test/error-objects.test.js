@@ -4,7 +4,6 @@ const Writable = require('stream').Writable
 const os = require('os')
 const test = require('tap').test
 const pino = require('pino')
-const chalk = require('chalk')
 const serializers = pino.stdSerializers
 const _prettyFactory = require('../')
 
@@ -134,7 +133,7 @@ test('error like objects tests', (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.is(lines.length, expected.length + 5)
-        t.is(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): ${chalk.gray('{"extra":{"a":1,"b":2}}')}`)
+        t.is(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): {"extra":{"a":1,"b":2}}`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)

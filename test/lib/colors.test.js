@@ -34,6 +34,9 @@ test('returns default colorizer', async t => {
 
   colorized = colorizer.message('foo')
   t.is(colorized, 'foo')
+
+  colorized = colorizer.greyMessage('foo')
+  t.is(colorized, 'foo')
 })
 
 test('returns colorizing colorizer', async t => {
@@ -67,4 +70,7 @@ test('returns colorizing colorizer', async t => {
 
   colorized = colorizer.message('foo')
   t.is(colorized, '\u001B[36mfoo\u001B[39m')
+
+  colorized = colorizer.greyMessage('foo')
+  t.is(colorized, '\u001B[90mfoo\u001B[39m')
 })

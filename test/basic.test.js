@@ -6,7 +6,6 @@ const test = require('tap').test
 const pino = require('pino')
 const dateformat = require('dateformat')
 const _prettyFactory = require('../')
-const chalk = require('chalk')
 
 function prettyFactory (opts) {
   if (!opts) {
@@ -711,7 +710,7 @@ test('basic prettifier tests', (t) => {
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.is(formatted, `[${epoch}] INFO (${pid} on ${hostname}): message ${chalk.gray('{"extra":{"foo":"bar","number":42},"upper":"FOOBAR"}')}\n`)
+        t.is(formatted, `[${epoch}] INFO (${pid} on ${hostname}): message {"extra":{"foo":"bar","number":42},"upper":"FOOBAR"}\n`)
 
         cb()
       }
