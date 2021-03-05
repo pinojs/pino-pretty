@@ -154,7 +154,8 @@ module.exports = function prettyFactory (options) {
         errorLikeKeys: errorLikeObjectKeys,
         eol: EOL,
         ident: IDENT,
-        singleLine
+        singleLine,
+        colorizer
       })
       line += prettifiedObject
     }
