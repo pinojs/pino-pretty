@@ -132,8 +132,8 @@ module.exports = function prettyFactory (options) {
       }
     }
 
-    if (line.length > 0) {
-      line += (singleLine ? ' ' : EOL)
+    if (line.length > 0 && !singleLine) {
+      line += EOL
     }
 
     if (log.type === 'Error' && log.stack) {
@@ -157,6 +157,11 @@ module.exports = function prettyFactory (options) {
         singleLine,
         colorizer
       })
+
+      // In single line mode, include a space only if prettified version isn't empty
+      if (singleLine && !/^\s$/.test(prettifiedObject)) {
+        line += ' '
+      }
       line += prettifiedObject
     }
 
