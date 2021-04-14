@@ -139,7 +139,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   levelFirst: false, // --levelFirst
   messageKey: 'msg', // --messageKey
   levelKey: 'level', // --levelKey
-  messageFormat: false // --messageFormat
+  messageFormat: false, // --messageFormat
   timestampKey: 'time', // --timestampKey
   translateTime: false, // --translateTime
   search: 'foo == `bar`', // --search
