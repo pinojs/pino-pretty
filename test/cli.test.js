@@ -133,5 +133,28 @@ test('cli', (t) => {
     t.tearDown(() => child.kill())
   })
 
+  t.test('does ignore nested keys', (t) => {
+    t.plan(1)
+
+    const logLineNested = JSON.stringify(Object.assign(JSON.parse(logLine), {
+      extra: {
+        foo: 'bar',
+        number: 42,
+        nested: {
+          foo2: 'bar2'
+        }
+      }
+    })) + '\n'
+
+    const env = { TERM: 'dumb' }
+    const child = spawn(process.argv[0], [bin, '-S', '-i', 'extra.foo,extra.nested,extra.nested.miss'], { env })
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.is(data.toString(), `[${epoch}] INFO (42 on foo): hello world {"extra":{"number":42}}\n`)
+    })
+    child.stdin.write(logLineNested)
+    t.tearDown(() => child.kill())
+  })
+
   t.end()
 })
