@@ -64,9 +64,19 @@ tap.test('prettifyMessage', t => {
     t.is(str, undefined)
   })
 
-  t.test('returns `undefined` if `messageKey` not string', async t => {
+  t.test('returns stringified value of `messageKey`', async t => {
     const str = prettifyMessage({ log: { msg: {} } })
-    t.is(str, undefined)
+    t.is(str, '{}')
+  })
+
+  t.test('returns value of `messageKey` if its a number', async t => {
+    const str = prettifyMessage({ log: { msg: 1234 } })
+    t.is(str, '1234')
+  })
+
+  t.test('returns value of `messageKey` if its null', async t => {
+    const str = prettifyMessage({ log: { msg: null } })
+    t.is(str, 'null')
   })
 
   t.test('returns non-colorized value for default colorizer', async t => {
