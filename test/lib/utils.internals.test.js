@@ -1,6 +1,7 @@
 'use strict'
 
 const tap = require('tap')
+const clone = require('rfdc')()
 const stringifySafe = require('fast-safe-stringify')
 const { internals } = require('../../lib/utils')
 
@@ -91,6 +92,35 @@ tap.test('#prettifyError', t => {
     const prettyError = internals.prettifyError({ keyName: 'errorKey', lines, ident: '    ', eol: '\n' })
     t.match(prettyError, /\s*errorKey: {\n\s*"stack":[\s\S]*"message": "Bad error!"/)
     t.end()
+  })
+
+  t.end()
+})
+
+tap.test('#deleteLogProperty', t => {
+  const logData = {
+    level: 30,
+    data1: {
+      data2: { 'data-3': 'bar' }
+    }
+  }
+
+  t.test('deleteLogProperty deletes property of depth 1', async t => {
+    const log = clone(logData)
+    internals.deleteLogProperty(log, 'data1')
+    t.same(log, { level: 30 })
+  })
+
+  t.test('deleteLogProperty deletes property of depth 2', async t => {
+    const log = clone(logData)
+    internals.deleteLogProperty(log, 'data1.data2')
+    t.same(log, { level: 30, data1: { } })
+  })
+
+  t.test('deleteLogProperty deletes property of depth 3', async t => {
+    const log = clone(logData)
+    internals.deleteLogProperty(log, 'data1.data2.data-3')
+    t.same(log, { level: 30, data1: { data2: { } } })
   })
 
   t.end()
