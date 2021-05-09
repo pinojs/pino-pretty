@@ -7,9 +7,9 @@
     "pino-pretty": "./bin.js"
   },
   "scripts": {
-    "ci": "standard && tap 'test/**/*.test.js' --coverage-report=lcovonly",
+    "ci": "standard && tap \"test/**/*.test.js\" --coverage-report=lcovonly",
     "lint": "standard | snazzy",
-    "test": "tap --100 'test/**/*.test.js'"
+    "test": "tap --100 \"test/**/*.test.js\""
   },
   "repository": {
     "type": "git",

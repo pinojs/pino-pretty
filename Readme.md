@@ -45,7 +45,7 @@ $ npm install -g pino-pretty
 <a id="usage"></a>
 ## Usage
 
-It's recommended to use `pino-pretty` with `pino`
+It is recommended to use `pino-pretty` with `pino`
 by piping output to the CLI tool:
 
 ```sh
@@ -59,7 +59,7 @@ node app.js | pino-pretty
 - `--crlf` (`-f`): Appends carriage return and line feed, instead of just a line
   feed, to the formatted log line.
 - `--errorProps` (`-e`): When formatting an error object, display this list
-  of properties. The list should be a comma separated list of properties Default: `''`.
+  of properties. The list should be a comma-separated list of properties Default: `''`.
 - `--levelFirst` (`-l`): Display the log level name before the logged date and time.
 - `--errorLikeObjectKeys` (`-k`): Define the log keys that are associated with
   error like objects. Default: `err,error`.
@@ -73,14 +73,14 @@ node app.js | pino-pretty
   Default: `false`
 - `--timestampKey` (`-a`): Define the key that contains the log timestamp.
   Default: `time`.
-- `--translateTime` (`-t`): Translate the epoch time value into a human readable
+- `--translateTime` (`-t`): Translate the epoch time value into a human-readable
   date and time string. This flag also can set the format string to apply when
-  translating the date to human readable format. For a list of available pattern
-  letters see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
+  translating the date to a human-readable format. For a list of available pattern
+  letters, see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
   - The default format is `yyyy-mm-dd HH:MM:ss.l o` in UTC.
-  - Require a `SYS:` prefix to translate time to the local system's timezone. A
+  - Require a `SYS:` prefix to translate time to the local system's time zone. A
     shortcut `SYS:standard` to translate time to `yyyy-mm-dd HH:MM:ss.l o` in
-    system timezone.
+    system time zone.
 - `--search` (`-s`): Specify a search pattern according to
   [jmespath](http://jmespath.org/).
 - `--ignore` (`-i`): Ignore one or several keys: (`-i time,hostname`)
@@ -91,7 +91,7 @@ node app.js | pino-pretty
 <a id="integration"></a>
 ## Programmatic Integration
 
-We recommend against using `pino-pretty` in production, and highly
+We recommend against using `pino-pretty` in production and highly
 recommend installing `pino-pretty` as a development dependency.
 
 When installed, `pino-pretty` will be used by `pino` as the default
@@ -155,7 +155,7 @@ The `colorize` default follows
 
 `customPrettifiers` option provides the ability to add a custom prettify function
 for specific log properties. `customPrettifiers` is an object, where keys are
-log properties which will be prettified and value is the prettify function itself.
+log properties that will be prettified and value is the prettify function itself.
 For example, if a log line contains a `query` property,
 you can specify a prettifier for it:
 ```js
@@ -170,13 +170,13 @@ const prettifyQuery = value => {
 }
 ```
 
-`messageFormat` option allows you to customize the message output. The format can be defined by a template `string` like this:
+`messageFormat` option allows you to customize the message output. A template `string` like this can define the format:
 ```js
 {
   messageFormat: '{levelLabel} - {pid} - url:{request.url}'
 }
 ```
-But this option can also be defined as a `function` with this prototype:
+This option can also be defined as a `function` with this prototype:
 ```js
 {
   messageFormat: (log, messageKey, levelLabel) => {

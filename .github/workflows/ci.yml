@@ -1,39 +1,46 @@
 name: CI
+
 on:
   push:
     paths-ignore:
-        - "docs/**"
-        - "*.md"
+        - 'docs/**'
+        - '*.md'
   pull_request:
     paths-ignore:
-        - "docs/**"
-        - "*.md"
+        - 'docs/**'
+        - '*.md'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 13.x, 14.x, 16.x]
+        node-version: [10, 12, 13, 14, 16]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4
+
       - name: Use Node.js
         uses: actions/setup-node@v2.1.5
         with:
           node-version: ${{ matrix.node-version }}
+
       - name: Restore cached dependencies
         uses: actions/cache@v2.1.5
         with:
           path: node_modules
           key: node-modules-${{ hashFiles('package.json') }}
+
       - name: Install dependencies
         run: npm install
+
       - name: Run Tests
         run: npm run ci
+
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@v1.1.2
         with:
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel: true
           flag-name: run-${{ matrix.node-version }}-${{ matrix.os }}
 
@@ -52,6 +59,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: fastify/github-action-merge-dependabot@v2.0.0
-        if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request' }}
         with:
-          github-token: ${{secrets.github_token}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
