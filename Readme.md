@@ -83,7 +83,7 @@ node app.js | pino-pretty
     system time zone.
 - `--search` (`-s`): Specify a search pattern according to
   [jmespath](http://jmespath.org/).
-- `--ignore` (`-i`): Ignore one or several keys: (`-i time,hostname`)
+- `--ignore` (`-i`): Ignore one or several keys, nested keys are supported: (`-i time,hostname,req.headers`)
 - `--hideObject` (`-H`): Hide objects from output (but not error object)
 - `--singleLine` (`-S`): Print each log message on a single line (errors will still be multi-line)
 - `--config`: Specify a path to a config file containing the pino-pretty options.  pino-pretty will attempt to read from a `.pino-prettyrc` in your current directory (`process.cwd`) if not specified

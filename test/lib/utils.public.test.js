@@ -341,3 +341,26 @@ tap.test('prettifyTime', t => {
 
   t.end()
 })
+
+tap.test('#filterLog', t => {
+  const { filterLog } = utils
+  const logData = {
+    level: 30,
+    time: 1522431328992,
+    data1: {
+      data2: { 'data-3': 'bar' }
+    }
+  }
+
+  t.test('filterLog removes single entry', async t => {
+    const result = filterLog(logData, ['data1.data2.data-3'])
+    t.same(result, { level: 30, time: 1522431328992, data1: { data2: { } } })
+  })
+
+  t.test('filterLog removes multiple entries', async t => {
+    const result = filterLog(logData, ['time', 'data1'])
+    t.same(result, { level: 30 })
+  })
+
+  t.end()
+})

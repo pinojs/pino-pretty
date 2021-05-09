@@ -11,7 +11,8 @@ const {
   prettifyMessage,
   prettifyMetadata,
   prettifyObject,
-  prettifyTime
+  prettifyTime,
+  filterLog
 } = require('./lib/utils')
 
 const bourne = require('@hapi/bourne')
@@ -81,12 +82,7 @@ module.exports = function prettyFactory (options) {
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel })
 
     if (ignoreKeys) {
-      log = Object.keys(log)
-        .filter(key => !ignoreKeys.has(key))
-        .reduce((res, key) => {
-          res[key] = log[key]
-          return res
-        }, {})
+      log = filterLog(log, ignoreKeys)
     }
 
     const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey })
