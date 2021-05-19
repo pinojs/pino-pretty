@@ -41,7 +41,7 @@ const defaultOptions = {
   singleLine: false
 }
 
-module.exports = function prettyFactory (options) {
+function prettyFactory (options) {
   const opts = Object.assign({}, defaultOptions, options)
   const EOL = opts.crlf ? '\r\n' : '\n'
   const IDENT = '    '
@@ -164,3 +164,7 @@ module.exports = function prettyFactory (options) {
     return line
   }
 }
+
+prettyFactory.prettyFactory = prettyFactory
+prettyFactory.default = prettyFactory
+module.exports = prettyFactory
