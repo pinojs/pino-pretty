@@ -1,7 +1,7 @@
 import prettyFactory from "../../";
-import {expectType} from "tsd";
+import { expectType } from "tsd";
 
-import PinoPretty, { PinoPretty as PinoPrettyNamed } from "../../";
+import PinoPretty, { PinoPretty as PinoPrettyNamed, PrettyOptions } from "../../";
 import PinoPrettyDefault from "../../";
 import * as PinoPrettyStar from "../../";
 import PinoPrettyCjsImport = require ("../../");
@@ -9,6 +9,24 @@ import Prettifier = PinoPretty.Prettifier;
 const PinoPrettyCjs = require("../../");
 
 const options: PinoPretty.PrettyOptions = {
+  colorize: true,
+  crlf: false,
+  errorLikeObjectKeys: ["err", "error"],
+  errorProps: "",
+  hideObject: true,
+  levelKey: "level",
+  levelLabel: "foo",
+  messageFormat: false,
+  ignore: "",
+  levelFirst: false,
+  messageKey: "msg",
+  timestampKey: "timestamp",
+  translateTime: "UTC:h:MM:ss TT Z",
+  search: "foo == `bar`",
+  singleLine: false,
+};
+
+const options2: PrettyOptions = {
   colorize: true,
   crlf: false,
   errorLikeObjectKeys: ["err", "error"],
