@@ -364,3 +364,25 @@ tap.test('#filterLog', t => {
 
   t.end()
 })
+
+tap.test('#filterLog with circular references', t => {
+  const { filterLog } = utils
+  const logData = {
+    level: 30,
+    time: 1522431328992,
+    data1: 'test'
+  }
+  logData.circular = logData
+
+  t.test('filterLog removes single entry', async t => {
+    const result = filterLog(logData, ['data1'])
+
+    t.same(result.circular.level, result.level)
+    t.same(result.circular.time, result.time)
+
+    delete result.circular
+    t.same(result, { level: 30, time: 1522431328992 })
+  })
+
+  t.end()
+})
