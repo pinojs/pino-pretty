@@ -19,14 +19,14 @@ test('crlf', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const formatted = pretty(logLine)
-    t.is(formatted.substr(-2), 'd\n')
+    t.equal(formatted.substr(-2), 'd\n')
   })
 
   t.test('can use CRLF', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ crlf: true })
     const formatted = pretty(logLine)
-    t.is(formatted.substr(-3), 'd\r\n')
+    t.equal(formatted.substr(-3), 'd\r\n')
   })
 
   t.end()

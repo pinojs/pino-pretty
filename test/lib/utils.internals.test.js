@@ -9,13 +9,13 @@ tap.test('#joinLinesWithIndentation', t => {
   t.test('joinLinesWithIndentation adds indentation to beginning of subsequent lines', async t => {
     const input = 'foo\nbar\nbaz'
     const result = internals.joinLinesWithIndentation({ input })
-    t.is(result, 'foo\n    bar\n    baz')
+    t.equal(result, 'foo\n    bar\n    baz')
   })
 
   t.test('joinLinesWithIndentation accepts custom indentation, line breaks, and eol', async t => {
     const input = 'foo\nbar\r\nbaz'
     const result = internals.joinLinesWithIndentation({ input, ident: '  ', eol: '^' })
-    t.is(result, 'foo^  bar^  baz')
+    t.equal(result, 'foo^  bar^  baz')
   })
 
   t.end()
@@ -28,17 +28,17 @@ tap.test('#formatTime', t => {
 
   t.test('passes through epoch if `translateTime` is `false`', async t => {
     const formattedTime = internals.formatTime(epochMS)
-    t.is(formattedTime, epochMS)
+    t.equal(formattedTime, epochMS)
   })
 
   t.test('translates epoch milliseconds if `translateTime` is `true`', async t => {
     const formattedTime = internals.formatTime(epochMS, true)
-    t.is(formattedTime, '2019-04-06 17:30:00.000 +0000')
+    t.equal(formattedTime, '2019-04-06 17:30:00.000 +0000')
   })
 
   t.test('translates epoch milliseconds to UTC string given format', async t => {
     const formattedTime = internals.formatTime(epochMS, 'd mmm yyyy H:MM')
-    t.is(formattedTime, '6 Apr 2019 17:30')
+    t.equal(formattedTime, '6 Apr 2019 17:30')
   })
 
   t.test('translates epoch milliseconds to SYS:STANDARD', async t => {
@@ -53,17 +53,17 @@ tap.test('#formatTime', t => {
 
   t.test('passes through date string if `translateTime` is `false`', async t => {
     const formattedTime = internals.formatTime(dateStr)
-    t.is(formattedTime, dateStr)
+    t.equal(formattedTime, dateStr)
   })
 
   t.test('translates date string if `translateTime` is `true`', async t => {
     const formattedTime = internals.formatTime(dateStr, true)
-    t.is(formattedTime, '2019-04-06 17:30:00.000 +0000')
+    t.equal(formattedTime, '2019-04-06 17:30:00.000 +0000')
   })
 
   t.test('translates date string to UTC string given format', async t => {
     const formattedTime = internals.formatTime(dateStr, 'd mmm yyyy H:MM')
-    t.is(formattedTime, '6 Apr 2019 17:30')
+    t.equal(formattedTime, '6 Apr 2019 17:30')
   })
 
   t.test('translates date string to SYS:STANDARD', async t => {
@@ -73,7 +73,7 @@ tap.test('#formatTime', t => {
 
   t.test('translates date string to UTC:<FORMAT>', async t => {
     const formattedTime = internals.formatTime(dateStr, 'UTC:d mmm yyyy H:MM')
-    t.is(formattedTime, '6 Apr 2019 17:30')
+    t.equal(formattedTime, '6 Apr 2019 17:30')
   })
 
   t.test('translates date string to SYS:<FORMAT>', async t => {
