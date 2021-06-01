@@ -22,17 +22,13 @@ const pid = process.pid
 const hostname = os.hostname()
 
 test('error like objects tests', (t) => {
-  t.beforeEach((done) => {
+  t.beforeEach(() => {
     Date.originalNow = Date.now
     Date.now = () => epoch
-
-    done()
   })
-  t.afterEach((done) => {
+  t.afterEach(() => {
     Date.now = Date.originalNow
     delete Date.originalNow
-
-    done()
   })
 
   t.test('pino transform prettifies Error', (t) => {
@@ -46,8 +42,8 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.is(lines.length, expected.length + 1)
-        t.is(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
+        t.equal(lines.length, expected.length + 1)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
         cb()
       }
     }))
@@ -97,8 +93,8 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.is(lines.length, expected.length + 6)
-        t.is(lines[0], `[${epoch}] INFO (${pid} on ${hostname}):`)
+        t.equal(lines.length, expected.length + 6)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}):`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
@@ -132,8 +128,8 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.is(lines.length, expected.length + 5)
-        t.is(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): {"extra":{"a":1,"b":2}}`)
+        t.equal(lines.length, expected.length + 5)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): {"extra":{"a":1,"b":2}}`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
@@ -165,7 +161,7 @@ test('error like objects tests', (t) => {
     const log = pino({ serializers: { err: serializers.err } }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.is(formatted, `[${epoch}] INFO (${pid} on ${hostname}):\n    err: error is hello world\n`)
+        t.equal(formatted, `[${epoch}] INFO (${pid} on ${hostname}):\n    err: error is hello world\n`)
         cb()
       }
     }))
@@ -188,8 +184,8 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.is(lines.length, expected.length + 6)
-        t.is(lines[0], `[${epoch}] INFO (${pid} on ${hostname}):`)
+        t.equal(lines.length, expected.length + 6)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}):`)
         t.match(lines[1], /\s{4}err: {$/)
         t.match(lines[2], /\s{6}"type": "Error",$/)
         t.match(lines[3], /\s{6}"message": "hello world",$/)
@@ -218,8 +214,8 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.is(lines.length, expected.length + 7)
-        t.is(lines[0], `[${epoch}] INFO (${pid} on ${hostname}):`)
+        t.equal(lines.length, expected.length + 7)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}):`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
@@ -255,7 +251,7 @@ test('error like objects tests', (t) => {
         const lines = formatted.split('\n')
         lines.shift(); lines.pop()
         for (let i = 0; i < lines.length; i += 1) {
-          t.is(lines[i], expectedLines[i])
+          t.equal(lines[i], expectedLines[i])
         }
         cb()
       }
@@ -305,7 +301,7 @@ test('error like objects tests', (t) => {
         const lines = formatted.split('\n')
         lines.shift(); lines.pop()
         for (let i = 0; i < lines.length; i += 1) {
-          t.true(expectedLines.includes(lines[i]))
+          t.ok(expectedLines.includes(lines[i]))
         }
         cb()
       }

@@ -14,7 +14,7 @@ test('cli', (t) => {
   const tmpDir = path.join(__dirname, '.tmp_' + Date.now())
   fs.mkdirSync(tmpDir)
 
-  t.tearDown(() => rimraf(tmpDir, noop))
+  t.teardown(() => rimraf(tmpDir, noop))
 
   t.test('loads and applies default config file: pino-pretty.config.js', (t) => {
     t.plan(1)
@@ -26,10 +26,10 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
-    t.tearDown(() => {
+    t.teardown(() => {
       fs.unlinkSync(configFile)
       child.kill()
     })
@@ -45,10 +45,10 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
-    t.tearDown(() => {
+    t.teardown(() => {
       fs.unlinkSync(configFile)
       child.kill()
     })
@@ -64,10 +64,10 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
-    t.tearDown(() => {
+    t.teardown(() => {
       fs.unlinkSync(configFile)
       child.kill()
     })
@@ -83,10 +83,10 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
-    t.tearDown(() => child.kill())
+    t.teardown(() => child.kill())
   })
 
   t.test('loads and applies custom config file: pino-pretty.config.test.js', (t) => {
@@ -99,10 +99,10 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
-    t.tearDown(() => child.kill())
+    t.teardown(() => child.kill())
   })
 
   t.test('cli options override config options', (t) => {
@@ -121,10 +121,10 @@ test('cli', (t) => {
     // Validate that the time has been translated and correct message key has been used
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine.replace(/"msg"/, '"new_msg"'))
-    t.tearDown(() => {
+    t.teardown(() => {
       fs.unlinkSync(configFile)
       child.kill()
     })
@@ -145,10 +145,10 @@ test('cli', (t) => {
     // Validate that the time has been translated and correct message key has been used
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.is(data.toString(), '[1594416696006] FATAL: There was an error starting the process.\n    QueryError: Error during sql query: syntax error at or near SELECTT\n        at /home/me/projects/example/sql.js\n        at /home/me/projects/example/index.js\nquerySql: SELECTT * FROM "test" WHERE id = $1;\nqueryArgs: 12\n')
+      t.equal(data.toString(), '[1594416696006] FATAL: There was an error starting the process.\n    QueryError: Error during sql query: syntax error at or near SELECTT\n        at /home/me/projects/example/sql.js\n        at /home/me/projects/example/index.js\nquerySql: SELECTT * FROM "test" WHERE id = $1;\nqueryArgs: 12\n')
     })
     child.stdin.write('{"level":60,"time":1594416696006,"msg":"There was an error starting the process.","type":"Error","stack":"QueryError: Error during sql query: syntax error at or near SELECTT\\n    at /home/me/projects/example/sql.js\\n    at /home/me/projects/example/index.js","querySql":"SELECTT * FROM \\"test\\" WHERE id = $1;","queryArgs":[12]}\n')
-    t.tearDown(() => {
+    t.teardown(() => {
       fs.unlinkSync(configFile)
       child.kill()
     })
@@ -159,11 +159,11 @@ test('cli', (t) => {
     const args = [bin, '--config', 'pino-pretty.config.missing.json']
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
-    child.on('close', (code) => t.is(code, 1))
+    child.on('close', (code) => t.equal(code, 1))
     child.stderr.on('data', (data) => {
-      t.contains(data.toString(), 'Error: Failed to load runtime configuration file: pino-pretty.config.missing.json\n')
+      t.equal(data.indexOf('Error: Failed to load runtime configuration file: pino-pretty.config.missing.json\n') >= 0, true)
     })
-    t.tearDown(() => child.kill())
+    t.teardown(() => child.kill())
   })
 
   t.test('throws on invalid default config file', (t) => {
@@ -172,11 +172,11 @@ test('cli', (t) => {
     fs.writeFileSync(configFile, 'module.exports = () => {}')
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
-    child.on('close', (code) => t.is(code, 1))
+    child.on('close', (code) => t.equal(code, 1))
     child.stderr.on('data', (data) => {
-      t.contains(data.toString(), 'Error: Invalid runtime configuration file: pino-pretty.config.js\n')
+      t.equal(data.indexOf('Error: Invalid runtime configuration file: pino-pretty.config.js\n') >= 0, true)
     })
-    t.tearDown(() => child.kill())
+    t.teardown(() => child.kill())
   })
 
   t.test('throws on invalid custom config file', (t) => {
@@ -186,11 +186,11 @@ test('cli', (t) => {
     const args = [bin, '--config', path.relative(tmpDir, configFile)]
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
-    child.on('close', (code) => t.is(code, 1))
+    child.on('close', (code) => t.equal(code, 1))
     child.stderr.on('data', (data) => {
-      t.contains(data.toString(), 'Error: Invalid runtime configuration file: pino-pretty.config.invalid.js\n')
+      t.equal(data.indexOf('Error: Invalid runtime configuration file: pino-pretty.config.invalid.js\n') >= 0, true)
     })
-    t.tearDown(() => child.kill())
+    t.teardown(() => child.kill())
   })
 
   t.end()
