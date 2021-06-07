@@ -54,7 +54,7 @@ interface PrettyOptions_ {
    */
   timestampKey?: string;
   /**
-   * Format output of message, e.g. {level} - {pid} will output message: INFO - 1123
+   * Format output of message, e.g. {level} - {pid} will output message: INFO  - 1123
    * @default false
    *
    * @example

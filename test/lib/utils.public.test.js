@@ -41,7 +41,7 @@ tap.test('prettifyLevel', t => {
       level: 30
     }
     const colorized = prettifyLevel({ log })
-    t.equal(colorized, 'INFO')
+    t.equal(colorized, 'INFO ')
   })
 
   t.test('returns colorized value for color colorizer', async t => {
@@ -50,7 +50,7 @@ tap.test('prettifyLevel', t => {
     }
     const colorizer = getColorizer(true)
     const colorized = prettifyLevel({ log, colorizer })
-    t.equal(colorized, '\u001B[32mINFO\u001B[39m')
+    t.equal(colorized, '\u001B[32mINFO \u001B[39m')
   })
 
   t.end()
@@ -103,7 +103,7 @@ tap.test('prettifyMessage', t => {
 
   t.test('returns message formatted by `messageFormat` option - levelLabel', async t => {
     const str = prettifyMessage({ log: { msg: 'foo', context: 'appModule', level: 30 }, messageFormat: '[{level}] {levelLabel} {context} - {msg}' })
-    t.equal(str, '[30] INFO appModule - foo')
+    t.equal(str, '[30] INFO  appModule - foo')
   })
 
   t.test('`messageFormat` supports nested curly brackets', async t => {

@@ -12,10 +12,10 @@ test('returns default colorizer', async t => {
   t.equal(colorized, 'DEBUG')
 
   colorized = colorizer(30)
-  t.equal(colorized, 'INFO')
+  t.equal(colorized, 'INFO ')
 
   colorized = colorizer(40)
-  t.equal(colorized, 'WARN')
+  t.equal(colorized, 'WARN ')
 
   colorized = colorizer(50)
   t.equal(colorized, 'ERROR')
@@ -27,7 +27,7 @@ test('returns default colorizer', async t => {
   t.equal(colorized, 'USERLVL')
 
   colorized = colorizer('info')
-  t.equal(colorized, 'INFO')
+  t.equal(colorized, 'INFO ')
 
   colorized = colorizer('use-default')
   t.equal(colorized, 'USERLVL')
@@ -48,10 +48,10 @@ test('returns colorizing colorizer', async t => {
   t.equal(colorized, '\u001B[34mDEBUG\u001B[39m')
 
   colorized = colorizer(30)
-  t.equal(colorized, '\u001B[32mINFO\u001B[39m')
+  t.equal(colorized, '\u001B[32mINFO \u001B[39m')
 
   colorized = colorizer(40)
-  t.equal(colorized, '\u001B[33mWARN\u001B[39m')
+  t.equal(colorized, '\u001B[33mWARN \u001B[39m')
 
   colorized = colorizer(50)
   t.equal(colorized, '\u001B[31mERROR\u001B[39m')
@@ -63,7 +63,7 @@ test('returns colorizing colorizer', async t => {
   t.equal(colorized, '\u001B[37mUSERLVL\u001B[39m')
 
   colorized = colorizer('info')
-  t.equal(colorized, '\u001B[32mINFO\u001B[39m')
+  t.equal(colorized, '\u001B[32mINFO \u001B[39m')
 
   colorized = colorizer('use-default')
   t.equal(colorized, '\u001B[37mUSERLVL\u001B[39m')

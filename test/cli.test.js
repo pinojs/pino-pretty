@@ -15,7 +15,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], [bin], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      t.equal(data.toString(), `[${epoch}] INFO  (42 on foo): hello world\n`)
     })
     child.stdin.write(logLine)
     t.teardown(() => child.kill())
@@ -27,7 +27,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], [bin, '-l'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), `INFO [${epoch}] (42 on foo): hello world\n`)
+      t.equal(data.toString(), `INFO  [${epoch}] (42 on foo): hello world\n`)
     })
     child.stdin.write(logLine)
     t.teardown(() => child.kill())
@@ -39,7 +39,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], [bin, '-t'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO  (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => child.kill())
@@ -51,7 +51,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], [bin, '-s', 'msg == `hello world`'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      t.equal(data.toString(), `[${epoch}] INFO  (42 on foo): hello world\n`)
     })
     child.stdin.write(logLine)
     t.teardown(() => child.kill())
@@ -63,7 +63,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], [bin, '-s', 'msg == `hello world`'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      t.equal(data.toString(), `[${epoch}] INFO  (42 on foo): hello world\n`)
     })
     child.stdin.write(logLine.replace('hello world', 'hello universe'))
     child.stdin.write(logLine)
@@ -76,7 +76,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], [bin, '-i', 'pid,hostname'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[1522431328992] INFO: hello world\n')
+      t.equal(data.toString(), '[1522431328992] INFO : hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => child.kill())
@@ -106,7 +106,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], [bin, '--timestampKey', '@timestamp'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[1522431328992] INFO: hello world\n')
+      t.equal(data.toString(), '[1522431328992] INFO : hello world\n')
     })
     const logLine = '{"level":30,"@timestamp":1522431328992,"msg":"hello world"}\n'
     child.stdin.write(logLine)
@@ -127,7 +127,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], [bin, '--singleLine'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world {"extra":{"foo":"bar","number":42}}\n`)
+      t.equal(data.toString(), `[${epoch}] INFO  (42 on foo): hello world {"extra":{"foo":"bar","number":42}}\n`)
     })
     child.stdin.write(logLineWithExtra)
     t.teardown(() => child.kill())
@@ -150,7 +150,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], [bin, '-S', '-i', 'extra.foo,extra.nested,extra.nested.miss'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world {"extra":{"number":42}}\n`)
+      t.equal(data.toString(), `[${epoch}] INFO  (42 on foo): hello world {"extra":{"number":42}}\n`)
     })
     child.stdin.write(logLineNested)
     t.teardown(() => child.kill())
