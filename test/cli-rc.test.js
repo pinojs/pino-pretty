@@ -161,7 +161,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
     child.stderr.on('data', (data) => {
-      t.equal(data.indexOf('Error: Failed to load runtime configuration file: pino-pretty.config.missing.json\n') >= 0, true)
+      t.equal(data.indexOf('Error: Failed to load runtime configuration file: pino-pretty.config.missing.json') >= 0, true)
     })
     t.teardown(() => child.kill())
   })
@@ -174,7 +174,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
     child.stderr.on('data', (data) => {
-      t.equal(data.indexOf('Error: Invalid runtime configuration file: pino-pretty.config.js\n') >= 0, true)
+      t.equal(data.indexOf('Error: Invalid runtime configuration file: pino-pretty.config.js') >= 0, true)
     })
     t.teardown(() => child.kill())
   })
@@ -188,7 +188,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
     child.stderr.on('data', (data) => {
-      t.equal(data.indexOf('Error: Invalid runtime configuration file: pino-pretty.config.invalid.js\n') >= 0, true)
+      t.equal(data.indexOf('Error: Invalid runtime configuration file: pino-pretty.config.invalid.js') >= 0, true)
     })
     t.teardown(() => child.kill())
   })
