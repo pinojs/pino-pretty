@@ -84,6 +84,40 @@ tap.test('#formatTime', t => {
   t.end()
 })
 
+tap.test('#createDate', t => {
+  const wanted = 1624450038567
+
+  t.test('accepts arguments the Date constructor would accept', async t => {
+    t.plan(2)
+    t.same(internals.createDate(1624450038567).getTime(), wanted)
+    t.same(internals.createDate('2021-06-23T12:07:18.567Z').getTime(), wanted)
+  })
+
+  t.test('accepts epoch as a string', async t => {
+    // If Date() accepts this argument, the createDate function is not needed
+    // and can be replaced with Date()
+    t.plan(2)
+    t.notSame(new Date('16244500385-67').getTime(), wanted)
+    t.same(internals.createDate('1624450038567').getTime(), wanted)
+  })
+
+  t.end()
+})
+
+tap.test('#isValidDate', t => {
+  t.test('returns true for valid dates', async t => {
+    t.same(internals.isValidDate(new Date()), true)
+  })
+
+  t.test('returns false for non-dates and invalid dates', async t => {
+    t.plan(2)
+    t.same(internals.isValidDate('20210621'), false)
+    t.same(internals.isValidDate(new Date('2021-41-99')), false)
+  })
+
+  t.end()
+})
+
 tap.test('#prettifyError', t => {
   t.test('prettifies error', t => {
     const error = Error('Bad error!')
