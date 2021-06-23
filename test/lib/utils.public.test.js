@@ -339,6 +339,26 @@ tap.test('prettifyTime', t => {
     t.equal(str, '[0]')
   })
 
+  t.test('works with epoch as a number or string', (t) => {
+    t.plan(3)
+    const epoch = 1522431328992
+    const asNumber = prettifyTime({
+      log: { time: epoch, msg: 'foo' },
+      translateFormat: true
+    })
+    const asString = prettifyTime({
+      log: { time: `${epoch}`, msg: 'foo' },
+      translateFormat: true
+    })
+    const invalid = prettifyTime({
+      log: { time: '2 days ago', msg: 'foo' },
+      translateFormat: true
+    })
+    t.same(asString, '[2018-03-30 17:35:28.992 +0000]')
+    t.same(asNumber, '[2018-03-30 17:35:28.992 +0000]')
+    t.same(invalid, '[2 days ago]')
+  })
+
   t.end()
 })
 
