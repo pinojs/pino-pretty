@@ -33,7 +33,6 @@
   ],
   "dependencies": {
     "@hapi/bourne": "^2.0.0",
-    "@types/node": "^16.0.0",
     "args": "^5.0.1",
     "chalk": "^4.0.0",
     "dateformat": "^4.5.1",
@@ -47,6 +46,7 @@
     "strip-json-comments": "^3.1.1"
   },
   "devDependencies": {
+    "@types/node": "^16.0.0",
     "pino": "^6.0.0",
     "pre-commit": "^1.2.2",
     "rimraf": "^3.0.2",
