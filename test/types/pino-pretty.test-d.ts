@@ -24,6 +24,11 @@ const options: PinoPretty.PrettyOptions = {
   translateTime: "UTC:h:MM:ss TT Z",
   search: "foo == `bar`",
   singleLine: false,
+  customPrettifiers: {
+    key: (value) => {
+      return value.toString().toUpperCase();
+    }
+  }
 };
 
 const options2: PrettyOptions = {
@@ -42,6 +47,11 @@ const options2: PrettyOptions = {
   translateTime: "UTC:h:MM:ss TT Z",
   search: "foo == `bar`",
   singleLine: false,
+  customPrettifiers: {
+    key: (value) => {
+      return value.toString().toUpperCase();
+    }
+  }
 };
 
 const pretty = prettyFactory(options);
