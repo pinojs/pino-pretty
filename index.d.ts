@@ -99,6 +99,27 @@ interface PrettyOptions_ {
    * @example "time,hostname"
    */
   ignore?: string;
+  /**
+   * Provides the ability to add a custom prettify function for specific log properties.
+   * `customPrettifiers` is an object, where keys are log properties that will be prettified
+   * and value is the prettify function itself.
+   * For example, if a log line contains a query property, you can specify a prettifier for it:
+   * @default {}
+   *
+   * @example
+   * ```typescript
+   * {
+   *   customPrettifiers: {
+   *     query: prettifyQuery
+   *   }
+   * }
+   * //...
+   * const prettifyQuery = value => {
+   *  // do some prettify magic
+   * }
+   * ```
+   */
+  customPrettifiers?: Record<string, PinoPretty.Prettifier>;
 }
 
 declare namespace PinoPretty {
