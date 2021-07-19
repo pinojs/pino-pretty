@@ -82,6 +82,19 @@ test('cli', (t) => {
     t.teardown(() => child.kill())
   })
 
+  t.test('does ignore escaped keys', (t) => {
+    t.plan(1)
+    const env = { TERM: 'dumb' }
+    const child = spawn(process.argv[0], [bin, '-i', 'log\\.domain\\.corp/foo'], { env })
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.equal(data.toString(), '[1522431328992] INFO: hello world\n')
+    })
+    const logLine = '{"level":30,"time":1522431328992,"msg":"hello world","log.domain.corp/foo":"bar"}\n'
+    child.stdin.write(logLine)
+    t.teardown(() => child.kill())
+  })
+
   t.test('passes through stringified date as string', (t) => {
     t.plan(1)
     const env = { TERM: 'dumb' }
