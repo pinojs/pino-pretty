@@ -159,3 +159,32 @@ tap.test('#deleteLogProperty', t => {
 
   t.end()
 })
+
+tap.test('#splitIgnoreKey', t => {
+  t.test('splitIgnoreKey does not change key', async t => {
+    const result = internals.splitIgnoreKey('data1')
+    t.same(result, ['data1'])
+  })
+
+  t.test('splitIgnoreKey splits nested key', async t => {
+    const result = internals.splitIgnoreKey('data1.data2.data-3')
+    t.same(result, ['data1', 'data2', 'data-3'])
+  })
+
+  t.test('splitIgnoreKey splits nested keys ending with a dot', async t => {
+    const result = internals.splitIgnoreKey('data1.data2.data-3.')
+    t.same(result, ['data1', 'data2', 'data-3'])
+  })
+
+  t.test('splitIgnoreKey splits nested escaped key', async t => {
+    const result = internals.splitIgnoreKey('logging\\.domain\\.corp/operation.foo.bar-2')
+    t.same(result, ['logging.domain.corp/operation', 'foo', 'bar-2'])
+  })
+
+  t.test('splitIgnoreKey splits nested escaped key with special characters', async t => {
+    const result = internals.splitIgnoreKey('logging\\.domain\\.corp/operation.!\t@#$%^&*()_+=-<>.bar\\.2')
+    t.same(result, ['logging.domain.corp/operation', '!\t@#$%^&*()_+=-<>', 'bar.2'])
+  })
+
+  t.end()
+})

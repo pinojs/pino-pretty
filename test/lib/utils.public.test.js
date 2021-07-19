@@ -382,6 +382,23 @@ tap.test('#filterLog', t => {
     t.same(result, { level: 30 })
   })
 
+  const logData2 = Object.assign({
+    'logging.domain.corp/operation': {
+      id: 'foo',
+      producer: 'bar'
+    }
+  }, logData)
+
+  t.test('filterLog removes entry with escape sequence', async t => {
+    const result = filterLog(logData2, ['data1', 'logging\\.domain\\.corp/operation'])
+    t.same(result, { level: 30, time: 1522431328992 })
+  })
+
+  t.test('filterLog removes entry with escape sequence nested', async t => {
+    const result = filterLog(logData2, ['data1', 'logging\\.domain\\.corp/operation.producer'])
+    t.same(result, { level: 30, time: 1522431328992, 'logging.domain.corp/operation': { id: 'foo' } })
+  })
+
   t.end()
 })
 
