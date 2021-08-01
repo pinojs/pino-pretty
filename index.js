@@ -60,8 +60,6 @@ function prettyFactory (options) {
   const colorizer = colors(opts.colorize)
   if (opts.colorize === true) {
     coloretteOptions.enabled = true
-  } else {
-    coloretteOptions.enabled = false
   }
 
   const search = opts.search
