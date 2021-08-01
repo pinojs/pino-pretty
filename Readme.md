@@ -134,7 +134,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
 
 ```js
 {
-  colorize: chalk.supportsColor, // --colorize
+  colorize: colorette.options.enabled, // --colorize
   crlf: false, // --crlf
   errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys
   errorProps: '', // --errorProps
@@ -153,7 +153,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
 ```
 
 The `colorize` default follows
-[`chalk.supportsColor`](https://www.npmjs.com/package/chalk#chalksupportscolor).
+[`colorette.options.enabled`](https://github.com/jorgebucaran/colorette#optionsenabled).
 
 `customPrettifiers` option provides the ability to add a custom prettify function
 for specific log properties. `customPrettifiers` is an object, where keys are

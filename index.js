@@ -1,6 +1,6 @@
 'use strict'
 
-const chalk = require('chalk')
+const { options: coloretteOptions } = require('colorette')
 const jmespath = require('jmespath')
 const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
@@ -25,7 +25,7 @@ const jsonParser = input => {
 }
 
 const defaultOptions = {
-  colorize: chalk.supportsColor,
+  colorize: coloretteOptions.enabled,
   crlf: false,
   errorLikeObjectKeys: ERROR_LIKE_KEYS,
   errorProps: '',
@@ -58,6 +58,12 @@ function prettyFactory (options) {
   const singleLine = opts.singleLine
 
   const colorizer = colors(opts.colorize)
+  if (opts.colorize === true) {
+    coloretteOptions.enabled = true
+  } else {
+    coloretteOptions.enabled = false
+  }
+
   const search = opts.search
 
   return pretty
