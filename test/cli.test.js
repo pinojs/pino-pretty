@@ -22,39 +22,45 @@ test('cli', (t) => {
   })
 
   t.test('flips epoch and level', (t) => {
-    t.plan(1)
-    const env = { TERM: 'dumb' }
-    const child = spawn(process.argv[0], [bin, '-l'], { env })
-    child.on('error', t.threw)
-    child.stdout.on('data', (data) => {
-      t.equal(data.toString(), `INFO [${epoch}] (42 on foo): hello world\n`)
+    t.plan(2)
+    ;['--levelFirst', '-l'].forEach((optionName) => {
+      const env = { TERM: 'dumb' }
+      const child = spawn(process.argv[0], [bin, optionName], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `INFO [${epoch}] (42 on foo): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
     })
-    child.stdin.write(logLine)
-    t.teardown(() => child.kill())
   })
 
   t.test('translates time to default format', (t) => {
-    t.plan(1)
-    const env = { TERM: 'dumb' }
-    const child = spawn(process.argv[0], [bin, '-t'], { env })
-    child.on('error', t.threw)
-    child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+    t.plan(2)
+    ;['--translateTime', '-t'].forEach((optionName) => {
+      const env = { TERM: 'dumb' }
+      const child = spawn(process.argv[0], [bin, optionName], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
     })
-    child.stdin.write(logLine)
-    t.teardown(() => child.kill())
   })
 
   t.test('does search', (t) => {
-    t.plan(1)
-    const env = { TERM: 'dumb' }
-    const child = spawn(process.argv[0], [bin, '-s', 'msg == `hello world`'], { env })
-    child.on('error', t.threw)
-    child.stdout.on('data', (data) => {
-      t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+    t.plan(2)
+    ;['--search', '-s'].forEach((optionName) => {
+      const env = { TERM: 'dumb' }
+      const child = spawn(process.argv[0], [bin, optionName, 'msg == `hello world`'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
     })
-    child.stdin.write(logLine)
-    t.teardown(() => child.kill())
   })
 
   t.test('does search but finds only 1 out of 2', (t) => {
@@ -71,15 +77,17 @@ test('cli', (t) => {
   })
 
   t.test('does ignore multiple keys', (t) => {
-    t.plan(1)
-    const env = { TERM: 'dumb' }
-    const child = spawn(process.argv[0], [bin, '-i', 'pid,hostname'], { env })
-    child.on('error', t.threw)
-    child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[1522431328992] INFO: hello world\n')
+    t.plan(2)
+    ;['--ignore', '-i'].forEach((optionName) => {
+      const env = { TERM: 'dumb' }
+      const child = spawn(process.argv[0], [bin, optionName, 'pid,hostname'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), '[1522431328992] INFO: hello world\n')
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
     })
-    child.stdin.write(logLine)
-    t.teardown(() => child.kill())
   })
 
   t.test('does ignore escaped keys', (t) => {
@@ -114,36 +122,39 @@ test('cli', (t) => {
   })
 
   t.test('uses specified timestampKey', (t) => {
-    t.plan(1)
-    const env = { TERM: 'dumb' }
-    const child = spawn(process.argv[0], [bin, '--timestampKey', '@timestamp'], { env })
-    child.on('error', t.threw)
-    child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[1522431328992] INFO: hello world\n')
+    t.plan(2)
+    ;['--timestampKey', '-a'].forEach((optionName) => {
+      const env = { TERM: 'dumb' }
+      const child = spawn(process.argv[0], [bin, optionName, '@timestamp'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), '[1522431328992] INFO: hello world\n')
+      })
+      const logLine = '{"level":30,"@timestamp":1522431328992,"msg":"hello world"}\n'
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
     })
-    const logLine = '{"level":30,"@timestamp":1522431328992,"msg":"hello world"}\n'
-    child.stdin.write(logLine)
-    t.teardown(() => child.kill())
   })
 
   t.test('singleLine=true', (t) => {
-    t.plan(1)
+    t.plan(2)
+    ;['--singleLine', '-S'].forEach((optionName) => {
+      const logLineWithExtra = JSON.stringify(Object.assign(JSON.parse(logLine), {
+        extra: {
+          foo: 'bar',
+          number: 42
+        }
+      })) + '\n'
 
-    const logLineWithExtra = JSON.stringify(Object.assign(JSON.parse(logLine), {
-      extra: {
-        foo: 'bar',
-        number: 42
-      }
-    })) + '\n'
-
-    const env = { TERM: 'dumb' }
-    const child = spawn(process.argv[0], [bin, '--singleLine'], { env })
-    child.on('error', t.threw)
-    child.stdout.on('data', (data) => {
-      t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world {"extra":{"foo":"bar","number":42}}\n`)
+      const env = { TERM: 'dumb' }
+      const child = spawn(process.argv[0], [bin, optionName], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world {"extra":{"foo":"bar","number":42}}\n`)
+      })
+      child.stdin.write(logLineWithExtra)
+      t.teardown(() => child.kill())
     })
-    child.stdin.write(logLineWithExtra)
-    t.teardown(() => child.kill())
   })
 
   t.test('does ignore nested keys', (t) => {
