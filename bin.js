@@ -70,6 +70,12 @@ let opts = args.parse(process.argv, {
       messageKey: DEFAULT_VALUE,
       levelKey: DEFAULT_VALUE,
       timestampKey: DEFAULT_VALUE
+    },
+    // NOTE: The following key-value pairs values should be in sync with the
+    //       short version values defined in each `args.option([value, key], ...)`
+    alias: {
+      messageKey: 'm',
+      timestampKey: 'a'
     }
   }
 })
