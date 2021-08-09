@@ -105,20 +105,17 @@ test('cli', (t) => {
     t.teardown(() => child.kill())
   })
 
-  t.test('cli options override config options', (t) => {
-    t.plan(2)
-    // Set translateTime: true on run configuration
-    const configFile = path.join(tmpDir, 'pino-pretty.config.js')
-    fs.writeFileSync(configFile, `
-      module.exports = {
-        translateTime: true,
-        messageKey: 'custom_msg'
-      }
-    `.trim())
-    t.teardown(() => {
-      fs.unlinkSync(configFile)
-    })
-    ;['--messageKey', '-m'].forEach((optionName) => {
+  ;['--messageKey', '-m'].forEach((optionName) => {
+    t.test(`cli options override config options via ${optionName}`, (t) => {
+      t.plan(1)
+      // Set translateTime: true on run configuration
+      const configFile = path.join(tmpDir, 'pino-pretty.config.js')
+      fs.writeFileSync(configFile, `
+        module.exports = {
+          translateTime: true,
+          messageKey: 'custom_msg'
+        }
+      `.trim())
       // Set messageKey: 'new_msg' using command line option
       const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName, 'new_msg'], { env, cwd: tmpDir })
@@ -129,6 +126,7 @@ test('cli', (t) => {
       })
       child.stdin.write(logLine.replace(/"msg"/, '"new_msg"'))
       t.teardown(() => {
+        fs.unlinkSync(configFile)
         child.kill()
       })
     })

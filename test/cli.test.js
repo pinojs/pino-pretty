@@ -21,9 +21,9 @@ test('cli', (t) => {
     t.teardown(() => child.kill())
   })
 
-  t.test('flips epoch and level', (t) => {
-    t.plan(2)
-    ;['--levelFirst', '-l'].forEach((optionName) => {
+  ;['--levelFirst', '-l'].forEach((optionName) => {
+    t.test(`flips epoch and level via ${optionName}`, (t) => {
+      t.plan(1)
       const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName], { env })
       child.on('error', t.threw)
@@ -35,9 +35,9 @@ test('cli', (t) => {
     })
   })
 
-  t.test('translates time to default format', (t) => {
-    t.plan(2)
-    ;['--translateTime', '-t'].forEach((optionName) => {
+  ;['--translateTime', '-t'].forEach((optionName) => {
+    t.test(`translates time to default format via ${optionName}`, (t) => {
+      t.plan(1)
       const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName], { env })
       child.on('error', t.threw)
@@ -49,9 +49,9 @@ test('cli', (t) => {
     })
   })
 
-  t.test('does search', (t) => {
-    t.plan(2)
-    ;['--search', '-s'].forEach((optionName) => {
+  ;['--search', '-s'].forEach((optionName) => {
+    t.test(`does search via ${optionName}`, (t) => {
+      t.plan(1)
       const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName, 'msg == `hello world`'], { env })
       child.on('error', t.threw)
@@ -76,9 +76,9 @@ test('cli', (t) => {
     t.teardown(() => child.kill())
   })
 
-  t.test('does ignore multiple keys', (t) => {
-    t.plan(2)
-    ;['--ignore', '-i'].forEach((optionName) => {
+  ;['--ignore', '-i'].forEach((optionName) => {
+    t.test('does ignore multiple keys', (t) => {
+      t.plan(1)
       const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName, 'pid,hostname'], { env })
       child.on('error', t.threw)
@@ -121,9 +121,9 @@ test('cli', (t) => {
     t.teardown(() => child.kill())
   })
 
-  t.test('uses specified timestampKey', (t) => {
-    t.plan(2)
-    ;['--timestampKey', '-a'].forEach((optionName) => {
+  ;['--timestampKey', '-a'].forEach((optionName) => {
+    t.test(`uses specified timestamp key via ${optionName}`, (t) => {
+      t.plan(1)
       const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName, '@timestamp'], { env })
       child.on('error', t.threw)
@@ -136,9 +136,9 @@ test('cli', (t) => {
     })
   })
 
-  t.test('singleLine=true', (t) => {
-    t.plan(2)
-    ;['--singleLine', '-S'].forEach((optionName) => {
+  ;['--singleLine', '-S'].forEach((optionName) => {
+    t.test(`singleLine=true via ${optionName}`, (t) => {
+      t.plan(1)
       const logLineWithExtra = JSON.stringify(Object.assign(JSON.parse(logLine), {
         extra: {
           foo: 'bar',
