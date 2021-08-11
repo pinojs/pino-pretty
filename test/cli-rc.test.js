@@ -105,28 +105,30 @@ test('cli', (t) => {
     t.teardown(() => child.kill())
   })
 
-  t.test('cli options override config options', (t) => {
-    t.plan(1)
-    // Set translateTime: true on run configuration
-    const configFile = path.join(tmpDir, 'pino-pretty.config.js')
-    fs.writeFileSync(configFile, `
-      module.exports = {
-        translateTime: true,
-        messageKey: 'custom_msg'
-      }
-    `.trim())
-    // Set messageKey: 'new_msg' using command line option
-    const env = { TERM: 'dumb' }
-    const child = spawn(process.argv[0], [bin, '--messageKey', 'new_msg'], { env, cwd: tmpDir })
-    // Validate that the time has been translated and correct message key has been used
-    child.on('error', t.threw)
-    child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
-    })
-    child.stdin.write(logLine.replace(/"msg"/, '"new_msg"'))
-    t.teardown(() => {
-      fs.unlinkSync(configFile)
-      child.kill()
+  ;['--messageKey', '-m'].forEach((optionName) => {
+    t.test(`cli options override config options via ${optionName}`, (t) => {
+      t.plan(1)
+      // Set translateTime: true on run configuration
+      const configFile = path.join(tmpDir, 'pino-pretty.config.js')
+      fs.writeFileSync(configFile, `
+        module.exports = {
+          translateTime: true,
+          messageKey: 'custom_msg'
+        }
+      `.trim())
+      // Set messageKey: 'new_msg' using command line option
+      const env = { TERM: 'dumb' }
+      const child = spawn(process.argv[0], [bin, optionName, 'new_msg'], { env, cwd: tmpDir })
+      // Validate that the time has been translated and correct message key has been used
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      })
+      child.stdin.write(logLine.replace(/"msg"/, '"new_msg"'))
+      t.teardown(() => {
+        fs.unlinkSync(configFile)
+        child.kill()
+      })
     })
   })
 
