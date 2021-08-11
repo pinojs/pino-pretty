@@ -7,11 +7,11 @@ const test = require('tap').test
 const bin = require.resolve(path.join(__dirname, '..', 'bin.js'))
 const epoch = 1522431328992
 const logLine = '{"level":30,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
+const env = { TERM: 'dumb' }
 
 test('cli', (t) => {
   t.test('does basic reformatting', (t) => {
     t.plan(1)
-    const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], [bin], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
@@ -24,7 +24,6 @@ test('cli', (t) => {
   ;['--levelFirst', '-l'].forEach((optionName) => {
     t.test(`flips epoch and level via ${optionName}`, (t) => {
       t.plan(1)
-      const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName], { env })
       child.on('error', t.threw)
       child.stdout.on('data', (data) => {
@@ -38,7 +37,6 @@ test('cli', (t) => {
   ;['--translateTime', '-t'].forEach((optionName) => {
     t.test(`translates time to default format via ${optionName}`, (t) => {
       t.plan(1)
-      const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName], { env })
       child.on('error', t.threw)
       child.stdout.on('data', (data) => {
@@ -52,7 +50,6 @@ test('cli', (t) => {
   ;['--search', '-s'].forEach((optionName) => {
     t.test(`does search via ${optionName}`, (t) => {
       t.plan(1)
-      const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName, 'msg == `hello world`'], { env })
       child.on('error', t.threw)
       child.stdout.on('data', (data) => {
@@ -65,7 +62,6 @@ test('cli', (t) => {
 
   t.test('does search but finds only 1 out of 2', (t) => {
     t.plan(1)
-    const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], [bin, '-s', 'msg == `hello world`'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
@@ -79,7 +75,6 @@ test('cli', (t) => {
   ;['--ignore', '-i'].forEach((optionName) => {
     t.test('does ignore multiple keys', (t) => {
       t.plan(1)
-      const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName, 'pid,hostname'], { env })
       child.on('error', t.threw)
       child.stdout.on('data', (data) => {
@@ -92,7 +87,6 @@ test('cli', (t) => {
 
   t.test('does ignore escaped keys', (t) => {
     t.plan(1)
-    const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], [bin, '-i', 'log\\.domain\\.corp/foo'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
@@ -105,7 +99,6 @@ test('cli', (t) => {
 
   t.test('passes through stringified date as string', (t) => {
     t.plan(1)
-    const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], [bin], { env })
     child.on('error', t.threw)
 
@@ -124,7 +117,6 @@ test('cli', (t) => {
   ;['--timestampKey', '-a'].forEach((optionName) => {
     t.test(`uses specified timestamp key via ${optionName}`, (t) => {
       t.plan(1)
-      const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName, '@timestamp'], { env })
       child.on('error', t.threw)
       child.stdout.on('data', (data) => {
@@ -146,7 +138,6 @@ test('cli', (t) => {
         }
       })) + '\n'
 
-      const env = { TERM: 'dumb' }
       const child = spawn(process.argv[0], [bin, optionName], { env })
       child.on('error', t.threw)
       child.stdout.on('data', (data) => {
@@ -170,7 +161,6 @@ test('cli', (t) => {
       }
     })) + '\n'
 
-    const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], [bin, '-S', '-i', 'extra.foo,extra.nested,extra.nested.miss'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
