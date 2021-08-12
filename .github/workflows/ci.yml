@@ -36,8 +36,6 @@ jobs:
 
       - name: Run Tests
         run: npm run ci
-        env:
-          CI: true
 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@1.1.3
