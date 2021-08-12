@@ -9,9 +9,9 @@
     "pino-pretty": "./bin.js"
   },
   "scripts": {
-    "ci": "standard && tap --color ./test/**/*.test.js && npm run test-types",
+    "ci": "standard && tap --color test/*.test.js test/*/*.test.js --coverage-report=lcovonly && npm run test-types",
     "lint": "standard | snazzy",
-    "test": "tap --100 --color ./test/**/*.test.js",
+    "test": "tap --100 --color test/*.test.js test/*/*.test.js",
     "test-types": "tsc && tsd"
   },
   "repository": {
