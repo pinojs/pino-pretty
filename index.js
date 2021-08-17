@@ -58,10 +58,6 @@ function prettyFactory (options) {
   const singleLine = opts.singleLine
 
   const colorizer = colors(opts.colorize)
-  if (opts.colorize === true) {
-    coloretteOptions.enabled = true
-  }
-
   const search = opts.search
 
   return pretty
