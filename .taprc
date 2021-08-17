@@ -3,4 +3,4 @@ jsx: false
 flow: false
 jobs: 1
 files:
-  - '**/*.test.js'
+  - 'test/**/*.test.js'
