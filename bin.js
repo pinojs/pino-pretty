@@ -3,11 +3,9 @@
 const fs = require('fs')
 const args = require('args')
 const path = require('path')
-const pump = require('pump')
-const split = require('split2')
-const { Transform } = require('readable-stream')
-const prettyFactory = require('./')
+const build = require('./')
 const CONSTANTS = require('./lib/constants')
+const pump = require('pump')
 const { isObject } = require('./lib/utils')
 
 const bourne = require('@hapi/bourne')
@@ -88,17 +86,9 @@ opts = Object.assign({}, config, opts)
 // set defaults
 opts.errorLikeObjectKeys = opts.errorLikeObjectKeys || 'err,error'
 opts.errorProps = opts.errorProps || ''
-const pretty = prettyFactory(opts)
-const prettyTransport = new Transform({
-  objectMode: true,
-  transform (chunk, enc, cb) {
-    const line = pretty(chunk.toString())
-    if (line === undefined) return cb()
-    cb(null, line)
-  }
-})
 
-pump(process.stdin, split(), prettyTransport, process.stdout)
+const res = build(opts)
+pump(process.stdin, res)
 
 // https://github.com/pinojs/pino/pull/358
 /* istanbul ignore next */

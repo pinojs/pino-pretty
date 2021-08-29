@@ -5,7 +5,7 @@ const os = require('os')
 const test = require('tap').test
 const pino = require('pino')
 const dateformat = require('dateformat')
-const _prettyFactory = require('../')
+const _prettyFactory = require('../').prettyFactory
 
 function prettyFactory (opts) {
   if (!opts) {
