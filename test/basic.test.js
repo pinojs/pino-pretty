@@ -5,7 +5,8 @@ const os = require('os')
 const test = require('tap').test
 const pino = require('pino')
 const dateformat = require('dateformat')
-const _prettyFactory = require('../').prettyFactory
+const pinoPretty = require('..')
+const _prettyFactory = pinoPretty.prettyFactory
 
 function prettyFactory (opts) {
   if (!opts) {
@@ -726,6 +727,11 @@ test('basic prettifier tests', (t) => {
       }
     }))
     log.info({ msg: 'message' })
+  })
+
+  t.test('default options', (t) => {
+    t.plan(1)
+    t.doesNotThrow(pinoPretty)
   })
 
   t.end()

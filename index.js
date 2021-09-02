@@ -169,7 +169,7 @@ function prettyFactory (options) {
   }
 }
 
-function build (opts) {
+function build (opts = {}) {
   const pretty = prettyFactory(opts)
   return abstractTransport(function (source) {
     const stream = new Transform({
