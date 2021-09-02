@@ -50,7 +50,7 @@ test('cli', (t) => {
   ;['--search', '-s'].forEach((optionName) => {
     t.test(`does search via ${optionName}`, (t) => {
       t.plan(1)
-      const child = spawn(process.argv[0], [bin, optionName, 'msg == `hello world`'], { env })
+      const child = spawn(process.argv[0], [bin, optionName, '$[?(@==\'hello world\')]'], { env })
       child.on('error', t.threw)
       child.stdout.on('data', (data) => {
         t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
@@ -62,7 +62,7 @@ test('cli', (t) => {
 
   t.test('does search but finds only 1 out of 2', (t) => {
     t.plan(1)
-    const child = spawn(process.argv[0], [bin, '-s', 'msg == `hello world`'], { env })
+    const child = spawn(process.argv[0], [bin, '-s', '$[?(@==\'hello world\')]'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
@@ -161,7 +161,7 @@ test('cli', (t) => {
       }
     })) + '\n'
 
-    const child = spawn(process.argv[0], [bin, '-S', '-i', 'extra.foo,extra.nested,extra.nested.miss'], { env })
+    const child = spawn(process.argv[0], [bin, '-S', '-i', '$.extra.foo,extra.nested,extra.nested.miss'], { env })
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
       t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world {"extra":{"number":42}}\n`)

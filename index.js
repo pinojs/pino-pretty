@@ -1,7 +1,7 @@
 'use strict'
 
 const { options: coloretteOptions } = require('colorette')
-const jmespath = require('jmespath')
+const jsonpath = require('jsonpath')
 const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
 const {
@@ -75,7 +75,7 @@ function prettyFactory (options) {
       log = inputData
     }
 
-    if (search && !jmespath.search(log, search)) {
+    if (search && jsonpath.query(log, search).length < 1) {
       return
     }
 

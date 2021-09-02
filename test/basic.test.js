@@ -442,9 +442,9 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
-  t.test('filter some lines based on jmespath', (t) => {
+  t.test('filter some lines based on jsonpath', (t) => {
     t.plan(3)
-    const pretty = prettyFactory({ search: 'foo.bar' })
+    const pretty = prettyFactory({ search: '$.foo.bar' })
     const expected = [
       undefined,
       undefined,
@@ -468,7 +468,8 @@ test('basic prettifier tests', (t) => {
 
   t.test('handles `undefined` return values', (t) => {
     t.plan(2)
-    const pretty = prettyFactory({ search: 'msg == \'hello world\'' })
+    const query = '$[?(@==\'hello world\')]'
+    const pretty = prettyFactory({ search: query })
     let formatted = pretty(`{"msg":"nope", "time":${epoch}, "level":30}`)
     t.equal(formatted, undefined)
     formatted = pretty(`{"msg":"hello world", "time":${epoch}, "level":30}`)
