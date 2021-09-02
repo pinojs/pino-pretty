@@ -82,7 +82,7 @@ node app.js | pino-pretty
     shortcut `SYS:standard` to translate time to `yyyy-mm-dd HH:MM:ss.l o` in
     system time zone.
 - `--search` (`-s`): Specify a search pattern according to
-  [jmespath](http://jmespath.org/).
+  [jsonpath](https://goessner.net/articles/JsonPath/).
 - `--ignore` (`-i`): Ignore one or several keys, nested keys are supported with each property delimited by a dot character (`.`), 
   keys may be escaped to target property names that contains the delimiter itself: 
   (`-i time,hostname,req.headers,log\\.domain\\.corp/foo`)
