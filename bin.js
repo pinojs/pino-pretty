@@ -3,18 +3,19 @@
 const fs = require('fs')
 const args = require('args')
 const path = require('path')
+const pump = require('pump')
+const bourne = require('@hapi/bourne')
+const JoyCon = require('joycon')
+const stripJsonComments = require('strip-json-comments')
+
 const build = require('./')
 const CONSTANTS = require('./lib/constants')
-const pump = require('pump')
 const { isObject } = require('./lib/utils')
 
-const bourne = require('@hapi/bourne')
-const stripJsonComments = require('strip-json-comments')
 const parseJSON = input => {
   return bourne.parse(stripJsonComments(input), { protoAction: 'remove' })
 }
 
-const JoyCon = require('joycon')
 const joycon = new JoyCon({
   parseJSON,
   files: [

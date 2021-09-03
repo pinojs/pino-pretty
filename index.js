@@ -5,8 +5,10 @@ const pump = require('pump')
 const { Transform } = require('readable-stream')
 const abstractTransport = require('pino-abstract-transport')
 const jmespath = require('jmespath')
-const colors = require('./lib/colors')
 const sonic = require('sonic-boom')
+const bourne = require('@hapi/bourne')
+
+const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
 const {
   isObject,
@@ -19,7 +21,6 @@ const {
   filterLog
 } = require('./lib/utils')
 
-const bourne = require('@hapi/bourne')
 const jsonParser = input => {
   try {
     return { value: bourne.parse(input, { protoAction: 'remove' }) }
