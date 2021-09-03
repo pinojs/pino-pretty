@@ -4,7 +4,7 @@ const fs = require('fs')
 const args = require('args')
 const path = require('path')
 const pump = require('pump')
-const bourne = require('@hapi/bourne')
+const sjp = require('secure-json-parse')
 const JoyCon = require('joycon')
 const stripJsonComments = require('strip-json-comments')
 
@@ -13,7 +13,7 @@ const CONSTANTS = require('./lib/constants')
 const { isObject } = require('./lib/utils')
 
 const parseJSON = input => {
-  return bourne.parse(stripJsonComments(input), { protoAction: 'remove' })
+  return sjp.parse(stripJsonComments(input), { protoAction: 'remove' })
 }
 
 const joycon = new JoyCon({

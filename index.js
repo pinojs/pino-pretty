@@ -6,7 +6,7 @@ const { Transform } = require('readable-stream')
 const abstractTransport = require('pino-abstract-transport')
 const jmespath = require('jmespath')
 const sonic = require('sonic-boom')
-const bourne = require('@hapi/bourne')
+const sjs = require('secure-json-parse')
 
 const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
@@ -23,7 +23,7 @@ const {
 
 const jsonParser = input => {
   try {
-    return { value: bourne.parse(input, { protoAction: 'remove' }) }
+    return { value: sjs.parse(input, { protoAction: 'remove' }) }
   } catch (err) {
     return { err }
   }
