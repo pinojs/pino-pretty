@@ -114,6 +114,23 @@ test('cli', (t) => {
     t.teardown(() => child.kill())
   })
 
+  t.test('end stdin does not end the destination', (t) => {
+    t.plan(2)
+    const child = spawn(process.argv[0], [bin], { env })
+    child.on('error', t.threw)
+
+    child.stdout.on('data', (data) => {
+      t.equal(data.toString(), 'aaa\n')
+    })
+
+    child.stdin.end('aaa\n')
+    child.on('exit', function (code) {
+      t.equal(code, 0)
+    })
+
+    t.teardown(() => child.kill())
+  })
+
   ;['--timestampKey', '-a'].forEach((optionName) => {
     t.test(`uses specified timestamp key via ${optionName}`, (t) => {
       t.plan(1)

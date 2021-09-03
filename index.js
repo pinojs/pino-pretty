@@ -1,7 +1,13 @@
 'use strict'
 
 const { options: coloretteOptions } = require('colorette')
+const pump = require('pump')
+const { Transform } = require('readable-stream')
+const abstractTransport = require('pino-abstract-transport')
 const jmespath = require('jmespath')
+const sonic = require('sonic-boom')
+const bourne = require('@hapi/bourne')
+
 const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
 const {
@@ -15,7 +21,6 @@ const {
   filterLog
 } = require('./lib/utils')
 
-const bourne = require('@hapi/bourne')
 const jsonParser = input => {
   try {
     return { value: bourne.parse(input, { protoAction: 'remove' }) }
@@ -165,6 +170,41 @@ function prettyFactory (options) {
   }
 }
 
-prettyFactory.prettyFactory = prettyFactory
-prettyFactory.default = prettyFactory
-module.exports = prettyFactory
+function build (opts = {}) {
+  const pretty = prettyFactory(opts)
+  return abstractTransport(function (source) {
+    const stream = new Transform({
+      objectMode: true,
+      autoDestroy: true,
+      transform (chunk, enc, cb) {
+        const line = pretty(chunk)
+        if (line === undefined) {
+          cb()
+          return
+        }
+
+        cb(null, line)
+      }
+    })
+
+    const destination = sonic({ dest: opts.destination || 1, sync: false })
+    /* istanbul ignore else */
+    if (destination.fd === 1) {
+      // We cannot close the output
+      destination.end = function () {
+        this.emit('close')
+      }
+    }
+
+    source.on('unknown', function (line) {
+      destination.write(line + '\n')
+    })
+
+    pump(source, stream, destination)
+    return stream
+  }, { parse: 'lines' })
+}
+
+module.exports = build
+module.exports.prettyFactory = prettyFactory
+module.exports.default = build
