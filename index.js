@@ -1,7 +1,7 @@
 'use strict'
 
 const { options: coloretteOptions } = require('colorette')
-const jmespath = require('jmespath')
+const jmespath = require('@bitforger/jmespath')
 const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
 const {
