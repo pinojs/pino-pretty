@@ -443,39 +443,6 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
-  t.test('filter some lines based on jmespath', (t) => {
-    t.plan(3)
-    const pretty = prettyFactory({ search: 'foo.bar' })
-    const expected = [
-      undefined,
-      undefined,
-      `[${epoch}] INFO (${pid} on ${hostname}): foo\n    foo: {\n      "bar": true\n    }\n`
-    ]
-    const log = pino({}, new Writable({
-      write (chunk, enc, cb) {
-        const formatted = pretty(chunk.toString())
-        t.equal(
-          formatted,
-          expected.shift()
-        )
-        cb()
-      }
-    }))
-    log.info('foo')
-    log.info({ something: 'else' }, 'foo')
-    // only this line will be formatted
-    log.info({ foo: { bar: true } }, 'foo')
-  })
-
-  t.test('handles `undefined` return values', (t) => {
-    t.plan(2)
-    const pretty = prettyFactory({ search: 'msg == \'hello world\'' })
-    let formatted = pretty(`{"msg":"nope", "time":${epoch}, "level":30}`)
-    t.equal(formatted, undefined)
-    formatted = pretty(`{"msg":"hello world", "time":${epoch}, "level":30}`)
-    t.equal(formatted, `[${epoch}] INFO: hello world\n`)
-  })
-
   t.test('formats a line with an undefined field', (t) => {
     t.plan(1)
     const pretty = prettyFactory()

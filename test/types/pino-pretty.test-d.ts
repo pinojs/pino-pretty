@@ -22,7 +22,6 @@ const options: PinoPretty.PrettyOptions = {
   messageKey: "msg",
   timestampKey: "timestamp",
   translateTime: "UTC:h:MM:ss TT Z",
-  search: "foo == `bar`",
   singleLine: false,
   customPrettifiers: {
     key: (value) => {
@@ -45,7 +44,6 @@ const options2: PrettyOptions = {
   messageKey: "msg",
   timestampKey: "timestamp",
   translateTime: "UTC:h:MM:ss TT Z",
-  search: "foo == `bar`",
   singleLine: false,
   customPrettifiers: {
     key: (value) => {

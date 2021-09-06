@@ -91,10 +91,6 @@ interface PrettyOptions_ {
    */
   errorProps?: string;
   /**
-   * Specify a search pattern according to {@link http://jmespath.org|jmespath}
-   */
-  search?: string;
-  /**
    * Ignore one or several keys.
    * @example "time,hostname"
    */

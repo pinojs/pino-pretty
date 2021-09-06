@@ -47,31 +47,6 @@ test('cli', (t) => {
     })
   })
 
-  ;['--search', '-s'].forEach((optionName) => {
-    t.test(`does search via ${optionName}`, (t) => {
-      t.plan(1)
-      const child = spawn(process.argv[0], [bin, optionName, 'msg == `hello world`'], { env })
-      child.on('error', t.threw)
-      child.stdout.on('data', (data) => {
-        t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
-      })
-      child.stdin.write(logLine)
-      t.teardown(() => child.kill())
-    })
-  })
-
-  t.test('does search but finds only 1 out of 2', (t) => {
-    t.plan(1)
-    const child = spawn(process.argv[0], [bin, '-s', 'msg == `hello world`'], { env })
-    child.on('error', t.threw)
-    child.stdout.on('data', (data) => {
-      t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
-    })
-    child.stdin.write(logLine.replace('hello world', 'hello universe'))
-    child.stdin.write(logLine)
-    t.teardown(() => child.kill())
-  })
-
   ;['--ignore', '-i'].forEach((optionName) => {
     t.test('does ignore multiple keys', (t) => {
       t.plan(1)
