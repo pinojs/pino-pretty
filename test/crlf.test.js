@@ -1,7 +1,7 @@
 'use strict'
 
 const test = require('tap').test
-const _prettyFactory = require('../')
+const _prettyFactory = require('../').prettyFactory
 
 function prettyFactory (opts) {
   if (!opts) {
