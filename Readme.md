@@ -81,10 +81,8 @@ node app.js | pino-pretty
   - Require a `SYS:` prefix to translate time to the local system's time zone. A
     shortcut `SYS:standard` to translate time to `yyyy-mm-dd HH:MM:ss.l o` in
     system time zone.
-- `--search` (`-s`): Specify a search pattern according to
-  [jmespath](http://jmespath.org/).
-- `--ignore` (`-i`): Ignore one or several keys, nested keys are supported with each property delimited by a dot character (`.`), 
-  keys may be escaped to target property names that contains the delimiter itself: 
+- `--ignore` (`-i`): Ignore one or several keys, nested keys are supported with each property delimited by a dot character (`.`),
+  keys may be escaped to target property names that contains the delimiter itself:
   (`-i time,hostname,req.headers,log\\.domain\\.corp/foo`)
 - `--hideObject` (`-H`): Hide objects from output (but not error object)
 - `--singleLine` (`-S`): Print each log message on a single line (errors will still be multi-line)
@@ -144,7 +142,6 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
   messageFormat: false, // --messageFormat
   timestampKey: 'time', // --timestampKey
   translateTime: false, // --translateTime
-  search: 'foo == `bar`', // --search
   ignore: 'pid,hostname', // --ignore
   hideObject: false, // --hideObject
   singleLine: false, // --singleLine

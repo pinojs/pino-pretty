@@ -4,7 +4,6 @@ const { options: coloretteOptions } = require('colorette')
 const pump = require('pump')
 const { Transform } = require('readable-stream')
 const abstractTransport = require('pino-abstract-transport')
-const jmespath = require('jmespath')
 const sonic = require('sonic-boom')
 const sjs = require('secure-json-parse')
 
@@ -61,9 +60,7 @@ function prettyFactory (options) {
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
   const hideObject = opts.hideObject
   const singleLine = opts.singleLine
-
   const colorizer = colors(opts.colorize)
-  const search = opts.search
 
   return pretty
 
@@ -78,10 +75,6 @@ function prettyFactory (options) {
       log = parsed.value
     } else {
       log = inputData
-    }
-
-    if (search && !jmespath.search(log, search)) {
-      return
     }
 
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel })
@@ -178,11 +171,6 @@ function build (opts = {}) {
       autoDestroy: true,
       transform (chunk, enc, cb) {
         const line = pretty(chunk)
-        if (line === undefined) {
-          cb()
-          return
-        }
-
         cb(null, line)
       }
     })
