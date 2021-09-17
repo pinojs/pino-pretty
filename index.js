@@ -1,6 +1,6 @@
 'use strict'
 
-const { options: coloretteOptions } = require('colorette')
+const { isColorSupported } = require('colorette')
 const pump = require('pump')
 const { Transform } = require('readable-stream')
 const abstractTransport = require('pino-abstract-transport')
@@ -29,7 +29,7 @@ const jsonParser = input => {
 }
 
 const defaultOptions = {
-  colorize: coloretteOptions.enabled,
+  colorize: isColorSupported,
   crlf: false,
   errorLikeObjectKeys: ERROR_LIKE_KEYS,
   errorProps: '',

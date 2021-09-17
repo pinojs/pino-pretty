@@ -132,7 +132,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
 
 ```js
 {
-  colorize: colorette.options.enabled, // --colorize
+  colorize: colorette.isColorSupported, // --colorize
   crlf: false, // --crlf
   errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys
   errorProps: '', // --errorProps
@@ -150,7 +150,7 @@ with keys corresponding to the options described in [CLI Arguments](#cliargs):
 ```
 
 The `colorize` default follows
-[`colorette.options.enabled`](https://github.com/jorgebucaran/colorette#optionsenabled).
+[`colorette.isColorSupported`](https://github.com/jorgebucaran/colorette#iscolorsupported).
 
 `customPrettifiers` option provides the ability to add a custom prettify function
 for specific log properties. `customPrettifiers` is an object, where keys are
