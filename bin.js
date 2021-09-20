@@ -35,6 +35,7 @@ args
   .option(['f', 'crlf'], 'Append CRLF instead of LF to formatted lines')
   .option(['e', 'errorProps'], 'Comma separated list of properties on error objects to show (`*` for all properties) (defaults to ``)')
   .option(['l', 'levelFirst'], 'Display the log level as the first output field')
+  .option(['L', 'minimumLevel'], 'Hide messages below the specified log level')
   .option(['k', 'errorLikeObjectKeys'], 'Define which keys contain error objects (`-k err,error`) (defaults to `err,error`)')
   .option(['m', 'messageKey'], 'Highlight the message under the specified key', CONSTANTS.MESSAGE_KEY)
   .option('levelKey', 'Detect the log level under the specified key', CONSTANTS.LEVEL_KEY)
@@ -42,7 +43,6 @@ args
   .option(['o', 'messageFormat'], 'Format output of message')
   .option(['a', 'timestampKey'], 'Display the timestamp from the specified key', CONSTANTS.TIMESTAMP_KEY)
   .option(['t', 'translateTime'], 'Display epoch timestamps as UTC ISO format or according to an optional format string (default ISO 8601)')
-  .option(['s', 'search'], 'Specify a search pattern according to jmespath')
   .option(['i', 'ignore'], 'Ignore one or several keys: (`-i time,hostname`)')
   .option(['H', 'hideObject'], 'Hide objects from output (but not error object)')
   .option(['S', 'singleLine'], 'Print all non-error objects on a single line')
@@ -57,7 +57,7 @@ args
   .example('cat log | pino-pretty -t', 'To convert Epoch timestamps to ISO timestamps use the -t option')
   .example('cat log | pino-pretty -t "SYS:yyyy-mm-dd HH:MM:ss"', 'To convert Epoch timestamps to local timezone format use the -t option with "SYS:" prefixed format string')
   .example('cat log | pino-pretty -l', 'To flip level and time/date in standard output use the -l option')
-  .example('cat log | pino-pretty -s "msg == \'hello world\'"', 'Only prints messages with msg equals to \'hello world\'')
+  .example('cat log | pino-pretty -L info', 'Only prints messages with a minimum log level of info')
   .example('cat log | pino-pretty -i pid,hostname', 'Prettify logs but don\'t print pid and hostname')
   .example('cat log | pino-pretty --config=/path/to/config.json', 'Loads options from a config file')
 
@@ -67,6 +67,7 @@ let opts = args.parse(process.argv, {
   mri: {
     default: {
       messageKey: DEFAULT_VALUE,
+      minimumLevel: DEFAULT_VALUE,
       levelKey: DEFAULT_VALUE,
       timestampKey: DEFAULT_VALUE
     },
@@ -74,6 +75,7 @@ let opts = args.parse(process.argv, {
     //       short version values defined in each `args.option([value, key], ...)`
     alias: {
       messageKey: 'm',
+      minimumLevel: 'L',
       timestampKey: 'a'
     }
   }

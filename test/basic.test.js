@@ -443,6 +443,53 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
+  t.test('filter some lines based on minimumLevel', (t) => {
+    t.plan(3)
+    const pretty = prettyFactory({ minimumLevel: 'info' })
+    const expected = [
+      undefined,
+      undefined,
+      `[${epoch}] INFO (${pid} on ${hostname}): baz\n`
+    ]
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          expected.shift()
+        )
+        cb()
+      }
+    }))
+    log.info({ msg: 'foo', level: 10 })
+    log.info({ msg: 'bar', level: 20 })
+    // only this line will be formatted
+    log.info({ msg: 'baz', level: 30 })
+  })
+
+  t.test('filter lines based on minimumLevel using custom levels and level key', (t) => {
+    t.plan(3)
+    const pretty = prettyFactory({ minimumLevel: 20, levelKey: 'bar' })
+    const expected = [
+      undefined,
+      `[${epoch}] DEBUG (${pid} on ${hostname}): bar\n`,
+      `[${epoch}] INFO (${pid} on ${hostname}): baz\n`
+    ]
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          expected.shift()
+        )
+        cb()
+      }
+    }))
+    log.info({ msg: 'foo', bar: 10 })
+    log.info({ msg: 'bar', bar: 20 })
+    log.info({ msg: 'baz', bar: 30 })
+  })
+
   t.test('formats a line with an undefined field', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
