@@ -8,7 +8,7 @@ const sonic = require('sonic-boom')
 const sjs = require('secure-json-parse')
 
 const colors = require('./lib/colors')
-const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY } = require('./lib/constants')
+const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = require('./lib/constants')
 const {
   isObject,
   prettifyErrorLog,
@@ -52,6 +52,7 @@ function prettyFactory (options) {
   const messageKey = opts.messageKey
   const levelKey = opts.levelKey
   const levelLabel = opts.levelLabel
+  const minimumLevel = opts.minimumLevel
   const messageFormat = opts.messageFormat
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
@@ -75,6 +76,12 @@ function prettyFactory (options) {
       log = parsed.value
     } else {
       log = inputData
+    }
+
+    if (minimumLevel) {
+      const minimum = LEVEL_NAMES[minimumLevel] || Number(minimumLevel)
+      const level = log[levelKey === undefined ? LEVEL_KEY : levelKey]
+      if (level < minimum) return
     }
 
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel })
