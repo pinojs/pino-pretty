@@ -4,7 +4,7 @@ const { Writable } = require('readable-stream')
 const os = require('os')
 const test = require('tap').test
 const pino = require('pino')
-const dateformat = require('dateformat')
+const dateformat = require('@matteo.collina/dateformat')
 const pinoPretty = require('..')
 const _prettyFactory = pinoPretty.prettyFactory
 
