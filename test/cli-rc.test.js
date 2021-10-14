@@ -147,7 +147,7 @@ test('cli', (t) => {
     // Validate that the time has been translated and correct message key has been used
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[1594416696006] FATAL: There was an error starting the process.\n    QueryError: Error during sql query: syntax error at or near SELECTT\n        at /home/me/projects/example/sql.js\n        at /home/me/projects/example/index.js\nquerySql: SELECTT * FROM "test" WHERE id = $1;\nqueryArgs: 12\n')
+      t.equal(data.toString(), '[1594416696006] FATAL: There was an error starting the process.\n    QueryError: Error during sql query: syntax error at or near SELECTT\n        at /home/me/projects/example/sql.js\n        at /home/me/projects/example/index.js\n    querySql: SELECTT * FROM "test" WHERE id = $1;\n    queryArgs: 12\n')
     })
     child.stdin.write('{"level":60,"time":1594416696006,"msg":"There was an error starting the process.","type":"Error","stack":"QueryError: Error during sql query: syntax error at or near SELECTT\\n    at /home/me/projects/example/sql.js\\n    at /home/me/projects/example/index.js","querySql":"SELECTT * FROM \\"test\\" WHERE id = $1;","queryArgs":[12]}\n')
     t.teardown(() => {

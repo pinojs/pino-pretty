@@ -21,7 +21,7 @@ const epoch = 1522431328992
 const pid = process.pid
 const hostname = os.hostname()
 
-test('error like objects tests', (t) => {
+test('error like objects tests', { only: true }, (t) => {
   t.beforeEach(() => {
     Date.originalNow = Date.now
     Date.now = () => epoch
@@ -42,7 +42,7 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.equal(lines.length, expected.length + 1)
+        t.equal(lines.length, expected.length + 6)
         t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
         cb()
       }
@@ -58,8 +58,8 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         t.match(formatted, /\s{4}error stack/)
-        t.match(formatted, /statusCode: 500/)
-        t.match(formatted, /originalStack: original stack/)
+        t.match(formatted, /"statusCode": 500/)
+        t.match(formatted, /"originalStack": "original stack"/)
         cb()
       }
     }))
@@ -94,7 +94,7 @@ test('error like objects tests', (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 6)
-        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}):`)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
@@ -129,7 +129,7 @@ test('error like objects tests', (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 5)
-        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): {"extra":{"a":1,"b":2}}`)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world {"extra":{"a":1,"b":2}}`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
@@ -145,7 +145,7 @@ test('error like objects tests', (t) => {
   })
 
   t.test('prettifies Error in property within errorLikeObjectKeys with custom function', (t) => {
-    t.plan(1)
+    t.plan(4)
     const pretty = prettyFactory({
       errorLikeObjectKeys: ['err'],
       customPrettifiers: {
@@ -161,7 +161,12 @@ test('error like objects tests', (t) => {
     const log = pino({ serializers: { err: serializers.err } }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.equal(formatted, `[${epoch}] INFO (${pid} on ${hostname}):\n    err: error is hello world\n`)
+        const lines = formatted.split('\n')
+        t.equal(lines.length, 3)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
+        t.equal(lines[1], '    err: error is hello world')
+        t.equal(lines[2], '')
+
         cb()
       }
     }))
@@ -185,7 +190,7 @@ test('error like objects tests', (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 6)
-        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}):`)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
         t.match(lines[1], /\s{4}err: {$/)
         t.match(lines[2], /\s{6}"type": "Error",$/)
         t.match(lines[3], /\s{6}"message": "hello world",$/)
@@ -215,7 +220,7 @@ test('error like objects tests', (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 7)
-        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}):`)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
@@ -232,19 +237,24 @@ test('error like objects tests', (t) => {
   })
 
   t.test('errorProps flag with "*" (print all nested props)', function (t) {
-    t.plan(9)
     const pretty = prettyFactory({ errorProps: '*' })
     const expectedLines = [
-      '    error stack',
-      'statusCode: 500',
-      'originalStack: original stack',
-      'dataBaseSpecificError: {',
-      '    erroMessage: "some database error message"',
-      '    evenMoreSpecificStuff: {',
-      '      "someErrorRelatedObject": "error"',
-      '    }',
-      '}'
+      '    err: {',
+      '      "type": "Error",',
+      '      "message": "error message",',
+      '      "stack":',
+      '          error stack',
+      '      "statusCode": 500,',
+      '      "originalStack": "original stack",',
+      '      "dataBaseSpecificError": {',
+      '        "erroMessage": "some database error message",',
+      '        "evenMoreSpecificStuff": {',
+      '          "someErrorRelatedObject": "error"',
+      '        }',
+      '      }',
+      '    }'
     ]
+    t.plan(expectedLines.length)
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
@@ -271,6 +281,107 @@ test('error like objects tests', (t) => {
     log.error(error)
   })
 
+  t.test('errorProps: legacy error object at top level', { only: true }, function (t) {
+    const pretty = prettyFactory({ errorProps: '*' })
+    const expectedLines = [
+      'INFO:',
+      '    error stack',
+      '    message: hello message',
+      '    statusCode: 500',
+      '    originalStack: original stack',
+      '    dataBaseSpecificError: {',
+      '        erroMessage: "some database error message"',
+      '        evenMoreSpecificStuff: {',
+      '          "someErrorRelatedObject": "error"',
+      '        }',
+      '    }',
+      ''
+    ]
+
+    t.plan(expectedLines.length)
+
+    const error = {}
+    error.level = 30
+    error.message = 'hello message'
+    error.type = 'Error'
+    error.stack = 'error stack'
+    error.statusCode = 500
+    error.originalStack = 'original stack'
+    error.dataBaseSpecificError = {
+      erroMessage: 'some database error message',
+      evenMoreSpecificStuff: {
+        someErrorRelatedObject: 'error'
+      }
+    }
+
+    const formatted = pretty(JSON.stringify(error))
+    const lines = formatted.split('\n')
+    for (let i = 0; i < lines.length; i += 1) {
+      t.equal(lines[i], expectedLines[i])
+    }
+  })
+
+  t.test('errorProps flag with a single property', function (t) {
+    const pretty = prettyFactory({ errorProps: 'originalStack' })
+    const expectedLines = [
+      'INFO:',
+      '    error stack',
+      '    originalStack: original stack',
+      ''
+    ]
+    t.plan(expectedLines.length)
+
+    const error = {}
+    error.level = 30
+    error.message = 'hello message'
+    error.type = 'Error'
+    error.stack = 'error stack'
+    error.statusCode = 500
+    error.originalStack = 'original stack'
+    error.dataBaseSpecificError = {
+      erroMessage: 'some database error message',
+      evenMoreSpecificStuff: {
+        someErrorRelatedObject: 'error'
+      }
+    }
+
+    const formatted = pretty(JSON.stringify(error))
+    const lines = formatted.split('\n')
+    for (let i = 0; i < lines.length; i += 1) {
+      t.equal(lines[i], expectedLines[i])
+    }
+  })
+
+  t.test('errorProps flag with a single property non existent', function (t) {
+    const pretty = prettyFactory({ errorProps: 'originalStackABC' })
+    const expectedLines = [
+      'INFO:',
+      '    error stack',
+      ''
+    ]
+    t.plan(expectedLines.length)
+
+    const error = {}
+    error.level = 30
+    error.message = 'hello message'
+    error.type = 'Error'
+    error.stack = 'error stack'
+    error.statusCode = 500
+    error.originalStack = 'original stack'
+    error.dataBaseSpecificError = {
+      erroMessage: 'some database error message',
+      evenMoreSpecificStuff: {
+        someErrorRelatedObject: 'error'
+      }
+    }
+
+    const formatted = pretty(JSON.stringify(error))
+    const lines = formatted.split('\n')
+    for (let i = 0; i < lines.length; i += 1) {
+      t.equal(lines[i], expectedLines[i])
+    }
+  })
+
   t.test('handles errors with a null stack', (t) => {
     t.plan(2)
     const pretty = prettyFactory()
@@ -288,20 +399,21 @@ test('error like objects tests', (t) => {
   })
 
   t.test('handles errors with a null stack for Error object', (t) => {
-    t.plan(3)
     const pretty = prettyFactory()
     const expectedLines = [
-      '    some: "property"',
-      '    stack: null',
-      '    type: "Error"'
+      '"type": "Error"',
+      '"message": "error message"',
+      '"stack": null',
+      '"some": "property"'
     ]
+    t.plan(expectedLines.length)
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        lines.shift(); lines.pop()
+        lines.shift(); lines.shift(); lines.pop(); lines.pop()
         for (let i = 0; i < lines.length; i += 1) {
-          t.ok(expectedLines.includes(lines[i]))
+          t.ok(lines[i].includes(expectedLines[i]))
         }
         cb()
       }

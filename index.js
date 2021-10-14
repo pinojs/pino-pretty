@@ -137,6 +137,7 @@ function prettyFactory (options) {
       line += EOL
     }
 
+    // pino@7+ does not log this anymore
     if (log.type === 'Error' && log.stack) {
       const prettifiedErrorLog = prettifyErrorLog({
         log,
