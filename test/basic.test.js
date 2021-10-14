@@ -541,7 +541,7 @@ test('basic prettifier tests', (t) => {
       '      "b": {',
       '        "c": "d"',
       '      },',
-      '      "a": "[Circular]"',
+      '      "a": "[Circular ~]"',
       '    }'
     ]
     const pretty = prettyFactory()

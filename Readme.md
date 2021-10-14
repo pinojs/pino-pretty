@@ -60,6 +60,7 @@ node app.js | pino-pretty
   feed, to the formatted log line.
 - `--errorProps` (`-e`): When formatting an error object, display this list
   of properties. The list should be a comma-separated list of properties Default: `''`.
+  Do not use this option if logging from pino@7. Support will be removed from future verions.
 - `--levelFirst` (`-l`): Display the log level name before the logged date and time.
 - `--errorLikeObjectKeys` (`-k`): Define the log keys that are associated with
   error like objects. Default: `err,error`.
