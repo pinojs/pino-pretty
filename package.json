@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@types/node": "^16.9.2",
-    "pino": "^6.13.2",
+    "pino": "^7.0.1",
     "pre-commit": "^1.2.2",
     "rimraf": "^3.0.2",
     "snazzy": "^9.0.0",
