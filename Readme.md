@@ -99,25 +99,30 @@ recommend installing `pino-pretty` as a development dependency.
 When installed, `pino-pretty` will be used by `pino` as the default
 prettifier.
 
-Install `pino-pretty` alongside `pino` and set the
-`prettyPrint` option to `true`:
+Install `pino-pretty` alongside `pino` and set the transport target to `'pino-pretty'`:
 
 ```js
 const pino = require('pino')
 const logger = pino({
-  prettyPrint: true
+  transport: {
+    target: 'pino-pretty'
+  },
 })
 
 logger.info('hi')
 ```
 
-The `prettyPrint` option can also be an object containing `pretty-print`
-options:
+The transport option can also have an options object containing `pino-pretty` options:
 
 ```js
 const pino = require('pino')
 const logger = pino({
-  prettyPrint: { colorize: true }
+  transport: {
+    target: 'pino-pretty',
+    options: {
+      colorize: true
+    }
+  }
 })
 
 logger.info('hi')
