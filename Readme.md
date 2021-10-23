@@ -130,6 +130,40 @@ logger.info('hi')
 
 See the [Options](#options) section for all possible options.
 
+### Handling non-serializable options
+
+Using the new [pino v7+
+transports](https://getpino.io/#/docs/transports?id=v7-transports) not all
+options are serializable, for example if you want to use `messageFormat` as a
+function you will need to wrap `pino-pretty` in a custom module.
+
+Executing `main.js` below will log a colorized `hello world` message using a
+custom function `messageFormat`:
+
+```js
+// main.js
+const pino = require('pino')
+
+const logger = pino({
+  transport: {
+    target: './pino-pretty-transport',
+    options: {
+      colorize: true
+    }
+  },
+})
+
+logger.info('world')
+```
+
+```js
+// pino-pretty-transport.js
+module.exports = opts => require('pino-pretty')({
+  ...opts,
+  messageFormat: (log, messageKey) => `hello ${log[messageKey]}`
+})
+```
+
 <a id="options"></a>
 ### Options
 
