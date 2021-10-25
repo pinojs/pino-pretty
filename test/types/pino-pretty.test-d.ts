@@ -53,7 +53,7 @@ const options2: PrettyOptions = {
 };
 
 const pretty = prettyFactory(options);
-expectType<Prettifier>(pretty)
+expectType<Prettifier>(pretty);
 
 expectType<Prettifier>(PinoPrettyNamed(options));
 expectType<Prettifier>(PinoPrettyDefault(options));
