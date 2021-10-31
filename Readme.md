@@ -24,6 +24,9 @@ Will format to:
 [1522431328992] INFO (42 on foo): hello world
 ```
 
+If you landed on this page due to the deprecation of the `prettyPrint` option
+of `pino`, read the [Programmatic Integration](#integration) section.
+
 <a id="example"></a>
 ## Example
 
@@ -96,9 +99,6 @@ node app.js | pino-pretty
 We recommend against using `pino-pretty` in production and highly
 recommend installing `pino-pretty` as a development dependency.
 
-When installed, `pino-pretty` will be used by `pino` as the default
-prettifier.
-
 Install `pino-pretty` alongside `pino` and set the transport target to `'pino-pretty'`:
 
 ```js
@@ -124,6 +124,29 @@ const logger = pino({
     }
   }
 })
+
+logger.info('hi')
+```
+
+Use it as a stream:
+
+```js
+const pino = require('pino')
+const pretty = require('pino-pretty')
+const logger = pino(pretty())
+
+logger.info('hi')
+```
+
+Options are also supported:
+
+```js
+const pino = require('pino')
+const pretty = require('pino-pretty')
+const stream = pretty({
+  prettyPrint: { colorize: true }
+})
+const logger = pino(stream)
 
 logger.info('hi')
 ```
@@ -167,9 +190,7 @@ module.exports = opts => require('pino-pretty')({
 <a id="options"></a>
 ### Options
 
-`pino-pretty` exports a factory function that can be used to format log strings.
-This factory function is used internally by Pino, and accepts an options argument
-with keys corresponding to the options described in [CLI Arguments](#cliargs):
+The options accepted have keys corresponding to the options described in [CLI Arguments](#cliargs):
 
 ```js
 {
