@@ -124,7 +124,6 @@ const logger = pino({
     }
   }
 })
-const logger = pino(stream)
 
 logger.info('hi')
 ```
