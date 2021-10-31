@@ -25,7 +25,7 @@ Will format to:
 ```
 
 If you landed on this page due to the deprecation of the `prettyPrint` option
-of `pino`, read the [programmatic usage](#integration).
+of `pino`, read the [Programmatic Integration](#integration) section.
 
 <a id="example"></a>
 ## Example
