@@ -207,6 +207,11 @@ The options accepted have keys corresponding to the options described in [CLI Ar
   ignore: 'pid,hostname', // --ignore
   hideObject: false, // --hideObject
   singleLine: false, // --singleLine
+
+  dest: 1, // The file or file descriptor to write to
+  append: true, // Append to the destination
+  mkdir: false, // Ensure the directory for dest exist when true
+
   customPrettifiers: {}
 }
 ```

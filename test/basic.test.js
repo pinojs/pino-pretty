@@ -5,8 +5,15 @@ const os = require('os')
 const test = require('tap').test
 const pino = require('pino')
 const dateformat = require('dateformat')
+const path = require('path')
+const rimraf = require('rimraf')
+const { join } = require('path')
+const fs = require('fs')
 const pinoPretty = require('..')
 const _prettyFactory = pinoPretty.prettyFactory
+
+// Disable pino warnings
+process.removeAllListeners('warning')
 
 function prettyFactory (opts) {
   if (!opts) {
@@ -748,5 +755,56 @@ test('basic prettifier tests', (t) => {
     t.doesNotThrow(pinoPretty)
   })
 
+  t.test('stream usage', async (t) => {
+    t.plan(1)
+    const tmpDir = path.join(__dirname, '.tmp_' + Date.now())
+    t.teardown(() => rimraf(tmpDir, noop))
+
+    const destination = join(tmpDir, 'output')
+
+    const pretty = pinoPretty({
+      singleLine: true,
+      colorize: false,
+      mkdir: true,
+      append: false,
+      destination,
+      customPrettifiers: {
+        upper: val => val.toUpperCase(),
+        undef: () => undefined
+      }
+    })
+    const log = pino(pretty)
+    log.info({ msg: 'message', extra: { foo: 'bar', number: 42 }, upper: 'foobar', undef: 'this will not show up' })
+
+    await watchFileCreated(destination)
+
+    const formatted = fs.readFileSync(destination, 'utf8')
+
+    t.equal(formatted, `[${epoch}] INFO (${pid} on ${hostname}): message {"extra":{"foo":"bar","number":42},"upper":"FOOBAR"}\n`)
+  })
+
   t.end()
 })
+
+function watchFileCreated (filename) {
+  return new Promise((resolve, reject) => {
+    const TIMEOUT = 2000
+    const INTERVAL = 100
+    const threshold = TIMEOUT / INTERVAL
+    let counter = 0
+    const interval = setInterval(() => {
+      // On some CI runs file is created but not filled
+      if (fs.existsSync(filename) && fs.statSync(filename).size !== 0) {
+        clearInterval(interval)
+        resolve()
+      } else if (counter <= threshold) {
+        counter++
+      } else {
+        clearInterval(interval)
+        reject(new Error(`${filename} was not created.`))
+      }
+    }, INTERVAL)
+  })
+}
+
+function noop () {}

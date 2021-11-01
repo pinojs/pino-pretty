@@ -183,7 +183,12 @@ function build (opts = {}) {
       }
     })
 
-    const destination = sonic({ dest: opts.destination || 1, sync: false })
+    const destination = sonic({
+      dest: opts.destination || 1,
+      append: opts.append,
+      mkdir: opts.mkdir,
+      sync: false
+    })
     /* istanbul ignore else */
     if (destination.fd === 1) {
       // We cannot close the output
