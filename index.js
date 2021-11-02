@@ -59,33 +59,39 @@ function prettyFactory (options) {
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
-  const customLevels = opts.customLevels ? opts.customLevels
-    .split(',')
-    .reduce((agg, value, idx) => {
-      const [levelName, levelIdx = idx] = value.split(':')
+  const customLevels = opts.customLevels
+    ? opts.customLevels
+        .split(',')
+        .reduce((agg, value, idx) => {
+          const [levelName, levelIdx = idx] = value.split(':')
 
-      agg[levelIdx] = levelName.toUpperCase()
+          agg[levelIdx] = levelName.toUpperCase()
 
-      return agg
-    }, { default: 'USERLVL' }) : undefined
-  const customLevelNames = opts.customLevels ? opts.customLevels
-    .split(',')
-    .reduce((agg, value, idx) => {
-      const [levelName, levelIdx = idx] = value.split(':')
+          return agg
+        }, { default: 'USERLVL' })
+    : undefined
+  const customLevelNames = opts.customLevels
+    ? opts.customLevels
+        .split(',')
+        .reduce((agg, value, idx) => {
+          const [levelName, levelIdx = idx] = value.split(':')
 
-      agg[levelName] = levelIdx
+          agg[levelName] = levelIdx
 
-      return agg
-    }, {}) : undefined
-  const customColors = opts.customColors ? opts.customColors
-    .split(',')
-    .reduce((agg, value) => {
-      const [level, color] = value.split(':')
+          return agg
+        }, {})
+    : undefined
+  const customColors = opts.customColors
+    ? opts.customColors
+        .split(',')
+        .reduce((agg, value) => {
+          const [level, color] = value.split(':')
 
-      agg.push([level, color])
+          agg.push([level, color])
 
-      return agg
-    }, []) : undefined
+          return agg
+        }, [])
+    : undefined
   const customPrettifiers = opts.customPrettifiers
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
   const hideObject = opts.hideObject
