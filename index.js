@@ -33,6 +33,8 @@ const defaultOptions = {
   crlf: false,
   errorLikeObjectKeys: ERROR_LIKE_KEYS,
   errorProps: '',
+  customLevels: null,
+  customColors: null,
   levelFirst: false,
   messageKey: MESSAGE_KEY,
   messageFormat: false,
@@ -57,11 +59,38 @@ function prettyFactory (options) {
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
+  const customLevels = opts.customLevels ? opts.customLevels
+    .split(',')
+    .reduce((agg, value, idx) => {
+      const [levelName, levelIdx = idx] = value.split(':')
+
+      agg[levelIdx] = levelName.toUpperCase()
+
+      return agg
+    }, { default: 'USERLVL' }) : undefined
+  const customLevelNames = opts.customLevels ? opts.customLevels
+    .split(',')
+    .reduce((agg, value, idx) => {
+      const [levelName, levelIdx = idx] = value.split(':')
+
+      agg[levelName] = levelIdx
+
+      return agg
+    }, {}) : undefined
+  const customColors = opts.customColors ? opts.customColors
+    .split(',')
+    .reduce((agg, value) => {
+      const [level, color] = value.split(':')
+
+      agg.push([level, color])
+
+      return agg
+    }, []) : undefined
   const customPrettifiers = opts.customPrettifiers
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
   const hideObject = opts.hideObject
   const singleLine = opts.singleLine
-  const colorizer = colors(opts.colorize)
+  const colorizer = colors(opts.colorize, customColors)
 
   return pretty
 
@@ -79,7 +108,7 @@ function prettyFactory (options) {
     }
 
     if (minimumLevel) {
-      const minimum = LEVEL_NAMES[minimumLevel] || Number(minimumLevel)
+      const minimum = (customLevelNames === undefined ? LEVEL_NAMES[minimumLevel] : customLevelNames[minimumLevel]) || Number(minimumLevel)
       const level = log[levelKey === undefined ? LEVEL_KEY : levelKey]
       if (level < minimum) return
     }
@@ -90,7 +119,7 @@ function prettyFactory (options) {
       log = filterLog(log, ignoreKeys)
     }
 
-    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level })
+    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, customLevels, customLevelNames })
     const prettifiedMetadata = prettifyMetadata({ log, prettifiers: customPrettifiers })
     const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey, prettifier: customPrettifiers.time })
 
