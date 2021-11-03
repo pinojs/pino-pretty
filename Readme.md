@@ -207,6 +207,13 @@ The options accepted have keys corresponding to the options described in [CLI Ar
   ignore: 'pid,hostname', // --ignore
   hideObject: false, // --hideObject
   singleLine: false, // --singleLine
+
+  // The file or file descriptor (1 is stdout) to write to
+  destination: 1,
+
+  // Alternatively, pass a `sonic-boom` instance (allowing more flexibility):
+  // destination: new SonicBoom({ dest: 'a/file', mkdir: true })
+
   customPrettifiers: {}
 }
 ```
