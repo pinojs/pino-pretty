@@ -10,6 +10,7 @@ const rimraf = require('rimraf')
 const { join } = require('path')
 const fs = require('fs')
 const pinoPretty = require('..')
+const SonicBoom = require('sonic-boom')
 const _prettyFactory = pinoPretty.prettyFactory
 
 // Disable pino warnings
@@ -767,7 +768,7 @@ test('basic prettifier tests', (t) => {
       colorize: false,
       mkdir: true,
       append: false,
-      destination,
+      destination: new SonicBoom({ dest: destination, async: false, mkdir: true, append: true }),
       customPrettifiers: {
         upper: val => val.toUpperCase(),
         undef: () => undefined

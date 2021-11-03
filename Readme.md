@@ -208,9 +208,10 @@ The options accepted have keys corresponding to the options described in [CLI Ar
   hideObject: false, // --hideObject
   singleLine: false, // --singleLine
 
-  dest: 1, // The file or file descriptor to write to
-  append: true, // Append to the destination
-  mkdir: false, // Ensure the directory for dest exist when true
+  // The file or file descriptor (1 is stdout) to write to
+  destination: 1,
+
+  // destination: new SonicBoom({ dest: 'a/file', mkdir: true })
 
   customPrettifiers: {}
 }
