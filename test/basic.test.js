@@ -546,10 +546,10 @@ test('basic prettifier tests', (t) => {
     t.plan(7)
     const expectedLines = [
       '    msg: {',
+      '      "a": "[Circular]",',
       '      "b": {',
       '        "c": "d"',
-      '      },',
-      '      "a": "[Circular ~]"',
+      '      }',
       '    }'
     ]
     const pretty = prettyFactory()
