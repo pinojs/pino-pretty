@@ -258,7 +258,7 @@ Note that prettifiers do not include any coloring, if the stock coloring on `lev
 ```js
 const levelColorize = require('pino-pretty/lib/colors.js')(true)
 const levelPrettifier = logLevel => `LEVEL: ${levelColorize(logLevel)}`
-
+//...
 {
   customPrettifiers: { level: levelPrettifier }
 }
