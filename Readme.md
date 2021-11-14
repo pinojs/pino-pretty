@@ -238,21 +238,20 @@ const prettifyQuery = value => {
 }
 ```
 
-You can also use `customPrettifiers` to format the time and level outputs:
+Additionally, `customPrettifiers` can be used to format the time and level outputs:
 ```js
 {
   customPrettifiers: {
-    // the argument for this function will be the same
-    // string that's at the start of the log-line by default
+    // The argument for this function will be the same
+    // string that's at the start of the log-line by default:
     time: timestamp => `🕰 ${timestamp}`,
-    // the argument for the level-prettifier may vary depending
-    // on if you're using the levelKey option or not.
-    // by default this will be the same numerics as the Pino default
+    
+    // The argument for the level-prettifier may vary depending
+    // on if the levelKey option is used or not.
+    // By default this will be the same numerics as the Pino default:
     level: logLevel => `LEVEL: ${logLevel}`
   }
 }
-```
-
 `messageFormat` option allows you to customize the message output. A template `string` like this can define the format:
 ```js
 {
