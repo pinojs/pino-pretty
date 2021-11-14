@@ -245,13 +245,25 @@ Additionally, `customPrettifiers` can be used to format the time and level outpu
     // The argument for this function will be the same
     // string that's at the start of the log-line by default:
     time: timestamp => `🕰 ${timestamp}`,
-    
+
     // The argument for the level-prettifier may vary depending
     // on if the levelKey option is used or not.
     // By default this will be the same numerics as the Pino default:
     level: logLevel => `LEVEL: ${logLevel}`
   }
 }
+```
+
+Note that prettifiers do not include any coloring, if the stock coloring on `level` is desired, it can be accomplished using the following:
+```js
+const levelColorize = require('pino-pretty/lib/colors.js')(true)
+const levelPrettifier = logLevel => `LEVEL: ${levelColorize(logLevel)}`
+
+{
+  customPrettifiers: { level: levelPrettifier }
+}
+```
+
 `messageFormat` option allows you to customize the message output. A template `string` like this can define the format:
 ```js
 {
