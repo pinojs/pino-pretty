@@ -256,7 +256,8 @@ Additionally, `customPrettifiers` can be used to format the time and level outpu
 
 Note that prettifiers do not include any coloring, if the stock coloring on `level` is desired, it can be accomplished using the following:
 ```js
-const levelColorize = require('pino-pretty/lib/colors.js')(true)
+const { colorizerFactory } = require('pino-pretty')
+const levelColorize = colorizerFactory(true)
 const levelPrettifier = logLevel => `LEVEL: ${levelColorize(logLevel)}`
 //...
 {
