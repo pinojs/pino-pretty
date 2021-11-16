@@ -27,6 +27,7 @@ function prettyFactory (opts) {
 
 // All dates are computed from 'Fri, 30 Mar 2018 17:35:28 GMT'
 const epoch = 1522431328992
+const formattedEpoch = '2018-03-30 17:35:28.992 +0000'
 const pid = process.pid
 const hostname = os.hostname()
 
@@ -127,6 +128,86 @@ test('basic prettifier tests', (t) => {
     log.info({ msg: 'foo', bar: 'warn' })
   })
 
+  t.test('can use a customPrettifier on default level output', (t) => {
+    t.plan(1)
+    const veryCustomLevels = {
+      30: 'ok',
+      40: 'not great'
+    }
+    const customPrettifiers = {
+      level: (level) => `LEVEL: ${veryCustomLevels[level]}`
+    }
+    const pretty = prettyFactory({ customPrettifiers })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${epoch}] LEVEL: ok (${pid} on ${hostname}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info({ msg: 'foo' })
+  })
+
+  t.test('can use a customPrettifier on different-level-key output', (t) => {
+    t.plan(1)
+    const customPrettifiers = {
+      level: (level) => `LEVEL: ${level.toUpperCase()}`
+    }
+    const pretty = prettyFactory({ levelKey: 'bar', customPrettifiers })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${epoch}] LEVEL: WARN (${pid} on ${hostname}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info({ msg: 'foo', bar: 'warn' })
+  })
+
+  t.test('can use a customPrettifier on default time output', (t) => {
+    t.plan(1)
+    const customPrettifiers = {
+      time: (timestamp) => `TIME: ${timestamp}`
+    }
+    const pretty = prettyFactory({ customPrettifiers })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `TIME: ${epoch} INFO (${pid} on ${hostname}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info('foo')
+  })
+
+  t.test('can use a customPrettifier on translateTime-time output', (t) => {
+    t.plan(1)
+    const customPrettifiers = {
+      time: (timestamp) => `TIME: ${timestamp}`
+    }
+    const pretty = prettyFactory({ customPrettifiers, translateTime: true })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `TIME: ${formattedEpoch} INFO (${pid} on ${hostname}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info('foo')
+  })
+
   t.test('will format time to UTC', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ translateTime: true })
@@ -135,7 +216,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `[2018-03-30 17:35:28.992 +0000] INFO (${pid} on ${hostname}): foo\n`
+          `[${formattedEpoch}] INFO (${pid} on ${hostname}): foo\n`
         )
         cb()
       }

@@ -90,9 +90,9 @@ function prettyFactory (options) {
       log = filterLog(log, ignoreKeys)
     }
 
-    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey })
+    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level })
     const prettifiedMetadata = prettifyMetadata({ log })
-    const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
+    const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey, prettifier: customPrettifiers.time })
 
     let line = ''
     if (opts.levelFirst && prettifiedLevel) {
@@ -214,4 +214,5 @@ function build (opts = {}) {
 
 module.exports = build
 module.exports.prettyFactory = prettyFactory
+module.exports.colorizerFactory = colors
 module.exports.default = build
