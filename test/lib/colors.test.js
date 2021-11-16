@@ -1,9 +1,10 @@
 'use strict'
 
 const { test } = require('tap')
-const getColorizer = require('../../lib/colors')
+const getColorizerPrivate = require('../../lib/colors')
+const { colorizerFactory: getColorizerPublic } = require('../../index')
 
-test('returns default colorizer', async t => {
+const testDefaultColorizer = getColorizer => async t => {
   const colorizer = getColorizer()
   let colorized = colorizer(10)
   t.equal(colorized, 'TRACE')
@@ -37,9 +38,9 @@ test('returns default colorizer', async t => {
 
   colorized = colorizer.greyMessage('foo')
   t.equal(colorized, 'foo')
-})
+}
 
-test('returns colorizing colorizer', async t => {
+const testColoringColorizer = getColorizer => async t => {
   const colorizer = getColorizer(true)
   let colorized = colorizer(10)
   t.equal(colorized, '\u001B[90mTRACE\u001B[39m')
@@ -73,4 +74,9 @@ test('returns colorizing colorizer', async t => {
 
   colorized = colorizer.greyMessage('foo')
   t.equal(colorized, '\u001B[90mfoo\u001B[39m')
-})
+}
+
+test('returns default colorizer - private export', testDefaultColorizer(getColorizerPrivate))
+test('returns default colorizer - public export', testDefaultColorizer(getColorizerPublic))
+test('returns colorizing colorizer - private export', testColoringColorizer(getColorizerPrivate))
+test('returns colorizing colorizer - public export', testColoringColorizer(getColorizerPublic))
