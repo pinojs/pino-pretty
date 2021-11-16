@@ -254,6 +254,17 @@ outputs:
   }
 }
 
+Note that prettifiers do not include any coloring, if the stock coloring on
+`level` is desired, it can be accomplished using the following:
+```js
+const { colorizerFactory } = require('pino-pretty')
+const levelColorize = colorizerFactory(true)
+const levelPrettifier = logLevel => `LEVEL: ${levelColorize(logLevel)}`
+//...
+{
+  customPrettifiers: { level: levelPrettifier }
+}
+
 `messageFormat` option allows you to customize the message output. A template `string` like this can define the format:
 ```js
 {
