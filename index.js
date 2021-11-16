@@ -87,7 +87,10 @@ function prettyFactory (options) {
         .reduce((agg, value) => {
           const [level, color] = value.split(':')
 
-          agg.push([level, color])
+          const levelNum = customLevelNames !== undefined ? customLevelNames[level] : LEVEL_NAMES[level]
+          const colorIdx = levelNum !== undefined ? levelNum : level
+
+          agg.push([colorIdx, color])
 
           return agg
         }, [])
