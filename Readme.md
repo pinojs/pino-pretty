@@ -153,7 +153,8 @@ logger.info('hi')
 
 See the [Options](#options) section for all possible options.
 
-If you are using pino-pretty as stream and you need to provide options to pino, pass them as first argument and pino-pretty as second argument:
+If you are using `pino-pretty` as a stream and you need to provide options to `pino`,
+pass the options as the first argument and `pino-pretty` as second argument:
 
 ```js
 const pino = require('pino')
