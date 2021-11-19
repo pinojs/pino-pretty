@@ -153,6 +153,21 @@ logger.info('hi')
 
 See the [Options](#options) section for all possible options.
 
+If you are using pino-pretty as stream and you need to provide options to pino, pass them as first argument and pino-pretty as second argument:
+
+```js
+const pino = require('pino')
+const pretty = require('pino-pretty')
+const stream = pretty({
+  prettyPrint: { colorize: true }
+})
+const logger = pino({ level: 'info' }, stream)
+
+// Nothing is printed
+logger.debug('hi')
+```
+
+
 ### Handling non-serializable options
 
 Using the new [pino v7+
