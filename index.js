@@ -84,6 +84,11 @@ function prettyFactory (options) {
       if (level < minimum) return
     }
 
+    if (!(messageKey in log)) {
+      const errorKey = errorLikeObjectKeys.find((it) => 'message' in (log[it] || {}))
+      if (errorKey) log = Object.assign({ [messageKey]: log[errorKey].message }, log)
+    }
+
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel })
 
     if (ignoreKeys) {
@@ -137,15 +142,17 @@ function prettyFactory (options) {
       line += EOL
     }
 
-    // pino@7+ does not log this anymore
-    if (log.type === 'Error' && log.stack) {
+    // pino@7+ moves error object from top level to err property
+    let err
+    if ((log.type === 'Error' && (err = log).stack) || ((err = log.err) && err.stack)) {
       const prettifiedErrorLog = prettifyErrorLog({
-        log,
+        log: err,
         errorLikeKeys: errorLikeObjectKeys,
         errorProperties: errorProps,
         ident: IDENT,
         eol: EOL
       })
+      if (singleLine) line += EOL
       line += prettifiedErrorLog
     } else if (!hideObject) {
       const skipKeys = [messageKey, levelKey, timestampKey].filter(key => typeof log[key] === 'string' || typeof log[key] === 'number')

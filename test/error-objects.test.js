@@ -32,9 +32,9 @@ test('error like objects tests', { only: true }, (t) => {
   })
 
   t.test('pino transform prettifies Error', (t) => {
-    t.plan(2)
+    t.plan(3)
     const pretty = prettyFactory()
-    const err = Error('hello world')
+    const err = TypeError('hello world')
     const expected = err.stack.split('\n')
     expected.unshift(err.message)
 
@@ -42,8 +42,30 @@ test('error like objects tests', { only: true }, (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.equal(lines.length, expected.length + 6)
+        t.equal(lines.length, expected.length + 1)
         t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
+        t.equal(lines[1], '    TypeError: hello world')
+        cb()
+      }
+    }))
+
+    log.info(err)
+  })
+
+  t.test('pino transform prettifies Error when singleLine=true', (t) => {
+    t.plan(3)
+    const pretty = prettyFactory({ singleLine: true })
+    const err = TypeError('hello world')
+    const expected = err.stack.split('\n')
+    expected.unshift(err.message)
+
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        const lines = formatted.split('\n')
+        t.equal(lines.length, expected.length + 1)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
+        t.equal(lines[1], '    TypeError: hello world')
         cb()
       }
     }))
@@ -58,8 +80,8 @@ test('error like objects tests', { only: true }, (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         t.match(formatted, /\s{4}error stack/)
-        t.match(formatted, /"statusCode": 500/)
-        t.match(formatted, /"originalStack": "original stack"/)
+        t.match(formatted, /statusCode: 500/)
+        t.match(formatted, /originalStack: original stack/)
         cb()
       }
     }))
@@ -80,7 +102,7 @@ test('error like objects tests', { only: true }, (t) => {
   })
 
   t.test('prettifies Error in property within errorLikeObjectKeys', (t) => {
-    t.plan(8)
+    t.plan(4)
     const pretty = prettyFactory({
       errorLikeObjectKeys: ['err']
     })
@@ -93,15 +115,11 @@ test('error like objects tests', { only: true }, (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.equal(lines.length, expected.length + 6)
+        t.equal(lines.length, expected.length + 1)
         t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
-        t.match(lines[1], /\s{4}err: {/)
-        t.match(lines[2], /\s{6}"type": "Error",/)
-        t.match(lines[3], /\s{6}"message": "hello world",/)
-        t.match(lines[4], /\s{6}"stack":/)
-        t.match(lines[5], /\s{6}Error: hello world/)
+        t.equal(lines[1], '    Error: hello world')
         // Node 12 labels the test `<anonymous>`
-        t.match(lines[6], /\s{10}(at Test.t.test|at Test.<anonymous>)/)
+        t.match(lines[2], /\s{8}(at Test.t.test|at Test.<anonymous>)/)
         cb()
       }
     }))
@@ -114,7 +132,7 @@ test('error like objects tests', { only: true }, (t) => {
     t.plan(8)
     const pretty = prettyFactory({
       singleLine: true,
-      errorLikeObjectKeys: ['err']
+      errorLikeObjectKeys: ['error']
     })
 
     const err = Error('hello world')
@@ -124,13 +142,13 @@ test('error like objects tests', { only: true }, (t) => {
       ...err.stack.split('\n')
     ]
 
-    const log = pino({ serializers: { err: serializers.err } }, new Writable({
+    const log = pino({ serializers: { error: serializers.err } }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 5)
         t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world {"extra":{"a":1,"b":2}}`)
-        t.match(lines[1], /\s{4}err: {/)
+        t.match(lines[1], /\s{4}error: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
         t.match(lines[4], /\s{6}"stack":/)
@@ -141,15 +159,15 @@ test('error like objects tests', { only: true }, (t) => {
       }
     }))
 
-    log.info({ err, extra: { a: 1, b: 2 } })
+    log.info({ error: err, extra: { a: 1, b: 2 } })
   })
 
   t.test('prettifies Error in property within errorLikeObjectKeys with custom function', (t) => {
     t.plan(4)
     const pretty = prettyFactory({
-      errorLikeObjectKeys: ['err'],
+      errorLikeObjectKeys: ['error'],
       customPrettifiers: {
-        err: val => `error is ${val.message}`
+        error: val => `error is ${val.message}`
       }
     })
 
@@ -158,26 +176,26 @@ test('error like objects tests', { only: true }, (t) => {
     const expected = err.stack.split('\n')
     expected.unshift(err.message)
 
-    const log = pino({ serializers: { err: serializers.err } }, new Writable({
+    const log = pino({ serializers: { error: serializers.err } }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, 3)
         t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
-        t.equal(lines[1], '    err: error is hello world')
+        t.equal(lines[1], '    error: error is hello world')
         t.equal(lines[2], '')
 
         cb()
       }
     }))
 
-    log.info({ err })
+    log.info({ error: err })
   })
 
   t.test('prettifies Error in property within errorLikeObjectKeys when stack has escaped characters', (t) => {
     t.plan(8)
     const pretty = prettyFactory({
-      errorLikeObjectKeys: ['err']
+      errorLikeObjectKeys: ['error']
     })
 
     const err = Error('hello world')
@@ -185,13 +203,13 @@ test('error like objects tests', { only: true }, (t) => {
     const expected = err.stack.split('\n')
     expected.unshift(err.message)
 
-    const log = pino({ serializers: { err: serializers.err } }, new Writable({
+    const log = pino({ serializers: { error: serializers.err } }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 6)
         t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
-        t.match(lines[1], /\s{4}err: {$/)
+        t.match(lines[1], /\s{4}error: {$/)
         t.match(lines[2], /\s{6}"type": "Error",$/)
         t.match(lines[3], /\s{6}"message": "hello world",$/)
         t.match(lines[4], /\s{6}"stack":$/)
@@ -201,13 +219,13 @@ test('error like objects tests', { only: true }, (t) => {
       }
     }))
 
-    log.info({ err })
+    log.info({ error: err })
   })
 
   t.test('prettifies Error in property within errorLikeObjectKeys when stack is not the last property', (t) => {
     t.plan(9)
     const pretty = prettyFactory({
-      errorLikeObjectKeys: ['err']
+      errorLikeObjectKeys: ['error']
     })
 
     const err = Error('hello world')
@@ -215,13 +233,13 @@ test('error like objects tests', { only: true }, (t) => {
     const expected = err.stack.split('\n')
     expected.unshift(err.message)
 
-    const log = pino({ serializers: { err: serializers.err } }, new Writable({
+    const log = pino({ serializers: { error: serializers.err } }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 7)
         t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
-        t.match(lines[1], /\s{4}err: {/)
+        t.match(lines[1], /\s{4}error: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
         t.match(lines[4], /\s{6}"stack":/)
@@ -233,13 +251,13 @@ test('error like objects tests', { only: true }, (t) => {
       }
     }))
 
-    log.info({ err })
+    log.info({ error: err })
   })
 
   t.test('errorProps flag with "*" (print all nested props)', function (t) {
     const pretty = prettyFactory({ errorProps: '*' })
     const expectedLines = [
-      '    err: {',
+      '    error: {',
       '      "type": "Error",',
       '      "message": "error message",',
       '      "stack":',
@@ -255,7 +273,7 @@ test('error like objects tests', { only: true }, (t) => {
       '    }'
     ]
     t.plan(expectedLines.length)
-    const log = pino({}, new Writable({
+    const log = pino({ serializers: { error: serializers.err } }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
@@ -278,7 +296,7 @@ test('error like objects tests', { only: true }, (t) => {
       }
     }
 
-    log.error(error)
+    log.error({ error })
   })
 
   t.test('errorProps: legacy error object at top level', { only: true }, function (t) {
