@@ -1,11 +1,11 @@
-import prettyFactory from "../../";
 import { expectType } from "tsd";
 
+import pretty from "../../";
 import PinoPretty, { PinoPretty as PinoPrettyNamed, PrettyOptions } from "../../";
 import PinoPrettyDefault from "../../";
 import * as PinoPrettyStar from "../../";
-import PinoPrettyCjsImport = require ("../../");
-import Prettifier = PinoPretty.Prettifier;
+import PinoPrettyCjsImport = require("../../");
+import PrettyStream = PinoPretty.PrettyStream;
 const PinoPrettyCjs = require("../../");
 
 const options: PinoPretty.PrettyOptions = {
@@ -52,16 +52,11 @@ const options2: PrettyOptions = {
   }
 };
 
-const pretty = prettyFactory(options);
-expectType<Prettifier>(pretty);
-
-expectType<Prettifier>(PinoPrettyNamed(options));
-expectType<Prettifier>(PinoPrettyDefault(options));
-expectType<Prettifier>(PinoPrettyStar.PinoPretty(options));
-expectType<Prettifier>(PinoPrettyStar.default(options));
-expectType<Prettifier>(PinoPrettyCjsImport.PinoPretty(options));
-expectType<Prettifier>(PinoPrettyCjsImport.default(options));
+expectType<PrettyStream>(pretty(options));
+expectType<PrettyStream>(PinoPrettyNamed(options));
+expectType<PrettyStream>(PinoPrettyDefault(options));
+expectType<PrettyStream>(PinoPrettyStar.PinoPretty(options));
+expectType<PrettyStream>(PinoPrettyStar.default(options));
+expectType<PrettyStream>(PinoPrettyCjsImport.PinoPretty(options));
+expectType<PrettyStream>(PinoPrettyCjsImport.default(options));
 expectType<any>(PinoPrettyCjs(options));
-
-expectType<string>(pretty({ foo: "bar" }));
-expectType<string>(pretty('dummy'));

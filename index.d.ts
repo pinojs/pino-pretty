@@ -1,11 +1,17 @@
-// Type definitions for pino-pretty 4.7
+// Type definitions for pino-pretty 7.0
 // Project: https://github.com/pinojs/pino-pretty#readme
 // Definitions by: Adam Vigneaux <https://github.com/AdamVig>
+//                 tearwyx <https://github.com/tearwyx>
 // Minimum TypeScript Version: 3.0
+
+/// <reference types="node" />
+
+import { Transform } from 'stream';
+import { OnUnknown } from 'pino-abstract-transport';
 
 type LogDescriptor = Record<string, unknown>;
 
-declare function PinoPretty(options: PrettyOptions_): PinoPretty.Prettifier;
+declare function PinoPretty(options: PrettyOptions_): PinoPretty.PrettyStream;
 
 interface PrettyOptions_ {
   /**
@@ -121,8 +127,9 @@ interface PrettyOptions_ {
 declare namespace PinoPretty {
   type Prettifier = (inputData: string | object) => string;
   type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string) => string;
-  type PrettyOptions = PrettyOptions_
+  type PrettyOptions = PrettyOptions_;
+  type PrettyStream = Transform & OnUnknown;
 }
 
 export default PinoPretty;
-export { PinoPretty, PrettyOptions_ as PrettyOptions }
+export { PinoPretty, PrettyOptions_ as PrettyOptions };
