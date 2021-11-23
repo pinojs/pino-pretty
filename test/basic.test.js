@@ -664,6 +664,17 @@ test('basic prettifier tests', (t) => {
     t.equal(arst, 'INFO: hello world\n    foo: bar_baz\n    multiline\n    cow: MOO\n')
   })
 
+  t.test('does not add trailing space if prettified value begins with eol', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({
+      customPrettifiers: {
+        calls: val => '\n' + val.map(it => '  ' + it).join('\n')
+      }
+    })
+    const arst = pretty('{"msg":"doing work","calls":["step 1","step 2","step 3"],"level":30}')
+    t.equal(arst, 'INFO: doing work\n    calls:\n      step 1\n      step 2\n      step 3\n')
+  })
+
   t.test('does not prettify custom key that does not exists', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
