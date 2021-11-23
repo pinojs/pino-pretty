@@ -281,7 +281,29 @@ test('error like objects tests', { only: true }, (t) => {
     log.error(error)
   })
 
-  t.test('errorProps: legacy error object at top level', { only: true }, function (t) {
+  t.test('prettifies legacy error object at top level when singleLine=true', function (t) {
+    t.plan(4)
+    const pretty = prettyFactory({ singleLine: true })
+    const err = Error('hello world')
+    const expected = err.stack.split('\n')
+    expected.unshift(err.message)
+
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        const lines = formatted.split('\n')
+        t.equal(lines.length, expected.length + 1)
+        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): ${expected[0]}`)
+        t.equal(lines[1], `    ${expected[1]}`)
+        t.equal(lines[2], `    ${expected[2]}`)
+        cb()
+      }
+    }))
+
+    log.info({ type: 'Error', stack: err.stack, msg: err.message })
+  })
+
+  t.test('errorProps: legacy error object at top level', function (t) {
     const pretty = prettyFactory({ errorProps: '*' })
     const expectedLines = [
       'INFO:',

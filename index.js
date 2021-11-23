@@ -146,6 +146,7 @@ function prettyFactory (options) {
         ident: IDENT,
         eol: EOL
       })
+      if (singleLine) line += EOL
       line += prettifiedErrorLog
     } else if (!hideObject) {
       const skipKeys = [messageKey, levelKey, timestampKey].filter(key => typeof log[key] === 'string' || typeof log[key] === 'number')
