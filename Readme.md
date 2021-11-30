@@ -242,6 +242,7 @@ for specific log properties. `customPrettifiers` is an object, where keys are
 log properties that will be prettified and value is the prettify function itself.
 For example, if a log line contains a `query` property,
 you can specify a prettifier for it:
+
 ```js
 {
   customPrettifiers: {
@@ -256,6 +257,7 @@ const prettifyQuery = value => {
 
 Additionally, `customPrettifiers` can be used to format the time and level
 outputs:
+
 ```js
 {
   customPrettifiers: {
@@ -269,9 +271,11 @@ outputs:
     level: logLevel => `LEVEL: ${logLevel}`
   }
 }
+```
 
 Note that prettifiers do not include any coloring, if the stock coloring on
 `level` is desired, it can be accomplished using the following:
+
 ```js
 const { colorizerFactory } = require('pino-pretty')
 const levelColorize = colorizerFactory(true)
@@ -280,14 +284,18 @@ const levelPrettifier = logLevel => `LEVEL: ${levelColorize(logLevel)}`
 {
   customPrettifiers: { level: levelPrettifier }
 }
+```
 
 `messageFormat` option allows you to customize the message output. A template `string` like this can define the format:
+
 ```js
 {
   messageFormat: '{levelLabel} - {pid} - url:{request.url}'
 }
 ```
+
 This option can also be defined as a `function` with this prototype:
+
 ```js
 {
   messageFormat: (log, messageKey, levelLabel) => {
