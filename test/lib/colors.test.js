@@ -76,7 +76,7 @@ const testColoringColorizer = getColorizer => async t => {
   t.equal(colorized, '\u001B[90mfoo\u001B[39m')
 }
 
-const testCustomColoringColorizer = getColorizer = async t => {
+const testCustomColoringColorizer = getColorizer => async t => {
   const customLevels = {
     0: 'INFO',
     1: 'ERR',
