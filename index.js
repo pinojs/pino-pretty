@@ -196,13 +196,6 @@ function build (opts = {}) {
         sync: false
       })
     }
-    /* istanbul ignore else */
-    if (destination.fd === 1) {
-      // We cannot close the output
-      destination.end = function () {
-        this.emit('close')
-      }
-    }
 
     source.on('unknown', function (line) {
       destination.write(line + '\n')
