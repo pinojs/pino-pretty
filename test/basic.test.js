@@ -851,7 +851,7 @@ test('basic prettifier tests', (t) => {
   t.test('does not call fs.close on stdout stream', (t) => {
     t.plan(2)
     const destination = pino.destination({ minLength: 4096, sync: true })
-    const prettyDestination = pinoPretty({ destination })
+    const prettyDestination = pinoPretty({ destination, colorize: false })
     const log = pino(prettyDestination)
     log.info('this message has been buffered')
     const chunks = []
@@ -870,12 +870,8 @@ test('basic prettifier tests', (t) => {
     })
     destination.end()
     Object.assign(fs, { close, writeSync })
-    // current behavior
-    t.equal(chunks.length, 0)
+    t.match(chunks.join(''), /INFO .+: this message has been buffered/)
     t.equal(closeCalled, false)
-    // future behavior
-    // t.match(chunks.join(''), /INFO .+: this message has been buffered/)
-    // t.equal(closeCalled, true)
   })
 
   t.test('stream usage', async (t) => {
