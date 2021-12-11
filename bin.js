@@ -19,6 +19,7 @@ const parseJSON = input => {
 const joycon = new JoyCon({
   parseJSON,
   files: [
+    'pino-pretty.config.cjs',
     'pino-pretty.config.js',
     '.pino-prettyrc',
     '.pino-prettyrc.json'
