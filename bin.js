@@ -26,10 +26,6 @@ const joycon = new JoyCon({
   ],
   stopDir: path.dirname(process.cwd())
 })
-joycon.addLoader({
-  test: /\.[^.]*rc$/,
-  loadSync: (path) => parseJSON(fs.readFileSync(path, 'utf-8'))
-})
 
 args
   .option(['c', 'colorize'], 'Force adding color sequences to the output')
