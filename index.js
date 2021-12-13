@@ -91,7 +91,7 @@ function prettyFactory (options) {
     }
 
     const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level })
-    const prettifiedMetadata = prettifyMetadata({ log })
+    const prettifiedMetadata = prettifyMetadata({ log, prettifiers: customPrettifiers })
     const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey, prettifier: customPrettifiers.time })
 
     let line = ''
