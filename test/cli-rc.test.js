@@ -35,6 +35,29 @@ test('cli', (t) => {
     })
   })
 
+  t.test('loads and applies default config file: pino-pretty.config.cjs', (t) => {
+    t.plan(1)
+    // Set translateTime: true on run configuration
+    const configFile = path.join(tmpDir, 'pino-pretty.config.cjs')
+    fs.writeFileSync(configFile, 'module.exports = { translateTime: true }')
+    // Tell the loader to expect ESM modules
+    const packageJsonFile = path.join(tmpDir, 'package.json')
+    fs.writeFileSync(packageJsonFile, JSON.stringify({ type: 'module' }, null, 4))
+    const env = { TERM: 'dumb' }
+    const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
+    // Validate that the time has been translated
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+    })
+    child.stdin.write(logLine)
+    t.teardown(() => {
+      fs.unlinkSync(configFile)
+      fs.unlinkSync(packageJsonFile)
+      child.kill()
+    })
+  })
+
   t.test('loads and applies default config file: .pino-prettyrc', (t) => {
     t.plan(1)
     // Set translateTime: true on run configuration
