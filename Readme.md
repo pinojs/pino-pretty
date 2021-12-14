@@ -255,7 +255,7 @@ const prettifyQuery = value => {
 }
 ```
 
-Additionally, `customPrettifiers` can be used to format the time and level
+Additionally, `customPrettifiers` can be used to format the `time`, `hostname`, `pid`, `name`, `caller` and `level`
 outputs:
 
 ```js
@@ -269,6 +269,12 @@ outputs:
     // on if the levelKey option is used or not.
     // By default this will be the same numerics as the Pino default:
     level: logLevel => `LEVEL: ${logLevel}`
+
+    // other prettifiers can be used for the other keys if needed, for example
+    hostname: hostname => colorGreen(hostname)
+    pid: pid => colorRed(hostname)
+    name: name => colorBlue(name)
+    caller: caller => colorCyan(caller)
   }
 }
 ```

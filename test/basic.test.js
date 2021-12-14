@@ -170,6 +170,46 @@ test('basic prettifier tests', (t) => {
     log.info({ msg: 'foo', bar: 'warn' })
   })
 
+  t.test('can use a customPrettifier on name output', (t) => {
+    t.plan(1)
+    const customPrettifiers = {
+      name: (hostname) => `NAME: ${hostname}`
+    }
+    const pretty = prettyFactory({ customPrettifiers })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${epoch}] INFO (NAME: logger/${pid} on ${hostname}): foo\n`
+        )
+        cb()
+      }
+    }))
+    const child = log.child({ name: 'logger' })
+    child.info({ msg: 'foo' })
+  })
+
+  t.test('can use a customPrettifier on hostname and pid output', (t) => {
+    t.plan(1)
+    const customPrettifiers = {
+      hostname: (hostname) => `HOSTNAME: ${hostname}`,
+      pid: (pid) => `PID: ${pid}`
+    }
+    const pretty = prettyFactory({ customPrettifiers })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${epoch}] INFO (PID: ${pid} on HOSTNAME: ${hostname}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info({ msg: 'foo' })
+  })
+
   t.test('can use a customPrettifier on default time output', (t) => {
     t.plan(1)
     const customPrettifiers = {
@@ -187,6 +227,25 @@ test('basic prettifier tests', (t) => {
       }
     }))
     log.info('foo')
+  })
+
+  t.test('can use a customPrettifier on the caller', (t) => {
+    t.plan(1)
+    const customPrettifiers = {
+      caller: (caller) => `CALLER: ${caller}`
+    }
+    const pretty = prettyFactory({ customPrettifiers })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${epoch}] INFO (${pid} on ${hostname}) <CALLER: test.js:10>: foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info({ msg: 'foo', caller: 'test.js:10' })
   })
 
   t.test('can use a customPrettifier on translateTime-time output', (t) => {
