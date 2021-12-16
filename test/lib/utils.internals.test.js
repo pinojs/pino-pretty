@@ -1,7 +1,7 @@
 'use strict'
 
 const tap = require('tap')
-const clone = require('rfdc')()
+const fastCopy = require('fast-copy')
 const stringifySafe = require('fast-safe-stringify')
 const { internals } = require('../../lib/utils')
 
@@ -140,19 +140,19 @@ tap.test('#deleteLogProperty', t => {
   }
 
   t.test('deleteLogProperty deletes property of depth 1', async t => {
-    const log = clone(logData)
+    const log = fastCopy(logData)
     internals.deleteLogProperty(log, 'data1')
     t.same(log, { level: 30 })
   })
 
   t.test('deleteLogProperty deletes property of depth 2', async t => {
-    const log = clone(logData)
+    const log = fastCopy(logData)
     internals.deleteLogProperty(log, 'data1.data2')
     t.same(log, { level: 30, data1: { } })
   })
 
   t.test('deleteLogProperty deletes property of depth 3', async t => {
-    const log = clone(logData)
+    const log = fastCopy(logData)
     internals.deleteLogProperty(log, 'data1.data2.data-3')
     t.same(log, { level: 30, data1: { data2: { } } })
   })
