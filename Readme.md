@@ -144,7 +144,7 @@ Options are also supported:
 const pino = require('pino')
 const pretty = require('pino-pretty')
 const stream = pretty({
-  prettyPrint: { colorize: true }
+  colorize: true
 })
 const logger = pino(stream)
 
@@ -160,7 +160,7 @@ pass the options as the first argument and `pino-pretty` as second argument:
 const pino = require('pino')
 const pretty = require('pino-pretty')
 const stream = pretty({
-  prettyPrint: { colorize: true }
+  colorize: true
 })
 const logger = pino({ level: 'info' }, stream)
 
