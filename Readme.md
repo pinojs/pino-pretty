@@ -188,7 +188,6 @@ test('test pino-pretty', () => {
 });
 ```
 
->>>>>>> Add support for sync: true as option
 ### Handling non-serializable options
 
 Using the new [pino v7+
