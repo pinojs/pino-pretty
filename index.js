@@ -193,7 +193,7 @@ function build (opts = {}) {
         dest: opts.destination || 1,
         append: opts.append,
         mkdir: opts.mkdir,
-        sync: false
+        sync: opts.sync // by default sonic will be async
       })
     }
 

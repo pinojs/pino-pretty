@@ -961,6 +961,29 @@ test('basic prettifier tests', (t) => {
     t.equal(formatted, `[${epoch}] INFO (${pid} on ${hostname}): message {"extra":{"foo":"bar","number":42},"upper":"FOOBAR"}\n`)
   })
 
+  t.test('sync option', async (t) => {
+    t.plan(1)
+    const tmpDir = path.join(__dirname, '.tmp_' + Date.now())
+    t.teardown(() => rimraf(tmpDir, noop))
+
+    const destination = join(tmpDir, 'output')
+
+    const pretty = pinoPretty({
+      singleLine: true,
+      colorize: false,
+      mkdir: true,
+      append: false,
+      sync: true,
+      destination
+    })
+    const log = pino(pretty)
+    log.info({ msg: 'message', extra: { foo: 'bar', number: 42 }, upper: 'foobar' })
+
+    const formatted = fs.readFileSync(destination, 'utf8')
+
+    t.equal(formatted, `[${epoch}] INFO (${pid} on ${hostname}): message {"extra":{"foo":"bar","number":42},"upper":"foobar"}\n`)
+  })
+
   t.end()
 })
 
