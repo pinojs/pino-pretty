@@ -153,6 +153,9 @@ logger.info('hi')
 
 See the [Options](#options) section for all possible options.
 
+
+### Usage as a stream
+
 If you are using `pino-pretty` as a stream and you need to provide options to `pino`,
 pass the options as the first argument and `pino-pretty` as second argument:
 
@@ -168,6 +171,22 @@ const logger = pino({ level: 'info' }, stream)
 logger.debug('hi')
 ```
 
+### Usage with Jest
+
+Logging with Jest is _problematic_, as the test framework requires no asynchronous operation to
+continue after the test has finished. The following is the only supported way to use this module
+with Jest:
+
+```js
+import pino from 'pino'
+import pretty from 'pino-pretty'
+
+test('test pino-pretty', () => {
+  const logger = pino(pretty({ sync: true }));
+  logger.info('Info');
+  logger.error('Error');
+});
+```
 
 ### Handling non-serializable options
 
@@ -229,6 +248,12 @@ The options accepted have keys corresponding to the options described in [CLI Ar
 
   // Alternatively, pass a `sonic-boom` instance (allowing more flexibility):
   // destination: new SonicBoom({ dest: 'a/file', mkdir: true })
+
+  // You can also configure some SonicBoom options directly
+  sync: false, // by default we write asynchronously
+  append: true, // the file is opened with the 'a' flag
+  mdkdir: true, // create the target destination
+
 
   customPrettifiers: {}
 }
