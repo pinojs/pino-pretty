@@ -76,7 +76,48 @@ const testColoringColorizer = getColorizer => async t => {
   t.equal(colorized, '\u001B[90mfoo\u001B[39m')
 }
 
+const testCustomColoringColorizer = getColorizer => async t => {
+  const customLevels = {
+    0: 'INFO',
+    1: 'ERR',
+    default: 'USERLVL'
+  }
+  const customLevelNames = {
+    info: 0,
+    err: 1
+  }
+  const customColors = [
+    [0, 'not-a-color'],
+    [1, 'red']
+  ]
+  const opts = {
+    customLevels,
+    customLevelNames
+  }
+
+  const colorizer = getColorizer(true, customColors)
+  let colorized = colorizer(1, opts)
+  t.equal(colorized, '\u001B[31mERR\u001B[39m')
+
+  colorized = colorizer(0, opts)
+  t.equal(colorized, '\u001B[37mINFO\u001B[39m')
+
+  colorized = colorizer(900)
+  t.equal(colorized, '\u001B[37mUSERLVL\u001B[39m')
+
+  colorized = colorizer('err', opts)
+  t.equal(colorized, '\u001B[31mERR\u001B[39m')
+
+  colorized = colorizer('info', opts)
+  t.equal(colorized, '\u001B[37mINFO\u001B[39m')
+
+  colorized = colorizer('use-default')
+  t.equal(colorized, '\u001B[37mUSERLVL\u001B[39m')
+}
+
 test('returns default colorizer - private export', testDefaultColorizer(getColorizerPrivate))
 test('returns default colorizer - public export', testDefaultColorizer(getColorizerPublic))
 test('returns colorizing colorizer - private export', testColoringColorizer(getColorizerPrivate))
 test('returns colorizing colorizer - public export', testColoringColorizer(getColorizerPublic))
+test('returns custom colorizing colorizer - private export', testCustomColoringColorizer(getColorizerPrivate))
+test('returns custom colorizing colorizer - public export', testCustomColoringColorizer(getColorizerPublic))
