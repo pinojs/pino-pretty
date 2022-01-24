@@ -27,7 +27,8 @@ const options: PinoPretty.PrettyOptions = {
     key: (value) => {
       return value.toString().toUpperCase();
     }
-  }
+  },
+  sync: false,
 };
 
 const options2: PrettyOptions = {
@@ -49,7 +50,8 @@ const options2: PrettyOptions = {
     key: (value) => {
       return value.toString().toUpperCase();
     }
-  }
+  },
+  sync: false,
 };
 
 expectType<PrettyStream>(pretty(options));
