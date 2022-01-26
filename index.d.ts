@@ -102,6 +102,11 @@ interface PrettyOptions_ {
    */
   ignore?: string;
   /**
+   * Makes messaging synchronous.
+   * @default false
+   */
+  sync?: boolean;
+  /**
    * Provides the ability to add a custom prettify function for specific log properties.
    * `customPrettifiers` is an object, where keys are log properties that will be prettified
    * and value is the prettify function itself.
