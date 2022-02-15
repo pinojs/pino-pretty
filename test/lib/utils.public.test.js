@@ -64,7 +64,7 @@ tap.test('prettifyMessage', t => {
     t.equal(str, undefined)
   })
 
-  t.test('returns `undefined` if `messageKey` not string', async t => {
+  t.test('returns `undefined` if `messageKey` not string nor number', async t => {
     const str = prettifyMessage({ log: { msg: {} } })
     t.equal(str, undefined)
   })
