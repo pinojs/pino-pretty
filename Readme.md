@@ -337,10 +337,13 @@ This option can also be defined as a `function` with this prototype:
 ```
 
 ## Limitations
-Because `pino-pretty` uses the stdout redirection, in some cases the command terminates with error due the shell limitations.
 
-For example, currently, mingw64 shell (installed by git bash on Windows) is affected by this issue terminating the process with `stdout is not a tty` error message
+Because `pino-pretty` uses stdout redirection, in some cases the command may
+terminate with an error due to shell limitations.
 
+For example, currently, mingw64 based shells (e.g. Bash as supplied by [git for
+Windows](https://gitforwindows.org)) are affected and terminate the process with
+a `stdout is not a tty` error message.
 
 <a id="license"></a>
 ## License
