@@ -8,6 +8,7 @@
 
 import { Transform } from 'stream';
 import { OnUnknown } from 'pino-abstract-transport';
+import { DestinationStream } from 'pino';
 
 type LogDescriptor = Record<string, unknown>;
 
@@ -106,6 +107,21 @@ interface PrettyOptions_ {
    * @default false
    */
   sync?: boolean;
+  /**
+   * The file, file descriptor, or stream to write to.  Defaults to 1 (stdout).
+   * @default 1
+   */
+  destination?: string | number | DestinationStream | NodeJS.WritableStream;
+  /**
+   * Opens the file with the 'a' flag.
+   * @default true
+   */
+  append?: boolean;
+  /**
+   * Ensure directory for destination file exists.
+   * @default false
+   */
+  mkdir?: boolean;
   /**
    * Provides the ability to add a custom prettify function for specific log properties.
    * `customPrettifiers` is an object, where keys are log properties that will be prettified

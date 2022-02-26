@@ -29,6 +29,8 @@ const options: PinoPretty.PrettyOptions = {
     }
   },
   sync: false,
+  append: true,
+  mkdir: true,
 };
 
 const options2: PrettyOptions = {
@@ -52,6 +54,8 @@ const options2: PrettyOptions = {
     }
   },
   sync: false,
+  append: true,
+  mkdir: true,
 };
 
 expectType<PrettyStream>(pretty(options));
