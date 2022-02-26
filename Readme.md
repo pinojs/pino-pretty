@@ -252,7 +252,7 @@ The options accepted have keys corresponding to the options described in [CLI Ar
   // You can also configure some SonicBoom options directly
   sync: false, // by default we write asynchronously
   append: true, // the file is opened with the 'a' flag
-  mdkdir: true, // create the target destination
+  mkdir: true, // create the target destination
 
 
   customPrettifiers: {}
@@ -261,6 +261,9 @@ The options accepted have keys corresponding to the options described in [CLI Ar
 
 The `colorize` default follows
 [`colorette.isColorSupported`](https://github.com/jorgebucaran/colorette#iscolorsupported).
+
+The defaults for `sync`, `append`, `mkdir` inherit from
+[`SonicBoom(opts)`](https://github.com/pinojs/sonic-boom#API).
 
 `customPrettifiers` option provides the ability to add a custom prettify function
 for specific log properties. `customPrettifiers` is an object, where keys are
