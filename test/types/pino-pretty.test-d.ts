@@ -29,6 +29,7 @@ const options: PinoPretty.PrettyOptions = {
     }
   },
   sync: false,
+  destination: 2,
   append: true,
   mkdir: true,
 };
@@ -54,6 +55,7 @@ const options2: PrettyOptions = {
     }
   },
   sync: false,
+  destination: 2,
   append: true,
   mkdir: true,
 };
