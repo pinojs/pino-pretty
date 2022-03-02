@@ -345,6 +345,8 @@ For example, currently, mingw64 based shells (e.g. Bash as supplied by [git for
 Windows](https://gitforwindows.org)) are affected and terminate the process with
 a `stdout is not a tty` error message.
 
+Any PRs are welcomed!
+
 <a id="license"></a>
 ## License
 
