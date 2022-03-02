@@ -339,7 +339,18 @@ This option can also be defined as a `function` with this prototype:
 }
 ```
 
-<a id="license"><a>
+## Limitations
+
+Because `pino-pretty` uses stdout redirection, in some cases the command may
+terminate with an error due to shell limitations.
+
+For example, currently, mingw64 based shells (e.g. Bash as supplied by [git for
+Windows](https://gitforwindows.org)) are affected and terminate the process with
+a `stdout is not a tty` error message.
+
+Any PRs are welcomed!
+
+<a id="license"></a>
 ## License
 
 MIT License
