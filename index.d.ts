@@ -8,6 +8,7 @@
 
 import { Transform } from 'stream';
 import { OnUnknown } from 'pino-abstract-transport';
+// @ts-ignore fall back to any if pino is not available, i.e. when running pino tests
 import { DestinationStream } from 'pino';
 
 type LogDescriptor = Record<string, unknown>;
