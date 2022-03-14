@@ -4,9 +4,7 @@ const { isColorSupported } = require('colorette')
 const pump = require('pump')
 const { Transform } = require('readable-stream')
 const abstractTransport = require('pino-abstract-transport')
-const sonic = require('sonic-boom')
 const sjs = require('secure-json-parse')
-
 const colors = require('./lib/colors')
 const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = require('./lib/constants')
 const {
@@ -17,6 +15,7 @@ const {
   prettifyMetadata,
   prettifyObject,
   prettifyTime,
+  buildSafeSonicBoom,
   filterLog
 } = require('./lib/utils')
 
@@ -227,7 +226,7 @@ function build (opts = {}) {
     if (typeof opts.destination === 'object' && typeof opts.destination.write === 'function') {
       destination = opts.destination
     } else {
-      destination = sonic({
+      destination = buildSafeSonicBoom({
         dest: opts.destination || 1,
         append: opts.append,
         mkdir: opts.mkdir,
