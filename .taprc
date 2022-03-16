@@ -1,5 +1,4 @@
 ts: false
-check-coverage: false
 jsx: false
 flow: false
 jobs: 1
