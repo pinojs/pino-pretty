@@ -3,6 +3,9 @@
 const tap = require('tap')
 const getColorizer = require('../../lib/colors')
 const utils = require('../../lib/utils')
+const rimraf = require('rimraf')
+const { join } = require('path')
+const fs = require('fs')
 
 tap.test('prettifyErrorLog', t => {
   const { prettifyErrorLog } = utils
@@ -424,6 +427,51 @@ tap.test('#filterLog with circular references', t => {
 
     delete result.circular
     t.same(result, { level: 30, time: 1522431328992 })
+  })
+
+  t.end()
+})
+
+tap.test('buildSafeSonicBoom', t => {
+  const { buildSafeSonicBoom } = utils
+
+  function noop () {}
+
+  const file = () => {
+    const dest = join(__dirname, `${process.pid}-${process.hrtime().toString()}`)
+    const fd = fs.openSync(dest, 'w')
+    return { dest, fd }
+  }
+
+  t.test('should not write when error emitted and code is "EPIPE"', async t => {
+    t.plan(1)
+
+    const { fd, dest } = file()
+    const stream = buildSafeSonicBoom({ sync: true, fd, mkdir: true })
+    t.teardown(() => rimraf(dest, noop))
+
+    stream.emit('error', { code: 'EPIPE' })
+    stream.write('will not work')
+
+    const dataFile = fs.readFileSync(dest)
+    t.equal(dataFile.length, 0)
+  })
+
+  t.test('should stream.write works when error code is not "EPIPE"', async t => {
+    t.plan(3)
+    const { fd, dest } = file()
+    const stream = buildSafeSonicBoom({ sync: true, fd, mkdir: true })
+
+    t.teardown(() => rimraf(dest, noop))
+
+    stream.on('error', () => t.pass('error emitted'))
+
+    stream.emit('error', 'fake error description')
+
+    t.ok(stream.write('will work'))
+
+    const dataFile = fs.readFileSync(dest)
+    t.equal(dataFile.toString(), 'will work')
   })
 
   t.end()
