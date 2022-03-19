@@ -113,6 +113,9 @@ const testCustomColoringColorizer = getColorizer => async t => {
 
   colorized = colorizer('use-default')
   t.equal(colorized, '\u001B[37mUSERLVL\u001B[39m')
+
+  colorized = colorizer(40, opts)
+  t.equal(colorized, '\u001B[33mWARN\u001B[39m')
 }
 
 test('returns default colorizer - private export', testDefaultColorizer(getColorizerPrivate))

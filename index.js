@@ -68,18 +68,18 @@ function prettyFactory (options) {
 
           return agg
         }, { default: 'USERLVL' })
-    : undefined
+    : { default: 'USERLVL' }
   const customLevelNames = opts.customLevels
     ? opts.customLevels
         .split(',')
         .reduce((agg, value, idx) => {
           const [levelName, levelIdx = idx] = value.split(':')
 
-          agg[levelName] = levelIdx
+          agg[levelName.toLowerCase()] = levelIdx
 
           return agg
         }, {})
-    : undefined
+    : {}
   const customColors = opts.customColors
     ? opts.customColors
         .split(',')
@@ -93,7 +93,7 @@ function prettyFactory (options) {
 
           return agg
         }, [])
-    : undefined
+    : []
   const customPrettifiers = opts.customPrettifiers
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
   const hideObject = opts.hideObject
@@ -116,7 +116,7 @@ function prettyFactory (options) {
     }
 
     if (minimumLevel) {
-      const minimum = (customLevelNames === undefined ? LEVEL_NAMES[minimumLevel] : customLevelNames[minimumLevel]) || Number(minimumLevel)
+      const minimum = (customLevelNames[minimumLevel] === undefined ? LEVEL_NAMES[minimumLevel] : customLevelNames[minimumLevel]) || Number(minimumLevel)
       const level = log[levelKey === undefined ? LEVEL_KEY : levelKey]
       if (level < minimum) return
     }
