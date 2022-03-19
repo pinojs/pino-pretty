@@ -150,6 +150,17 @@ test('cli', (t) => {
   ;['--useOnlyCustomProps', '-U'].forEach((optionName) => {
     t.test(`customize levels via ${optionName} false and customColors`, (t) => {
       t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--customColors', 'err:blue,info:red', optionName, 'false'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
+    })
+
+    t.test(`customize levels via ${optionName} true and customColors`, (t) => {
+      t.plan(1)
       const child = spawn(process.argv[0], [bin, '--customColors', 'err:blue,info:red', optionName, 'true'], { env })
       child.on('error', t.threw)
       child.stdout.on('data', (data) => {

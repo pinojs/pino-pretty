@@ -59,7 +59,7 @@ function prettyFactory (options) {
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
-  const useOnlyCustomProps = opts.useOnlyCustomProps === 'true'
+  const useOnlyCustomProps = typeof opts.useOnlyCustomProps === 'boolean' ? opts.useOnlyCustomProps : opts.useOnlyCustomProps === 'true'
   const customLevels = opts.customLevels
     ? opts.customLevels
         .split(',')
