@@ -104,14 +104,29 @@ tap.test('prettifyMessage', t => {
     t.equal(str, 'appModule - ')
   })
 
-  t.test('returns message formatted by `messageFormat` option - levelLabel', async t => {
-    const str = prettifyMessage({ log: { msg: 'foo', context: 'appModule', level: 30 }, messageFormat: '[{level}] {levelLabel} {context} - {msg}' })
+  t.test('returns message formatted by `messageFormat` option - levelLabel & useOnlyCustomProps false', async t => {
+    const str = prettifyMessage({ log: { msg: 'foo', context: 'appModule', level: 30 }, messageFormat: '[{level}] {levelLabel} {context} - {msg}', customLevels: {} })
     t.equal(str, '[30] INFO appModule - foo')
+  })
+
+  t.test('returns message formatted by `messageFormat` option - levelLabel & useOnlyCustomProps true', async t => {
+    const str = prettifyMessage({ log: { msg: 'foo', context: 'appModule', level: 30 }, messageFormat: '[{level}] {levelLabel} {context} - {msg}', customLevels: { 30: 'CHECK' }, useOnlyCustomProps: true })
+    t.equal(str, '[30] CHECK appModule - foo')
   })
 
   t.test('returns message formatted by `messageFormat` option - levelLabel & customLevels', async t => {
     const str = prettifyMessage({ log: { msg: 'foo', context: 'appModule', level: 123 }, messageFormat: '[{level}] {levelLabel} {context} - {msg}', customLevels: { 123: 'CUSTOM' } })
     t.equal(str, '[123] CUSTOM appModule - foo')
+  })
+
+  t.test('returns message formatted by `messageFormat` option - levelLabel, customLevels & useOnlyCustomProps', async t => {
+    const str = prettifyMessage({ log: { msg: 'foo', context: 'appModule', level: 123 }, messageFormat: '[{level}] {levelLabel} {context} - {msg}', customLevels: { 123: 'CUSTOM' }, useOnlyCustomProps: true })
+    t.equal(str, '[123] CUSTOM appModule - foo')
+  })
+
+  t.test('returns message formatted by `messageFormat` option - levelLabel, customLevels & useOnlyCustomProps false', async t => {
+    const str = prettifyMessage({ log: { msg: 'foo', context: 'appModule', level: 40 }, messageFormat: '[{level}] {levelLabel} {context} - {msg}', customLevels: { 123: 'CUSTOM' }, useOnlyCustomProps: false })
+    t.equal(str, '[40] WARN appModule - foo')
   })
 
   t.test('`messageFormat` supports nested curly brackets', async t => {

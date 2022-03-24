@@ -96,6 +96,7 @@ const testCustomColoringColorizer = getColorizer => async t => {
   }
 
   const colorizer = getColorizer(true, customColors)
+  const colorizerWithCustomPropUse = getColorizer(true, customColors, true)
   let colorized = colorizer(1, opts)
   t.equal(colorized, '\u001B[31mERR\u001B[39m')
 
@@ -112,6 +113,12 @@ const testCustomColoringColorizer = getColorizer => async t => {
   t.equal(colorized, '\u001B[37mINFO\u001B[39m')
 
   colorized = colorizer('use-default')
+  t.equal(colorized, '\u001B[37mUSERLVL\u001B[39m')
+
+  colorized = colorizer(40, opts)
+  t.equal(colorized, '\u001B[33mWARN\u001B[39m')
+
+  colorized = colorizerWithCustomPropUse(50, opts)
   t.equal(colorized, '\u001B[37mUSERLVL\u001B[39m')
 }
 

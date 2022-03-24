@@ -96,6 +96,30 @@ test('cli', (t) => {
       child.stdin.write('{"level":99,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
       t.teardown(() => child.kill())
     })
+
+    t.test(`customize levels via ${optionName} with minimumLevel, customLevels and useOnlyCustomProps false`, (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--minimumLevel', 'custom', '--useOnlyCustomProps', 'false', optionName, 'custom:99,info:1'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `[${epoch}] CUSTOM (42 on foo): hello world\n`)
+      })
+      child.stdin.write('{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
+      child.stdin.write('{"level":99,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
+      t.teardown(() => child.kill())
+    })
+
+    t.test(`customize levels via ${optionName} with minimumLevel, customLevels and useOnlyCustomProps true`, (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--minimumLevel', 'custom', '--useOnlyCustomProps', 'true', optionName, 'custom:99,info:1'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `[${epoch}] CUSTOM (42 on foo): hello world\n`)
+      })
+      child.stdin.write('{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
+      child.stdin.write('{"level":99,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
+      t.teardown(() => child.kill())
+    })
   })
 
   ;['--customColors', '-X'].forEach((optionName) => {
@@ -114,6 +138,74 @@ test('cli', (t) => {
       t.plan(1)
       const logLine = '{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
       const child = spawn(process.argv[0], [bin, '--customLevels', 'err:99,info', optionName, 'info:blue,message:red'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
+    })
+  })
+
+  ;['--useOnlyCustomProps', '-U'].forEach((optionName) => {
+    t.test(`customize levels via ${optionName} false and customColors`, (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--customColors', 'err:blue,info:red', optionName, 'false'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
+    })
+
+    t.test(`customize levels via ${optionName} true and customColors`, (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--customColors', 'err:blue,info:red', optionName, 'true'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
+    })
+
+    t.test(`customize levels via ${optionName} true and customLevels`, (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--customLevels', 'err:99,custom:30', optionName, 'true'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `[${epoch}] CUSTOM (42 on foo): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
+    })
+
+    t.test(`customize levels via ${optionName} true and no customLevels`, (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, optionName, 'true'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
+    })
+
+    t.test(`customize levels via ${optionName} false and customLevels`, (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--customLevels', 'err:99,custom:25', optionName, 'false'], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
+    })
+
+    t.test(`customize levels via ${optionName} false and no customLevels`, (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, optionName, 'false'], { env })
       child.on('error', t.threw)
       child.stdout.on('data', (data) => {
         t.equal(data.toString(), `[${epoch}] INFO (42 on foo): hello world\n`)

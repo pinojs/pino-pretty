@@ -308,11 +308,12 @@ test('basic prettifier tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const localHour = dateformat(epoch, 'HH')
+        const localMinute = dateformat(epoch, 'MM')
         const localDate = dateformat(epoch, 'yyyy-mm-dd')
         const offset = dateformat(epoch, 'o')
         t.equal(
           formatted,
-          `[${localDate} ${localHour}:35:28.992 ${offset}] INFO (${pid} on ${hostname}): foo\n`
+          `[${localDate} ${localHour}:${localMinute}:28.992 ${offset}] INFO (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
@@ -329,11 +330,12 @@ test('basic prettifier tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const localHour = dateformat(epoch, 'HH')
+        const localMinute = dateformat(epoch, 'MM')
         const localDate = dateformat(epoch, 'yyyy/mm/dd')
         const offset = dateformat(epoch, 'o')
         t.equal(
           formatted,
-          `[${localDate} ${localHour}:35:28 ${offset}] INFO (${pid} on ${hostname}): foo\n`
+          `[${localDate} ${localHour}:${localMinute}:28 ${offset}] INFO (${pid} on ${hostname}): foo\n`
         )
         cb()
       }

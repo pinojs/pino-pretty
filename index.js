@@ -34,6 +34,7 @@ const defaultOptions = {
   errorProps: '',
   customLevels: null,
   customColors: null,
+  useOnlyCustomProps: true,
   levelFirst: false,
   messageKey: MESSAGE_KEY,
   messageFormat: false,
@@ -58,6 +59,7 @@ function prettyFactory (options) {
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
+  const useOnlyCustomProps = typeof opts.useOnlyCustomProps === 'boolean' ? opts.useOnlyCustomProps : opts.useOnlyCustomProps === 'true'
   const customLevels = opts.customLevels
     ? opts.customLevels
         .split(',')
@@ -68,25 +70,26 @@ function prettyFactory (options) {
 
           return agg
         }, { default: 'USERLVL' })
-    : undefined
+    : {}
   const customLevelNames = opts.customLevels
     ? opts.customLevels
         .split(',')
         .reduce((agg, value, idx) => {
           const [levelName, levelIdx = idx] = value.split(':')
 
-          agg[levelName] = levelIdx
+          agg[levelName.toLowerCase()] = levelIdx
 
           return agg
         }, {})
-    : undefined
+    : {}
   const customColors = opts.customColors
     ? opts.customColors
         .split(',')
         .reduce((agg, value) => {
           const [level, color] = value.split(':')
 
-          const levelNum = customLevelNames !== undefined ? customLevelNames[level] : LEVEL_NAMES[level]
+          const condition = useOnlyCustomProps ? opts.customLevels : customLevelNames[level] !== undefined
+          const levelNum = condition ? customLevelNames[level] : LEVEL_NAMES[level]
           const colorIdx = levelNum !== undefined ? levelNum : level
 
           agg.push([colorIdx, color])
@@ -94,11 +97,19 @@ function prettyFactory (options) {
           return agg
         }, [])
     : undefined
+  const customProps = {
+    customLevels,
+    customLevelNames
+  }
+  if (useOnlyCustomProps && !opts.customLevels) {
+    customProps.customLevels = undefined
+    customProps.customLevelNames = undefined
+  }
   const customPrettifiers = opts.customPrettifiers
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
   const hideObject = opts.hideObject
   const singleLine = opts.singleLine
-  const colorizer = colors(opts.colorize, customColors)
+  const colorizer = colors(opts.colorize, customColors, useOnlyCustomProps)
 
   return pretty
 
@@ -116,18 +127,19 @@ function prettyFactory (options) {
     }
 
     if (minimumLevel) {
-      const minimum = (customLevelNames === undefined ? LEVEL_NAMES[minimumLevel] : customLevelNames[minimumLevel]) || Number(minimumLevel)
+      const condition = useOnlyCustomProps ? opts.customLevels : customLevelNames[minimumLevel] !== undefined
+      const minimum = (condition ? customLevelNames[minimumLevel] : LEVEL_NAMES[minimumLevel]) || Number(minimumLevel)
       const level = log[levelKey === undefined ? LEVEL_KEY : levelKey]
       if (level < minimum) return
     }
 
-    const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel })
+    const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel, ...customProps, useOnlyCustomProps })
 
     if (ignoreKeys) {
       log = filterLog(log, ignoreKeys)
     }
 
-    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, customLevels, customLevelNames })
+    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, ...customProps })
     const prettifiedMetadata = prettifyMetadata({ log, prettifiers: customPrettifiers })
     const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey, prettifier: customPrettifiers.time })
 

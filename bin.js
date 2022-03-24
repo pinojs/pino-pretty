@@ -35,6 +35,7 @@ args
   .option(['L', 'minimumLevel'], 'Hide messages below the specified log level')
   .option(['x', 'customLevels'], 'Override default levels (`-x err:99,info:1`)')
   .option(['X', 'customColors'], 'Override default colors using names from https://www.npmjs.com/package/colorette (`-X err:red,info:blue`)')
+  .option(['U', 'useOnlyCustomProps'], 'Only use custom levels and colors (if provided); don\'t fallback to default levels and colors (-U false)')
   .option(['k', 'errorLikeObjectKeys'], 'Define which keys contain error objects (`-k err,error`) (defaults to `err,error`)')
   .option(['m', 'messageKey'], 'Highlight the message under the specified key', CONSTANTS.MESSAGE_KEY)
   .option('levelKey', 'Detect the log level under the specified key', CONSTANTS.LEVEL_KEY)
