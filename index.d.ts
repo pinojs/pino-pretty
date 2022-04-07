@@ -13,7 +13,7 @@ import { DestinationStream } from 'pino';
 
 type LogDescriptor = Record<string, unknown>;
 
-declare function PinoPretty(options: PrettyOptions_): PinoPretty.PrettyStream;
+declare function PinoPretty(options?: PrettyOptions_): PinoPretty.PrettyStream;
 
 interface PrettyOptions_ {
   /**
