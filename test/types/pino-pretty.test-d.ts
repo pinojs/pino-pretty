@@ -60,6 +60,7 @@ const options2: PrettyOptions = {
   mkdir: true,
 };
 
+expectType<PrettyStream>(pretty()); // #326
 expectType<PrettyStream>(pretty(options));
 expectType<PrettyStream>(PinoPrettyNamed(options));
 expectType<PrettyStream>(PinoPrettyDefault(options));
