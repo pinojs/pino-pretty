@@ -82,17 +82,21 @@ test('basic prettifier tests', (t) => {
 
   t.test('can swap date and level position', (t) => {
     t.plan(1)
-    const pretty = prettyFactory({ levelFirst: true })
-    const log = pino({}, new Writable({
-      write (chunk, enc, cb) {
-        const formatted = pretty(chunk.toString())
+    const destination = new Writable({
+      write (formatted, enc, cb) {
         t.equal(
-          formatted,
+          formatted.toString(),
           `INFO [${epoch}] (${pid} on ${hostname}): foo\n`
         )
         cb()
       }
-    }))
+    })
+    const pretty = pinoPretty({
+      destination,
+      levelFirst: true,
+      colorize: false
+    })
+    const log = pino({}, pretty)
     log.info('foo')
   })
 
@@ -553,46 +557,6 @@ test('basic prettifier tests', (t) => {
     log.testCustom('test message')
   })
 
-  t.test('supports pino metadata API', (t) => {
-    t.plan(1)
-    const dest = new Writable({
-      write (chunk, enc, cb) {
-        t.equal(
-          chunk.toString(),
-          `[${epoch}] INFO (${pid} on ${hostname}): foo\n`
-        )
-        cb()
-      }
-    })
-    const log = pino({
-      prettifier: prettyFactory,
-      prettyPrint: true
-    }, dest)
-    log.info('foo')
-  })
-
-  t.test('can swap date and level position through meta stream', (t) => {
-    t.plan(1)
-
-    const dest = new Writable({
-      objectMode: true,
-      write (formatted, enc, cb) {
-        t.equal(
-          formatted,
-          `INFO [${epoch}] (${pid} on ${hostname}): foo\n`
-        )
-        cb()
-      }
-    })
-    const log = pino({
-      prettifier: prettyFactory,
-      prettyPrint: {
-        levelFirst: true
-      }
-    }, dest)
-    log.info('foo')
-  })
-
   t.test('filter some lines based on minimumLevel', (t) => {
     t.plan(3)
     const pretty = prettyFactory({ minimumLevel: 'info' })
@@ -750,7 +714,7 @@ test('basic prettifier tests', (t) => {
 
   t.test('prettifies object with some undefined values', (t) => {
     t.plan(1)
-    const dest = new Writable({
+    const destination = new Writable({
       write (chunk, _, cb) {
         t.equal(
           chunk + '',
@@ -759,10 +723,11 @@ test('basic prettifier tests', (t) => {
         cb()
       }
     })
-    const log = pino({
-      prettifier: prettyFactory,
-      prettyPrint: true
-    }, dest)
+    const pretty = pinoPretty({
+      destination,
+      colorize: false
+    })
+    const log = pino({}, pretty)
     log.info({
       a: { b: 'c' },
       s: Symbol.for('s'),
