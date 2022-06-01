@@ -391,18 +391,24 @@ tap.test('#filterLog', t => {
     level: 30,
     time: 1522431328992,
     data1: {
-      data2: { 'data-3': 'bar' }
+      data2: { 'data-3': 'bar' },
+      error: new Error('test')
     }
   }
 
   t.test('filterLog removes single entry', async t => {
     const result = filterLog(logData, ['data1.data2.data-3'])
-    t.same(result, { level: 30, time: 1522431328992, data1: { data2: { } } })
+    t.same(result, { level: 30, time: 1522431328992, data1: { data2: { }, error: new Error('test') } })
   })
 
   t.test('filterLog removes multiple entries', async t => {
     const result = filterLog(logData, ['time', 'data1'])
     t.same(result, { level: 30 })
+  })
+
+  t.test('filterLog keeps error instance', async t => {
+    const result = filterLog(logData, [])
+    t.equals(logData.data1.error, result.data1.error)
   })
 
   const logData2 = Object.assign({
