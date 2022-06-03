@@ -21,6 +21,7 @@ const options: PinoPretty.PrettyOptions = {
   levelFirst: false,
   messageKey: "msg",
   timestampKey: "timestamp",
+  minimumLevel: "trace",
   translateTime: "UTC:h:MM:ss TT Z",
   singleLine: false,
   customPrettifiers: {
@@ -47,6 +48,7 @@ const options2: PrettyOptions = {
   levelFirst: false,
   messageKey: "msg",
   timestampKey: "timestamp",
+  minimumLevel: "trace",
   translateTime: "UTC:h:MM:ss TT Z",
   singleLine: false,
   customPrettifiers: {
