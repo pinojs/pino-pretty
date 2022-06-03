@@ -9,7 +9,7 @@
 import { Transform } from 'stream';
 import { OnUnknown } from 'pino-abstract-transport';
 // @ts-ignore fall back to any if pino is not available, i.e. when running pino tests
-import { DestinationStream } from 'pino';
+import { DestinationStream, Level } from 'pino';
 
 type LogDescriptor = Record<string, unknown>;
 
@@ -61,6 +61,11 @@ interface PrettyOptions_ {
    * @default "time"
    */
   timestampKey?: string;
+  /**
+   * The minimum log level to include in the output.
+   * @default "trace"
+   */
+  minimumLevel?: Level;
   /**
    * Format output of message, e.g. {level} - {pid} will output message: INFO - 1123
    * @default false
