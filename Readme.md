@@ -303,7 +303,7 @@ outputs:
 
     // other prettifiers can be used for the other keys if needed, for example
     hostname: hostname => colorGreen(hostname)
-    pid: pid => colorRed(hostname)
+    pid: pid => colorRed(pid)
     name: name => colorBlue(name)
     caller: caller => colorCyan(caller)
   }
