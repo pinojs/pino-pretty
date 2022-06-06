@@ -43,7 +43,7 @@
     "pump": "^3.0.0",
     "readable-stream": "^3.6.0",
     "secure-json-parse": "^2.4.0",
-    "sonic-boom": "^2.2.0",
+    "sonic-boom": "^3.0.0",
     "strip-json-comments": "^3.1.1"
   },
   "devDependencies": {
