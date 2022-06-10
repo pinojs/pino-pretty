@@ -62,40 +62,40 @@ function prettyFactory (options) {
   const useOnlyCustomProps = typeof opts.useOnlyCustomProps === 'boolean' ? opts.useOnlyCustomProps : opts.useOnlyCustomProps === 'true'
   const customLevels = opts.customLevels
     ? opts.customLevels
-        .split(',')
-        .reduce((agg, value, idx) => {
-          const [levelName, levelIdx = idx] = value.split(':')
+      .split(',')
+      .reduce((agg, value, idx) => {
+        const [levelName, levelIdx = idx] = value.split(':')
 
-          agg[levelIdx] = levelName.toUpperCase()
+        agg[levelIdx] = levelName.toUpperCase()
 
-          return agg
-        }, { default: 'USERLVL' })
+        return agg
+      }, { default: 'USERLVL' })
     : {}
   const customLevelNames = opts.customLevels
     ? opts.customLevels
-        .split(',')
-        .reduce((agg, value, idx) => {
-          const [levelName, levelIdx = idx] = value.split(':')
+      .split(',')
+      .reduce((agg, value, idx) => {
+        const [levelName, levelIdx = idx] = value.split(':')
 
-          agg[levelName.toLowerCase()] = levelIdx
+        agg[levelName.toLowerCase()] = levelIdx
 
-          return agg
-        }, {})
+        return agg
+      }, {})
     : {}
   const customColors = opts.customColors
     ? opts.customColors
-        .split(',')
-        .reduce((agg, value) => {
-          const [level, color] = value.split(':')
+      .split(',')
+      .reduce((agg, value) => {
+        const [level, color] = value.split(':')
 
-          const condition = useOnlyCustomProps ? opts.customLevels : customLevelNames[level] !== undefined
-          const levelNum = condition ? customLevelNames[level] : LEVEL_NAMES[level]
-          const colorIdx = levelNum !== undefined ? levelNum : level
+        const condition = useOnlyCustomProps ? opts.customLevels : customLevelNames[level] !== undefined
+        const levelNum = condition ? customLevelNames[level] : LEVEL_NAMES[level]
+        const colorIdx = levelNum !== undefined ? levelNum : level
 
-          agg.push([colorIdx, color])
+        agg.push([colorIdx, color])
 
-          return agg
-        }, [])
+        return agg
+      }, [])
     : undefined
   const customProps = {
     customLevels,
