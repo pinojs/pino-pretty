@@ -408,7 +408,7 @@ tap.test('#filterLog', t => {
 
   t.test('filterLog keeps error instance', async t => {
     const result = filterLog(logData, [])
-    t.equals(logData.data1.error, result.data1.error)
+    t.equal(logData.data1.error, result.data1.error)
   })
 
   const logData2 = Object.assign({
