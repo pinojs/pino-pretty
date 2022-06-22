@@ -9,7 +9,7 @@
     "pino-pretty": "./bin.js"
   },
   "scripts": {
-    "ci": "standard && tap --color --coverage-report=lcovonly && npm run test-types",
+    "ci": "standard && tap --coverage-report=lcovonly && npm run test-types",
     "lint": "standard | snazzy",
     "test": "tap --100 --color",
     "test-types": "tsc && tsd"
