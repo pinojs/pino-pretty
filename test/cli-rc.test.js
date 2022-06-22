@@ -186,6 +186,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
     child.stdout.pipe(process.stdout)
+    child.stderr.setEncoding('utf8')
     child.stderr.on('data', (data) => {
       t.comment(data)
       t.equal(
@@ -204,6 +205,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
     child.stdout.pipe(process.stdout)
+    child.stderr.setEncoding('utf8')
     child.stderr.on('data', (data) => {
       t.comment(data)
       t.equal(data.indexOf('Error: Invalid runtime configuration file: pino-pretty.config.js') >= 0, true)
@@ -220,6 +222,7 @@ test('cli', (t) => {
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
     child.stdout.pipe(process.stdout)
+    child.stderr.setEncoding('utf8')
     child.stderr.on('data', (data) => {
       t.comment(data)
       t.equal(data.indexOf('Error: Invalid runtime configuration file: pino-pretty.config.invalid.js') >= 0, true)
