@@ -185,8 +185,17 @@ test('cli', (t) => {
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
-    child.stderr.on('data', (data) => {
-      t.equal(data.indexOf('Error: Failed to load runtime configuration file: pino-pretty.config.missing.json') >= 0, true)
+    child.stdout.pipe(process.stdout)
+    child.stderr.setEncoding('utf8')
+    let data = ''
+    child.stderr.on('data', (chunk) => {
+      data += chunk
+    })
+    child.on('close', function () {
+      t.equal(
+        data.toString().indexOf('Error: Failed to load runtime configuration file: pino-pretty.config.missing.json') >= 0,
+        true
+      )
     })
     t.teardown(() => child.kill())
   })
@@ -198,7 +207,13 @@ test('cli', (t) => {
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
-    child.stderr.on('data', (data) => {
+    child.stdout.pipe(process.stdout)
+    child.stderr.setEncoding('utf8')
+    let data = ''
+    child.stderr.on('data', (chunk) => {
+      data += chunk
+    })
+    child.on('close', function () {
       t.equal(data.indexOf('Error: Invalid runtime configuration file: pino-pretty.config.js') >= 0, true)
     })
     t.teardown(() => child.kill())
@@ -212,7 +227,13 @@ test('cli', (t) => {
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
-    child.stderr.on('data', (data) => {
+    child.stdout.pipe(process.stdout)
+    child.stderr.setEncoding('utf8')
+    let data = ''
+    child.stderr.on('data', (chunk) => {
+      data += chunk
+    })
+    child.on('close', function () {
       t.equal(data.indexOf('Error: Invalid runtime configuration file: pino-pretty.config.invalid.js') >= 0, true)
     })
     t.teardown(() => child.kill())

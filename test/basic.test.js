@@ -377,8 +377,8 @@ test('basic prettifier tests', (t) => {
 
     const opts = {
       base: {
-        name: name,
-        hostname: hostname
+        name,
+        hostname
       }
     }
     const log = pino(opts, new Writable({
@@ -401,7 +401,7 @@ test('basic prettifier tests', (t) => {
 
     const opts = {
       base: {
-        name: name,
+        name,
         pid: process.pid
       }
     }
@@ -424,7 +424,7 @@ test('basic prettifier tests', (t) => {
 
     const opts = {
       base: {
-        hostname: hostname,
+        hostname,
         pid: process.pid
       }
     }

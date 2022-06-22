@@ -3,7 +3,6 @@
 
 [![NPM Package Version](https://img.shields.io/npm/v/pino-pretty)](https://www.npmjs.com/package/pino-pretty)
 [![Build Status](https://img.shields.io/github/workflow/status/pinojs/pino-pretty/CI)](https://github.com/pinojs/pino-pretty/actions?query=workflow%3ACI)
-[![Known Vulnerabilities](https://snyk.io/test/github/pinojs/pino-pretty/badge.svg)](https://snyk.io/test/github/pinojs/pino-pretty)
 [![Coverage Status](https://img.shields.io/coveralls/github/pinojs/pino-pretty)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
@@ -77,7 +76,7 @@ node app.js | pino-pretty
 - `--customLevels` (`-x`): Override default levels with custom levels, e.g. `-x err:99,info:1`
 - `--customColors` (`-X`): Override default colors with custom colors, e.g. `-X err:red,info:blue`
 - `--useOnlyCustomProps` (`-U`): Only use custom levels and colors (if provided) (default: true); else fallback to default levels and colors, e.g. `-U false`
-- `--messageFormat` (`-o`): Format output of message, e.g. `{levelLabel} - {pid} - url:{request.url}` will output message: `INFO - 1123 - url:localhost:3000/test`
+- `--messageFormat` (`-o`): Format output of message, e.g. `{levelLabel} - {pid} - url:{req.url}` will output message: `INFO - 1123 - url:localhost:3000/test`
   Default: `false`
 - `--timestampKey` (`-a`): Define the key that contains the log timestamp.
   Default: `time`.
@@ -327,7 +326,7 @@ const levelPrettifier = logLevel => `LEVEL: ${levelColorize(logLevel)}`
 
 ```js
 {
-  messageFormat: '{levelLabel} - {pid} - url:{request.url}'
+  messageFormat: '{levelLabel} - {pid} - url:{req.url}'
 }
 ```
 
