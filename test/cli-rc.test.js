@@ -219,7 +219,9 @@ test('cli', (t) => {
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
+    child.stdout.pipe(process.stdout)
     child.stderr.on('data', (data) => {
+      t.comment(data)
       t.equal(data.indexOf('Error: Invalid runtime configuration file: pino-pretty.config.invalid.js') >= 0, true)
     })
     t.teardown(() => child.kill())
