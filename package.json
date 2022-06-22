@@ -39,7 +39,7 @@
     "fast-safe-stringify": "^2.1.1",
     "joycon": "^3.1.1",
     "on-exit-leak-free": "^1.0.0",
-    "pino-abstract-transport": "^0.5.0",
+    "pino-abstract-transport": "^1.0.0",
     "pump": "^3.0.0",
     "readable-stream": "^4.0.0",
     "secure-json-parse": "^2.4.0",
