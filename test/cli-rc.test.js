@@ -239,5 +239,17 @@ test('cli', (t) => {
     t.teardown(() => child.kill())
   })
 
+  t.test('test help', (t) => {
+    t.plan(1)
+    const env = { TERM: 'dumb' }
+    const child = spawn(process.argv[0], [bin, '--help'], { env })
+    const file = fs.readFileSync('help/help.txt').toString()
+    child.on('error', t.threw)
+    child.stdout.on('data', (data) => {
+      t.equal(data.toString(), file)
+    })
+    t.teardown(() => child.kill())
+  })
+
   t.end()
 })
