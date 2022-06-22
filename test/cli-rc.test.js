@@ -185,7 +185,9 @@ test('cli', (t) => {
     const env = { TERM: 'dumb' }
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
+    child.stdout.pipe(process.stdout)
     child.stderr.on('data', (data) => {
+      t.comment(data)
       t.equal(
         data.toString().indexOf('Error: Failed to load runtime configuration file: pino-pretty.config.missing.json') >= 0,
         true
