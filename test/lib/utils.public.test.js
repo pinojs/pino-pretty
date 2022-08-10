@@ -1,5 +1,7 @@
 'use strict'
 
+process.env.TZ = 'UTC'
+
 const tap = require('tap')
 const getColorizer = require('../../lib/colors')
 const utils = require('../../lib/utils')
@@ -294,7 +296,7 @@ tap.test('prettifyTime', t => {
   t.test('returns prettified formatted time from custom field', async t => {
     const log = { customtime: 1554642900000 }
     let str = prettifyTime({ log, translateFormat: true, timestampKey: 'customtime' })
-    t.equal(str, '[2019-04-07 13:15:00.000 +0000]')
+    t.equal(str, '[13:15:00.000]')
 
     str = prettifyTime({ log, translateFormat: false, timestampKey: 'customtime' })
     t.equal(str, '[1554642900000]')
@@ -303,19 +305,19 @@ tap.test('prettifyTime', t => {
   t.test('returns prettified formatted time', async t => {
     let log = { time: 1554642900000 }
     let str = prettifyTime({ log, translateFormat: true })
-    t.equal(str, '[2019-04-07 13:15:00.000 +0000]')
+    t.equal(str, '[13:15:00.000]')
 
     log = { timestamp: 1554642900000 }
     str = prettifyTime({ log, translateFormat: true })
-    t.equal(str, '[2019-04-07 13:15:00.000 +0000]')
+    t.equal(str, '[13:15:00.000]')
 
     log = { time: '2019-04-07T09:15:00.000-04:00' }
     str = prettifyTime({ log, translateFormat: true })
-    t.equal(str, '[2019-04-07 13:15:00.000 +0000]')
+    t.equal(str, '[13:15:00.000]')
 
     log = { timestamp: '2019-04-07T09:15:00.000-04:00' }
     str = prettifyTime({ log, translateFormat: true })
-    t.equal(str, '[2019-04-07 13:15:00.000 +0000]')
+    t.equal(str, '[13:15:00.000]')
 
     log = { time: 1554642900000 }
     str = prettifyTime({ log, translateFormat: 'd mmm yyyy H:MM' })
@@ -377,8 +379,8 @@ tap.test('prettifyTime', t => {
       log: { time: '2 days ago', msg: 'foo' },
       translateFormat: true
     })
-    t.same(asString, '[2018-03-30 17:35:28.992 +0000]')
-    t.same(asNumber, '[2018-03-30 17:35:28.992 +0000]')
+    t.same(asString, '[17:35:28.992]')
+    t.same(asNumber, '[17:35:28.992]')
     t.same(invalid, '[2 days ago]')
   })
 

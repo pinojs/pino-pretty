@@ -1,5 +1,7 @@
 'use strict'
 
+process.env.TZ = 'UTC'
+
 const test = require('tap').test
 const _prettyFactory = require('../').prettyFactory
 

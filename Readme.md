@@ -6,7 +6,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/github/pinojs/pino-pretty)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
-This module provides a basic [ndjson](http://ndjson.org/) formatter. If an
+This module provides a basic [ndjson](http://ndjson.org/) formatter to be used in __development__. If an
 incoming line looks like it could be a log line from an ndjson logger, in
 particular the [Pino](https://getpino.io/) logging library, then it will apply
 extra formatting by considering things like the log level and timestamp.
@@ -20,7 +20,7 @@ A standard Pino log line like:
 Will format to:
 
 ```
-[1522431328992] INFO (42 on foo): hello world
+[17:35:28.992] INFO (42): hello world
 ```
 
 If you landed on this page due to the deprecation of the `prettyPrint` option
@@ -84,13 +84,15 @@ node app.js | pino-pretty
   date and time string. This flag also can set the format string to apply when
   translating the date to a human-readable format. For a list of available pattern
   letters, see the [`dateformat` documentation](https://www.npmjs.com/package/dateformat).
-  - The default format is `yyyy-mm-dd HH:MM:ss.l o` in UTC.
+  - The default format is `HH:MM:ss.l` in the local timezone.
+  - Require a `UTC:` prefix to translate time to UTC, e.g. `UTC:yyyy-mm-dd HH:MM:ss.l o`.
   - Require a `SYS:` prefix to translate time to the local system's time zone. A
     shortcut `SYS:standard` to translate time to `yyyy-mm-dd HH:MM:ss.l o` in
     system time zone.
 - `--ignore` (`-i`): Ignore one or several keys, nested keys are supported with each property delimited by a dot character (`.`),
   keys may be escaped to target property names that contains the delimiter itself:
   (`-i time,hostname,req.headers,log\\.domain\\.corp/foo`)
+  Default: `hostname`.
 - `--hideObject` (`-H`): Hide objects from output (but not error object)
 - `--singleLine` (`-S`): Print each log message on a single line (errors will still be multi-line)
 - `--config`: Specify a path to a config file containing the pino-pretty options.  pino-pretty will attempt to read from a `.pino-prettyrc` in your current directory (`process.cwd`) if not specified
