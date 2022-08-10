@@ -27,7 +27,6 @@ function prettyFactory (opts) {
   return _prettyFactory(opts)
 }
 
-// Date.prototype.getTimezoneOffset = function () { return 0 }
 
 // All dates are computed from 'Fri, 30 Mar 2018 17:35:28 GMT'
 const epoch = 1522431328992
