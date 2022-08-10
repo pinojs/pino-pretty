@@ -28,7 +28,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => {
@@ -50,7 +50,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => {
@@ -70,7 +70,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => {
@@ -89,7 +89,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => {
@@ -108,7 +108,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => child.kill())
@@ -124,7 +124,7 @@ test('cli', (t) => {
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => child.kill())
@@ -147,7 +147,7 @@ test('cli', (t) => {
       // Validate that the time has been translated and correct message key has been used
       child.on('error', t.threw)
       child.stdout.on('data', (data) => {
-        t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
+        t.equal(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
       })
       child.stdin.write(logLine.replace(/"msg"/, '"new_msg"'))
       t.teardown(() => {

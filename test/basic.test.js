@@ -60,7 +60,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `[${formattedEpoch}] INFO (${pid} on ${hostname}): foo\n`
+          `[${formattedEpoch}] INFO (${pid}): foo\n`
         )
         cb()
       }
@@ -76,7 +76,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `[${formattedEpoch}] \u001B[32mINFO\u001B[39m (${pid} on ${hostname}): \u001B[36mfoo\u001B[39m\n`
+          `[${formattedEpoch}] \u001B[32mINFO\u001B[39m (${pid}): \u001B[36mfoo\u001B[39m\n`
         )
         cb()
       }
@@ -90,7 +90,7 @@ test('basic prettifier tests', (t) => {
       write (formatted, enc, cb) {
         t.equal(
           formatted.toString(),
-          `INFO [${formattedEpoch}] (${pid} on ${hostname}): foo\n`
+          `INFO [${formattedEpoch}] (${pid}): foo\n`
         )
         cb()
       }
@@ -112,7 +112,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `[${formattedEpoch}] INFO (${pid} on ${hostname}): baz\n`
+          `[${formattedEpoch}] INFO (${pid}): baz\n`
         )
         cb()
       }
@@ -128,7 +128,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `[${formattedEpoch}] WARN (${pid} on ${hostname}): foo\n`
+          `[${formattedEpoch}] WARN (${pid}): foo\n`
         )
         cb()
       }
@@ -151,7 +151,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `[${formattedEpoch}] LEVEL: ok (${pid} on ${hostname}): foo\n`
+          `[${formattedEpoch}] LEVEL: ok (${pid}): foo\n`
         )
         cb()
       }
@@ -170,7 +170,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `[${formattedEpoch}] LEVEL: WARN (${pid} on ${hostname}): foo\n`
+          `[${formattedEpoch}] LEVEL: WARN (${pid}): foo\n`
         )
         cb()
       }
@@ -189,7 +189,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `[${formattedEpoch}] INFO (NAME: logger/${pid} on ${hostname}): foo\n`
+          `[${formattedEpoch}] INFO (NAME: logger/${pid}): foo\n`
         )
         cb()
       }
@@ -204,7 +204,7 @@ test('basic prettifier tests', (t) => {
       hostname: (hostname) => `HOSTNAME: ${hostname}`,
       pid: (pid) => `PID: ${pid}`
     }
-    const pretty = prettyFactory({ customPrettifiers })
+    const pretty = prettyFactory({ customPrettifiers, ignore: '' })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
@@ -229,7 +229,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `TIME: ${formattedEpoch} INFO (${pid} on ${hostname}): foo\n`
+          `TIME: ${formattedEpoch} INFO (${pid}): foo\n`
         )
         cb()
       }
@@ -248,7 +248,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `[${formattedEpoch}] INFO (${pid} on ${hostname}) <CALLER: test.js:10>: foo\n`
+          `[${formattedEpoch}] INFO (${pid}) <CALLER: test.js:10>: foo\n`
         )
         cb()
       }
@@ -267,7 +267,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `TIME: ${formattedEpoch} INFO (${pid} on ${hostname}): foo\n`
+          `TIME: ${formattedEpoch} INFO (${pid}): foo\n`
         )
         cb()
       }
@@ -283,7 +283,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `[${formattedEpoch}] INFO (${pid} on ${hostname}): foo\n`
+          `[${formattedEpoch}] INFO (${pid}): foo\n`
         )
         cb()
       }
@@ -301,7 +301,7 @@ test('basic prettifier tests', (t) => {
         const offset = dateformat(epoch, 'UTC:' + 'o')
         t.equal(
           formatted,
-          `[${utcHour}:35:28 ${offset}] INFO (${pid} on ${hostname}): foo\n`
+          `[${utcHour}:35:28 ${offset}] INFO (${pid}): foo\n`
         )
         cb()
       }
@@ -321,7 +321,7 @@ test('basic prettifier tests', (t) => {
         const offset = dateformat(epoch, 'o')
         t.equal(
           formatted,
-          `[${localDate} ${localHour}:${localMinute}:28.992 ${offset}] INFO (${pid} on ${hostname}): foo\n`
+          `[${localDate} ${localHour}:${localMinute}:28.992 ${offset}] INFO (${pid}): foo\n`
         )
         cb()
       }
@@ -343,7 +343,7 @@ test('basic prettifier tests', (t) => {
         const offset = dateformat(epoch, 'o')
         t.equal(
           formatted,
-          `[${localDate} ${localHour}:${localMinute}:28 ${offset}] INFO (${pid} on ${hostname}): foo\n`
+          `[${localDate} ${localHour}:${localMinute}:28 ${offset}] INFO (${pid}): foo\n`
         )
         cb()
       }
@@ -377,7 +377,7 @@ test('basic prettifier tests', (t) => {
     const pretty = prettyFactory()
     const name = 'test'
     const msg = 'hello world'
-    const regex = new RegExp('\\[.*\\] INFO \\(' + name + ' on ' + hostname + '\\): ' + msg)
+    const regex = new RegExp('\\[.*\\] INFO \\(' + name + '\\): ' + msg)
 
     const opts = {
       base: {
@@ -424,7 +424,7 @@ test('basic prettifier tests', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const msg = 'hello world'
-    const regex = new RegExp('\\[.*\\] INFO \\(' + process.pid + ' on ' + hostname + '\\): ' + msg)
+    const regex = new RegExp('\\[.*\\] INFO \\(' + process.pid + '\\): ' + msg)
 
     const opts = {
       base: {
@@ -449,7 +449,7 @@ test('basic prettifier tests', (t) => {
     const log = pino({ timestamp: null }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.equal(formatted, `INFO (${pid} on ${hostname}): hello world\n`)
+        t.equal(formatted, `INFO (${pid}): hello world\n`)
         cb()
       }
     }))
@@ -500,7 +500,7 @@ test('basic prettifier tests', (t) => {
     const log = pino({ name: 'matteo' }, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.equal(formatted, `[${formattedEpoch}] INFO (matteo/${pid} on ${hostname}): hello world\n`)
+        t.equal(formatted, `[${formattedEpoch}] INFO (matteo/${pid}): hello world\n`)
         cb()
       }
     }))
@@ -567,7 +567,7 @@ test('basic prettifier tests', (t) => {
     const expected = [
       undefined,
       undefined,
-      `[${formattedEpoch}] INFO (${pid} on ${hostname}): baz\n`
+      `[${formattedEpoch}] INFO (${pid}): baz\n`
     ]
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -590,8 +590,8 @@ test('basic prettifier tests', (t) => {
     const pretty = prettyFactory({ minimumLevel: 20, levelKey: 'bar' })
     const expected = [
       undefined,
-      `[${formattedEpoch}] DEBUG (${pid} on ${hostname}): bar\n`,
-      `[${formattedEpoch}] INFO (${pid} on ${hostname}): baz\n`
+      `[${formattedEpoch}] DEBUG (${pid}): bar\n`,
+      `[${formattedEpoch}] INFO (${pid}): baz\n`
     ]
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -619,7 +619,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(obj)
         t.equal(
           formatted,
-          `[${formattedEpoch}] INFO (${pid} on ${hostname}): foo\n`
+          `[${formattedEpoch}] INFO (${pid}): foo\n`
         )
         cb()
       }
@@ -722,7 +722,7 @@ test('basic prettifier tests', (t) => {
       write (chunk, _, cb) {
         t.equal(
           chunk + '',
-          `[${formattedEpoch}] INFO (${pid} on ${hostname}):\n    a: {\n      "b": "c"\n    }\n    n: null\n`
+          `[${formattedEpoch}] INFO (${pid}):\n    a: {\n      "b": "c"\n    }\n    n: null\n`
         )
         cb()
       }
@@ -798,7 +798,7 @@ test('basic prettifier tests', (t) => {
         const formatted = pretty(chunk.toString())
         t.equal(
           formatted,
-          `[${formattedEpoch}] INFO (${pid} on ${hostname}) </tmp/script.js>: foo\n`
+          `[${formattedEpoch}] INFO (${pid}) </tmp/script.js>: foo\n`
         )
         cb()
       }
@@ -832,7 +832,7 @@ test('basic prettifier tests', (t) => {
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.equal(formatted, `[${formattedEpoch}] INFO (${pid} on ${hostname}): hello world\n`)
+        t.equal(formatted, `[${formattedEpoch}] INFO (${pid}): hello world\n`)
         cb()
       }
     }))
@@ -852,7 +852,7 @@ test('basic prettifier tests', (t) => {
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.equal(formatted, `[${formattedEpoch}] INFO (${pid} on ${hostname}): message {"extra":{"foo":"bar","number":42},"upper":"FOOBAR"}\n`)
+        t.equal(formatted, `[${formattedEpoch}] INFO (${pid}): message {"extra":{"foo":"bar","number":42},"upper":"FOOBAR"}\n`)
 
         cb()
       }
@@ -866,7 +866,7 @@ test('basic prettifier tests', (t) => {
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.equal(formatted, `[${formattedEpoch}] INFO (${pid} on ${hostname}): message\n`)
+        t.equal(formatted, `[${formattedEpoch}] INFO (${pid}): message\n`)
         cb()
       }
     }))
@@ -929,7 +929,7 @@ test('basic prettifier tests', (t) => {
 
     const formatted = fs.readFileSync(destination, 'utf8')
 
-    t.equal(formatted, `[${formattedEpoch}] INFO (${pid} on ${hostname}): message {"extra":{"foo":"bar","number":42},"upper":"FOOBAR"}\n`)
+    t.equal(formatted, `[${formattedEpoch}] INFO (${pid}): message {"extra":{"foo":"bar","number":42},"upper":"FOOBAR"}\n`)
   })
 
   t.test('sync option', async (t) => {
@@ -952,7 +952,7 @@ test('basic prettifier tests', (t) => {
 
     const formatted = fs.readFileSync(destination, 'utf8')
 
-    t.equal(formatted, `[${formattedEpoch}] INFO (${pid} on ${hostname}): message {"extra":{"foo":"bar","number":42},"upper":"foobar"}\n`)
+    t.equal(formatted, `[${formattedEpoch}] INFO (${pid}): message {"extra":{"foo":"bar","number":42},"upper":"foobar"}\n`)
   })
 
   t.end()

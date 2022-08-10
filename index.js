@@ -44,6 +44,7 @@ const defaultOptions = {
   outputStream: process.stdout,
   customPrettifiers: {},
   hideObject: false,
+  ignore: 'hostname',
   singleLine: false
 }
 
