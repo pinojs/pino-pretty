@@ -27,7 +27,6 @@ function prettyFactory (opts) {
   return _prettyFactory(opts)
 }
 
-
 // All dates are computed from 'Fri, 30 Mar 2018 17:35:28 GMT'
 const epoch = 1522431328992
 const formattedEpoch = '17:35:28.992'
