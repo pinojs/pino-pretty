@@ -1,5 +1,7 @@
 'use strict'
 
+process.env.TZ = 'UTC'
+
 const tap = require('tap')
 const fastCopy = require('fast-copy')
 const stringifySafe = require('fast-safe-stringify')
@@ -33,7 +35,7 @@ tap.test('#formatTime', t => {
 
   t.test('translates epoch milliseconds if `translateTime` is `true`', async t => {
     const formattedTime = internals.formatTime(epochMS, true)
-    t.equal(formattedTime, '2019-04-06 17:30:00.000 +0000')
+    t.equal(formattedTime, '17:30:00.000')
   })
 
   t.test('translates epoch milliseconds to UTC string given format', async t => {
@@ -58,7 +60,7 @@ tap.test('#formatTime', t => {
 
   t.test('translates date string if `translateTime` is `true`', async t => {
     const formattedTime = internals.formatTime(dateStr, true)
-    t.equal(formattedTime, '2019-04-06 17:30:00.000 +0000')
+    t.equal(formattedTime, '17:30:00.000')
   })
 
   t.test('translates date string to UTC string given format', async t => {

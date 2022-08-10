@@ -1,5 +1,7 @@
 'use strict'
 
+process.env.TZ = 'UTC'
+
 const path = require('path')
 const spawn = require('child_process').spawn
 const test = require('tap').test
@@ -21,12 +23,12 @@ test('cli', (t) => {
     // Set translateTime: true on run configuration
     const configFile = path.join(tmpDir, 'pino-pretty.config.js')
     fs.writeFileSync(configFile, 'module.exports = { translateTime: true }')
-    const env = { TERM: 'dumb' }
+    const env = { TERM: 'dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => {
@@ -43,12 +45,12 @@ test('cli', (t) => {
     // Tell the loader to expect ESM modules
     const packageJsonFile = path.join(tmpDir, 'package.json')
     fs.writeFileSync(packageJsonFile, JSON.stringify({ type: 'module' }, null, 4))
-    const env = { TERM: 'dumb' }
+    const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => {
@@ -63,12 +65,12 @@ test('cli', (t) => {
     // Set translateTime: true on run configuration
     const configFile = path.join(tmpDir, '.pino-prettyrc')
     fs.writeFileSync(configFile, JSON.stringify({ translateTime: true }, null, 4))
-    const env = { TERM: 'dumb' }
+    const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => {
@@ -82,12 +84,12 @@ test('cli', (t) => {
     // Set translateTime: true on run configuration
     const configFile = path.join(tmpDir, '.pino-prettyrc.json')
     fs.writeFileSync(configFile, JSON.stringify({ translateTime: true }, null, 4))
-    const env = { TERM: 'dumb' }
+    const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => {
@@ -101,12 +103,12 @@ test('cli', (t) => {
     // Set translateTime: true on run configuration
     const configFile = path.join(tmpDir, 'pino-pretty.config.test.json')
     fs.writeFileSync(configFile, JSON.stringify({ translateTime: true }, null, 4))
-    const env = { TERM: 'dumb' }
+    const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], [bin, '--config', configFile], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => child.kill())
@@ -117,12 +119,12 @@ test('cli', (t) => {
     // Set translateTime: true on run configuration
     const configFile = path.join(tmpDir, 'pino-pretty.config.test.js')
     fs.writeFileSync(configFile, 'module.exports = { translateTime: true }')
-    const env = { TERM: 'dumb' }
+    const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], [bin, '--config', configFile], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+      t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
     })
     child.stdin.write(logLine)
     t.teardown(() => child.kill())
@@ -140,12 +142,12 @@ test('cli', (t) => {
         }
       `.trim())
       // Set messageKey: 'new_msg' using command line option
-      const env = { TERM: 'dumb' }
+      const env = { TERM: ' dumb', TZ: 'UTC' }
       const child = spawn(process.argv[0], [bin, optionName, 'new_msg'], { env, cwd: tmpDir })
       // Validate that the time has been translated and correct message key has been used
       child.on('error', t.threw)
       child.stdout.on('data', (data) => {
-        t.equal(data.toString(), '[2018-03-30 17:35:28.992 +0000] INFO (42 on foo): hello world\n')
+        t.equal(data.toString(), '[17:35:28.992] INFO (42 on foo): hello world\n')
       })
       child.stdin.write(logLine.replace(/"msg"/, '"new_msg"'))
       t.teardown(() => {
@@ -165,12 +167,12 @@ test('cli', (t) => {
       }
     `.trim())
     // Set messageKey: 'new_msg' using command line option
-    const env = { TERM: 'dumb' }
+    const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     // Validate that the time has been translated and correct message key has been used
     child.on('error', t.threw)
     child.stdout.on('data', (data) => {
-      t.equal(data.toString(), '[1594416696006] FATAL: There was an error starting the process.\n    QueryError: Error during sql query: syntax error at or near SELECTT\n        at /home/me/projects/example/sql.js\n        at /home/me/projects/example/index.js\n    querySql: SELECTT * FROM "test" WHERE id = $1;\n    queryArgs: 12\n')
+      t.equal(data.toString(), '[21:31:36.006] FATAL: There was an error starting the process.\n    QueryError: Error during sql query: syntax error at or near SELECTT\n        at /home/me/projects/example/sql.js\n        at /home/me/projects/example/index.js\n    querySql: SELECTT * FROM "test" WHERE id = $1;\n    queryArgs: 12\n')
     })
     child.stdin.write('{"level":60,"time":1594416696006,"msg":"There was an error starting the process.","type":"Error","stack":"QueryError: Error during sql query: syntax error at or near SELECTT\\n    at /home/me/projects/example/sql.js\\n    at /home/me/projects/example/index.js","querySql":"SELECTT * FROM \\"test\\" WHERE id = $1;","queryArgs":[12]}\n')
     t.teardown(() => {
@@ -182,7 +184,7 @@ test('cli', (t) => {
   t.test('throws on missing config file', (t) => {
     t.plan(2)
     const args = [bin, '--config', 'pino-pretty.config.missing.json']
-    const env = { TERM: 'dumb' }
+    const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
     child.stdout.pipe(process.stdout)
@@ -202,7 +204,7 @@ test('cli', (t) => {
     t.plan(2)
     const configFile = path.join(tmpDir, 'pino-pretty.config.js')
     fs.writeFileSync(configFile, 'module.exports = () => {}')
-    const env = { TERM: 'dumb' }
+    const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
     child.stdout.pipe(process.stdout)
@@ -222,7 +224,7 @@ test('cli', (t) => {
     const configFile = path.join(tmpDir, 'pino-pretty.config.invalid.js')
     fs.writeFileSync(configFile, 'module.exports = () => {}')
     const args = [bin, '--config', path.relative(tmpDir, configFile)]
-    const env = { TERM: 'dumb' }
+    const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
     child.on('close', (code) => t.equal(code, 1))
     child.stdout.pipe(process.stdout)
@@ -239,7 +241,7 @@ test('cli', (t) => {
 
   t.test('test help', (t) => {
     t.plan(1)
-    const env = { TERM: 'dumb' }
+    const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], [bin, '--help'], { env })
     const file = fs.readFileSync('help/help.txt').toString()
     child.on('error', t.threw)

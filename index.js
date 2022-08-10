@@ -39,7 +39,7 @@ const defaultOptions = {
   messageKey: MESSAGE_KEY,
   messageFormat: false,
   timestampKey: TIMESTAMP_KEY,
-  translateTime: false,
+  translateTime: true,
   useMetadata: false,
   outputStream: process.stdout,
   customPrettifiers: {},

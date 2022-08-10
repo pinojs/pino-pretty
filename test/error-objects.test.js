@@ -1,5 +1,7 @@
 'use strict'
 
+process.env.TZ = 'UTC'
+
 const Writable = require('stream').Writable
 const os = require('os')
 const test = require('tap').test
@@ -18,6 +20,7 @@ function prettyFactory (opts) {
 
 // All dates are computed from 'Fri, 30 Mar 2018 17:35:28 GMT'
 const epoch = 1522431328992
+const formattedEpoch = '17:35:28.992'
 const pid = process.pid
 const hostname = os.hostname()
 
@@ -43,7 +46,7 @@ test('error like objects tests', { only: true }, (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 6)
-        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
+        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid} on ${hostname}): hello world`)
         cb()
       }
     }))
@@ -94,7 +97,7 @@ test('error like objects tests', { only: true }, (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 6)
-        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
+        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid} on ${hostname}): hello world`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
@@ -129,7 +132,7 @@ test('error like objects tests', { only: true }, (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 5)
-        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world {"extra":{"a":1,"b":2}}`)
+        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid} on ${hostname}): hello world {"extra":{"a":1,"b":2}}`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
@@ -163,7 +166,7 @@ test('error like objects tests', { only: true }, (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, 3)
-        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
+        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid} on ${hostname}): hello world`)
         t.equal(lines[1], '    err: error is hello world')
         t.equal(lines[2], '')
 
@@ -190,7 +193,7 @@ test('error like objects tests', { only: true }, (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 6)
-        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
+        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid} on ${hostname}): hello world`)
         t.match(lines[1], /\s{4}err: {$/)
         t.match(lines[2], /\s{6}"type": "Error",$/)
         t.match(lines[3], /\s{6}"message": "hello world",$/)
@@ -220,7 +223,7 @@ test('error like objects tests', { only: true }, (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 7)
-        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): hello world`)
+        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid} on ${hostname}): hello world`)
         t.match(lines[1], /\s{4}err: {/)
         t.match(lines[2], /\s{6}"type": "Error",/)
         t.match(lines[3], /\s{6}"message": "hello world",/)
@@ -293,7 +296,7 @@ test('error like objects tests', { only: true }, (t) => {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
         t.equal(lines.length, expected.length + 1)
-        t.equal(lines[0], `[${epoch}] INFO (${pid} on ${hostname}): ${expected[0]}`)
+        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid} on ${hostname}): ${expected[0]}`)
         t.equal(lines[1], `    ${expected[1]}`)
         t.equal(lines[2], `    ${expected[2]}`)
         cb()
