@@ -15,6 +15,26 @@ type LogDescriptor = Record<string, unknown>;
 
 declare function PinoPretty(options?: PrettyOptions_): PinoPretty.PrettyStream;
 
+declare function colorizerFactory(
+  useColors?: boolean,
+  customColors?: [number, string][],
+  useOnlyCustomProps?: boolean,
+): {
+  (
+    level?: number | string,
+    opts?: {
+      customLevels?: { [level: number]: string };
+      customLevelNames?: { [name: string]: number };
+    },
+  ): string,
+  message: (input: string | number) => string,
+  greyMessage: (input: string | number) => string,
+}
+
+declare function prettyFactory(
+  options: PrettyOptions_,
+): (inputData: any) => string
+
 interface PrettyOptions_ {
   /**
    * Hide objects from output (but not error object).
@@ -156,7 +176,9 @@ declare namespace PinoPretty {
   type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string) => string;
   type PrettyOptions = PrettyOptions_;
   type PrettyStream = Transform & OnUnknown;
+  type ColorizerFactory = typeof colorizerFactory;
+  type PrettyFactory = typeof prettyFactory;
 }
 
 export default PinoPretty;
-export { PinoPretty, PrettyOptions_ as PrettyOptions };
+export { PinoPretty, PrettyOptions_ as PrettyOptions, colorizerFactory, prettyFactory };
