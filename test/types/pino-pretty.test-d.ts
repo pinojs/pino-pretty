@@ -1,7 +1,12 @@
 import { expectType } from "tsd";
 
 import pretty from "../../";
-import PinoPretty, { PinoPretty as PinoPrettyNamed, PrettyOptions } from "../../";
+import PinoPretty, {
+  PinoPretty as PinoPrettyNamed,
+  PrettyOptions,
+  colorizerFactory,
+  prettyFactory
+} from "../../";
 import PinoPrettyDefault from "../../";
 import * as PinoPrettyStar from "../../";
 import PinoPrettyCjsImport = require("../../");
@@ -71,3 +76,6 @@ expectType<PrettyStream>(PinoPrettyStar.default(options));
 expectType<PrettyStream>(PinoPrettyCjsImport.PinoPretty(options));
 expectType<PrettyStream>(PinoPrettyCjsImport.default(options));
 expectType<any>(PinoPrettyCjs(options));
+
+expectType<PinoPretty.ColorizerFactory>(colorizerFactory)
+expectType<PinoPretty.PrettyFactory>(prettyFactory)
