@@ -76,6 +76,5 @@ expectType<PrettyStream>(PinoPrettyStar.default(options));
 expectType<PrettyStream>(PinoPrettyCjsImport.PinoPretty(options));
 expectType<PrettyStream>(PinoPrettyCjsImport.default(options));
 expectType<any>(PinoPrettyCjs(options));
-
 expectType<PinoPretty.ColorizerFactory>(colorizerFactory)
 expectType<PinoPretty.PrettyFactory>(prettyFactory)
