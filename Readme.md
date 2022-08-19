@@ -29,13 +29,12 @@ of `pino`, read the [Programmatic Integration](#integration) section.
 <a id="example"></a>
 ## Example
 
-Using the [example script][exscript] from the Pino module, and specifying
-that logs should be colored and the time translated, we can see what the
+Using the [example script][exscript] from the Pino module, we can see what the
 prettified logs will look like:
 
 ![demo](demo.png)
 
-[exscript]: https://github.com/pinojs/pino/blob/fc4c83b/example.js
+[exscript]: https://github.com/pinojs/pino/blob/25ba61f40ea5a1a753c85002812426d765da52a4/examples/basic.js
 
 <a id="install"></a>
 ## Install
