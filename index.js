@@ -45,6 +45,7 @@ const defaultOptions = {
   customPrettifiers: {},
   hideObject: false,
   ignore: 'hostname',
+  include: undefined,
   singleLine: false
 }
 
