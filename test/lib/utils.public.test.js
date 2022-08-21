@@ -387,16 +387,23 @@ tap.test('prettifyTime', t => {
   t.end()
 })
 
-tap.test('#filterLog', t => {
-  const { filterLog } = utils
-  const logData = {
-    level: 30,
-    time: 1522431328992,
-    data1: {
-      data2: { 'data-3': 'bar' },
-      error: new Error('test')
-    }
+const logData = {
+  level: 30,
+  time: 1522431328992,
+  data1: {
+    data2: { 'data-3': 'bar' },
+    error: new Error('test')
   }
+}
+const logData2 = Object.assign({
+  'logging.domain.corp/operation': {
+    id: 'foo',
+    producer: 'bar'
+  }
+}, logData)
+
+tap.test('#filterLog with an ignoreKeys option', t => {
+  const { filterLog } = utils
 
   t.test('filterLog removes single entry', async t => {
     const result = filterLog(logData, ['data1.data2.data-3'])
@@ -413,13 +420,6 @@ tap.test('#filterLog', t => {
     t.equal(logData.data1.error, result.data1.error)
   })
 
-  const logData2 = Object.assign({
-    'logging.domain.corp/operation': {
-      id: 'foo',
-      producer: 'bar'
-    }
-  }, logData)
-
   t.test('filterLog removes entry with escape sequence', async t => {
     const result = filterLog(logData2, ['data1', 'logging\\.domain\\.corp/operation'])
     t.same(result, { level: 30, time: 1522431328992 })
@@ -431,6 +431,40 @@ tap.test('#filterLog', t => {
   })
 
   t.end()
+})
+
+const ignoreKeysArray = [
+  undefined,
+  ['level'],
+  ['level', 'data1.data2.data-3']
+]
+ignoreKeysArray.forEach(ignoreKeys => {
+  tap.test(`#filterLog with an includeKeys option when the ignoreKeys being ${ignoreKeys}`, t => {
+    const { filterLog } = utils
+
+    t.test('filterLog include nothing', async t => {
+      const result = filterLog(logData, ignoreKeys, [])
+      t.same(result, {})
+    })
+
+    t.test('filterLog include single entry', async t => {
+      const result = filterLog(logData, ignoreKeys, ['time'])
+      t.same(result, { time: 1522431328992 })
+    })
+
+    t.test('filterLog include multiple entries', async t => {
+      const result = filterLog(logData, ignoreKeys, ['time', 'data1'])
+      t.same(result, {
+        time: 1522431328992,
+        data1: {
+          data2: { 'data-3': 'bar' },
+          error: new Error('test')
+        }
+      })
+    })
+
+    t.end()
+  })
 })
 
 tap.test('#filterLog with circular references', t => {
@@ -450,6 +484,22 @@ tap.test('#filterLog with circular references', t => {
 
     delete result.circular
     t.same(result, { level: 30, time: 1522431328992 })
+  })
+
+  t.test('filterLog includes single entry', async t => {
+    const result = filterLog(logData, undefined, ['data1'])
+
+    t.same(result, { data1: 'test' })
+  })
+
+  t.test('filterLog includes circular keys', async t => {
+    const result = filterLog(logData, undefined, ['level', 'circular'])
+
+    t.same(result.circular.level, logData.level)
+    t.same(result.circular.time, logData.time)
+
+    delete result.circular
+    t.same(result, { level: 30 })
   })
 
   t.end()
