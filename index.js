@@ -107,7 +107,8 @@ function prettyFactory (options) {
     customProps.customLevelNames = undefined
   }
   const customPrettifiers = opts.customPrettifiers
-  const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
+  const includeKeys = opts.include !== undefined ? new Set(opts.include.split(',')) : undefined
+  const ignoreKeys = (!includeKeys && opts.ignore) ? new Set(opts.ignore.split(',')) : undefined
   const hideObject = opts.hideObject
   const singleLine = opts.singleLine
   const colorizer = colors(opts.colorize, customColors, useOnlyCustomProps)
@@ -136,8 +137,8 @@ function prettyFactory (options) {
 
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel, ...customProps, useOnlyCustomProps })
 
-    if (ignoreKeys) {
-      log = filterLog(log, ignoreKeys)
+    if (ignoreKeys || includeKeys) {
+      log = filterLog(log, ignoreKeys, includeKeys)
     }
 
     const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, ...customProps })
