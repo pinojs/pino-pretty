@@ -55,6 +55,7 @@ let opts = minimist(process.argv, {
     timestampKey: 'a',
     translateTime: 't',
     ignore: 'i',
+    include: 'I',
     hideObject: 'H',
     singleLine: 'S'
   },
