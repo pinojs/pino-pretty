@@ -125,9 +125,15 @@ interface PrettyOptions_ {
   errorProps?: string;
   /**
    * Ignore one or several keys.
+   * Will be overridden by the option include if include is presented.
    * @example "time,hostname"
    */
   ignore?: string;
+  /**
+   * Include one or several keys.
+   * @example "time,level"
+   */
+  include?: string;
   /**
    * Makes messaging synchronous.
    * @default false
