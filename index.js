@@ -139,7 +139,7 @@ function prettyFactory (options) {
     const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel, ...customProps, useOnlyCustomProps })
 
     if (ignoreKeys || includeKeys) {
-      log = filterLog(log, ignoreKeys, includeKeys)
+      log = filterLog({ log, ignoreKeys, includeKeys })
     }
 
     const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, ...customProps })
