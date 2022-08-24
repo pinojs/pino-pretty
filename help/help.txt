@@ -15,6 +15,7 @@
     -h, --help                  Output usage information
     -H, --hideObject            Hide objects from output (but not error object)
     -i, --ignore                Ignore one or several keys: (`-i time,hostname`)
+    -I, --include               The opposite of `--ignore`, only include one or several keys: (`-I level,time`)
     -l, --levelFirst            Display the log level as the first output field
     -L, --levelKey [value]      Detect the log level under the specified key (defaults to "level")
     -b, --levelLabel [value]    Output the log level using the specified label (defaults to "levelLabel")
@@ -57,6 +58,9 @@
 
     - Prettify logs but don't print pid and hostname
     $ cat log | pino-pretty -i pid,hostname
+    
+    - Prettify logs but only print time and level
+    $ cat log | pino-pretty -i time,level
 
     - Loads options from a config file
     $ cat log | pino-pretty --config=/path/to/config.json

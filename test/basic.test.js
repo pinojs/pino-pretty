@@ -775,6 +775,34 @@ test('basic prettifier tests', (t) => {
     t.equal(arst, 'hello world\n')
   })
 
+  t.test('include nothing', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ include: '' })
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
+    t.equal(arst, 'hello world\n')
+  })
+
+  t.test('include multiple keys', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ include: 'time,level' })
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
+    t.equal(arst, `[${formattedEpoch}] INFO: hello world\n`)
+  })
+
+  t.test('include a single key', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ include: 'level' })
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
+    t.equal(arst, 'INFO: hello world\n')
+  })
+
+  t.test('include should override ignore', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ ignore: 'time,level', include: 'time,level' })
+    const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
+    t.equal(arst, `[${formattedEpoch}] INFO: hello world\n`)
+  })
+
   t.test('prettifies trace caller', (t) => {
     t.plan(1)
     const traceCaller = (instance) => {
