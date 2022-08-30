@@ -60,7 +60,7 @@
     $ cat log | pino-pretty -i pid,hostname
     
     - Prettify logs but only print time and level
-    $ cat log | pino-pretty -i time,level
+    $ cat log | pino-pretty -I time,level
 
     - Loads options from a config file
     $ cat log | pino-pretty --config=/path/to/config.json
