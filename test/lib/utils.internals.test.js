@@ -3,7 +3,7 @@
 process.env.TZ = 'UTC'
 
 const tap = require('tap')
-const fastCopy = require('fast-copy')
+const fastCopy = require('fast-copy').default
 const stringifySafe = require('fast-safe-stringify')
 const { internals } = require('../../lib/utils')
 
