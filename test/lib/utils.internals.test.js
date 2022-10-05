@@ -3,9 +3,10 @@
 process.env.TZ = 'UTC'
 
 const tap = require('tap')
-const fastCopy = require('fast-copy')
+const { createCopier } = require('fast-copy')
 const stringifySafe = require('fast-safe-stringify')
 const { internals } = require('../../lib/utils')
+const fastCopy = createCopier({})
 
 tap.test('#joinLinesWithIndentation', t => {
   t.test('joinLinesWithIndentation adds indentation to beginning of subsequent lines', async t => {
