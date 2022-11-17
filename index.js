@@ -15,7 +15,6 @@ const {
   prettifyMetadata,
   prettifyObject,
   prettifyTime,
-  buildSafeSonicBoom,
   filterLog
 } = require('./lib/utils')
 
@@ -240,13 +239,6 @@ function build (opts = {}) {
 
     if (typeof opts.destination === 'object' && typeof opts.destination.write === 'function') {
       destination = opts.destination
-    } else {
-      destination = buildSafeSonicBoom({
-        dest: opts.destination || 1,
-        append: opts.append,
-        mkdir: opts.mkdir,
-        sync: opts.sync // by default sonic will be async
-      })
     }
 
     source.on('unknown', function (line) {
