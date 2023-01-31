@@ -2,7 +2,7 @@
 # pino-pretty
 
 [![NPM Package Version](https://img.shields.io/npm/v/pino-pretty)](https://www.npmjs.com/package/pino-pretty)
-[![Build Status](https://img.shields.io/github/workflow/status/pinojs/pino-pretty/CI)](https://github.com/pinojs/pino-pretty/actions?query=workflow%3ACI)
+![Build Status](https://github.com/pinojs/pino-pretty/workflows/ci/badge.svg)
 [![Coverage Status](https://img.shields.io/coveralls/github/pinojs/pino-pretty)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
