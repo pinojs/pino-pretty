@@ -549,3 +549,71 @@ tap.test('buildSafeSonicBoom', t => {
 
   t.end()
 })
+
+tap.test('handleCustomlevelsOpts', t => {
+  const { handleCustomlevelsOpts } = utils
+
+  t.test('returns a empty object `{}` for unknown parameter', async t => {
+    const handledCustomLevel = handleCustomlevelsOpts(123)
+    t.same(handledCustomLevel, {})
+  })
+
+  t.test('returns a filled object for string parameter', async t => {
+    const handledCustomLevel = handleCustomlevelsOpts('ok:10,warn:20,error:35')
+    t.same(handledCustomLevel, {
+      10: 'OK',
+      20: 'WARN',
+      35: 'ERROR',
+      default: 'USERLVL'
+    })
+  })
+
+  t.test('returns a filled object for object parameter', async t => {
+    const handledCustomLevel = handleCustomlevelsOpts({
+      ok: 10,
+      warn: 20,
+      error: 35
+    })
+    t.same(handledCustomLevel, {
+      10: 'OK',
+      20: 'WARN',
+      35: 'ERROR',
+      default: 'USERLVL'
+    })
+  })
+
+  t.end()
+})
+
+tap.test('handleCustomlevelNamesOpts', t => {
+  const { handleCustomlevelNamesOpts } = utils
+
+  t.test('returns a empty object `{}` for unknown parameter', async t => {
+    const handledCustomLevelNames = handleCustomlevelNamesOpts(123)
+    t.same(handledCustomLevelNames, {})
+  })
+
+  t.test('returns a filled object for string parameter', async t => {
+    const handledCustomLevelNames = handleCustomlevelNamesOpts('ok:10,warn:20,error:35')
+    t.same(handledCustomLevelNames, {
+      ok: 10,
+      warn: 20,
+      error: 35
+    })
+  })
+
+  t.test('returns a filled object for object parameter', async t => {
+    const handledCustomLevelNames = handleCustomlevelNamesOpts({
+      ok: 10,
+      warn: 20,
+      error: 35
+    })
+    t.same(handledCustomLevelNames, {
+      ok: 10,
+      warn: 20,
+      error: 35
+    })
+  })
+
+  t.end()
+})

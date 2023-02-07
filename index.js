@@ -16,7 +16,9 @@ const {
   prettifyObject,
   prettifyTime,
   buildSafeSonicBoom,
-  filterLog
+  filterLog,
+  handleCustomlevelsOpts,
+  handleCustomlevelNamesOpts
 } = require('./lib/utils')
 
 const jsonParser = input => {
@@ -62,28 +64,9 @@ function prettyFactory (options) {
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
   const useOnlyCustomProps = typeof opts.useOnlyCustomProps === 'boolean' ? opts.useOnlyCustomProps : opts.useOnlyCustomProps === 'true'
-  const customLevels = opts.customLevels
-    ? opts.customLevels
-      .split(',')
-      .reduce((agg, value, idx) => {
-        const [levelName, levelIdx = idx] = value.split(':')
+  const customLevels = handleCustomlevelsOpts(opts.customLevels)
+  const customLevelNames = handleCustomlevelNamesOpts(opts.customLevels)
 
-        agg[levelIdx] = levelName.toUpperCase()
-
-        return agg
-      }, { default: 'USERLVL' })
-    : {}
-  const customLevelNames = opts.customLevels
-    ? opts.customLevels
-      .split(',')
-      .reduce((agg, value, idx) => {
-        const [levelName, levelIdx = idx] = value.split(':')
-
-        agg[levelName.toLowerCase()] = levelIdx
-
-        return agg
-      }, {})
-    : {}
   const customColors = opts.customColors
     ? opts.customColors
       .split(',')
