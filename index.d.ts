@@ -175,6 +175,15 @@ interface PrettyOptions_ {
    * ```
    */
   customPrettifiers?: Record<string, PinoPretty.Prettifier>;
+  /**
+   * Change the level names and values to an user custom preset.
+   *
+   * Can be a CSV string in 'level_name:level_value' format or an object.
+   *
+   * @example ( CSV ) customLevels: 'info:10,some_level:40'
+   * @example ( Object ) customLevels: { info: 10, some_level: 40 }
+   */
+  customLevels?: string|object;
 }
 
 declare namespace PinoPretty {
