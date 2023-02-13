@@ -270,6 +270,11 @@ tap.test('prettifyObject', t => {
     t.equal(str, '    foo: "bar"\n')
   })
 
+  t.test('ignores escape backslashs in string values', async t => {
+    const str = prettifyObject({ input: { foo_regexp: '\\[^\\w\\s]\\' } })
+    t.equal(str, '    foo_regexp: "\\[^\\w\\s]\\"\n')
+  })
+
   t.test('works with error props', async t => {
     const err = Error('Something went wrong')
     const serializedError = {
