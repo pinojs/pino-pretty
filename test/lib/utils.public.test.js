@@ -270,12 +270,12 @@ tap.test('prettifyObject', t => {
     t.equal(str, '    foo: "bar"\n')
   })
 
-  t.test('ignores escape backslashs in string values', async t => {
+  t.test('ignores escaped backslashes in string values', async t => {
     const str = prettifyObject({ input: { foo_regexp: '\\[^\\w\\s]\\' } })
     t.equal(str, '    foo_regexp: "\\[^\\w\\s]\\"\n')
   })
 
-  t.test('ignores escape backslashs in string values (singleLine option)', async t => {
+  t.test('ignores escaped backslashes in string values (singleLine option)', async t => {
     const str = prettifyObject({ input: { foo_regexp: '\\[^\\w\\s]\\' }, singleLine: true })
     t.equal(str, '{"foo_regexp":"\\[^\\w\\s]\\"}\n')
   })
