@@ -31,6 +31,7 @@ const jsonParser = input => {
 
 const defaultOptions = {
   colorize: isColorSupported,
+  colorizeObjects: true,
   crlf: false,
   errorLikeObjectKeys: ERROR_LIKE_KEYS,
   errorProps: '',
@@ -96,6 +97,7 @@ function prettyFactory (options) {
   const hideObject = opts.hideObject
   const singleLine = opts.singleLine
   const colorizer = colors(opts.colorize, customColors, useOnlyCustomProps)
+  const objectColorizer = opts.colorizeObjects ? colorizer : colors(false, [], false)
 
   return pretty
 
@@ -193,7 +195,7 @@ function prettyFactory (options) {
         eol: EOL,
         ident: IDENT,
         singleLine,
-        colorizer
+        colorizer: objectColorizer
       })
 
       // In single line mode, include a space only if prettified version isn't empty

@@ -82,6 +82,22 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
+  t.test('will omit color codes from objects when colorizeObjects = false', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ colorize: true, singleLine: true, colorizeObjects: false })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${formattedEpoch}] \u001B[32mINFO\u001B[39m (${pid}): \u001B[36mfoo\u001B[39m {"foo":"bar"}\n`
+        )
+        cb()
+      }
+    }))
+    log.info({ foo: 'bar' }, 'foo')
+  })
+
   t.test('can swap date and level position', (t) => {
     t.plan(1)
     const destination = new Writable({
