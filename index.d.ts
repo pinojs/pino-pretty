@@ -108,6 +108,11 @@ interface PrettyOptions_ {
    */
   colorize?: boolean;
   /**
+   * If set to false while `colorize` is `true`, will output JSON objects without color.
+   * @default true
+   */
+  colorizeObjects?: boolean;
+  /**
    * Appends carriage return and line feed, instead of just a line feed, to the formatted log line.
    * @default false
    */
