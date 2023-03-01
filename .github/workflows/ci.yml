@@ -67,7 +67,7 @@ jobs:
 
       - name: Coveralls Parallel
         id: coveralls-parallel
-        uses: coverallsapp/github-action@1.1.3
+        uses: coverallsapp/github-action@v1.2.4
         continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -88,7 +88,7 @@ jobs:
     if: needs.test.outputs.COVERALLS != 'failure'
     steps:
       - name: Coveralls Finished
-        uses: coverallsapp/github-action@1.1.3
+        uses: coverallsapp/github-action@v1.2.4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
