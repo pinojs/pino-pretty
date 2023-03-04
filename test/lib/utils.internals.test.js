@@ -163,30 +163,61 @@ tap.test('#deleteLogProperty', t => {
   t.end()
 })
 
-tap.test('#splitIgnoreKey', t => {
-  t.test('splitIgnoreKey does not change key', async t => {
-    const result = internals.splitIgnoreKey('data1')
+tap.test('#splitPropertyKey', t => {
+  t.test('splitPropertyKey does not change key', async t => {
+    const result = internals.splitPropertyKey('data1')
     t.same(result, ['data1'])
   })
 
-  t.test('splitIgnoreKey splits nested key', async t => {
-    const result = internals.splitIgnoreKey('data1.data2.data-3')
+  t.test('splitPropertyKey splits nested key', async t => {
+    const result = internals.splitPropertyKey('data1.data2.data-3')
     t.same(result, ['data1', 'data2', 'data-3'])
   })
 
-  t.test('splitIgnoreKey splits nested keys ending with a dot', async t => {
-    const result = internals.splitIgnoreKey('data1.data2.data-3.')
+  t.test('splitPropertyKey splits nested keys ending with a dot', async t => {
+    const result = internals.splitPropertyKey('data1.data2.data-3.')
     t.same(result, ['data1', 'data2', 'data-3'])
   })
 
-  t.test('splitIgnoreKey splits nested escaped key', async t => {
-    const result = internals.splitIgnoreKey('logging\\.domain\\.corp/operation.foo.bar-2')
+  t.test('splitPropertyKey splits nested escaped key', async t => {
+    const result = internals.splitPropertyKey('logging\\.domain\\.corp/operation.foo.bar-2')
     t.same(result, ['logging.domain.corp/operation', 'foo', 'bar-2'])
   })
 
-  t.test('splitIgnoreKey splits nested escaped key with special characters', async t => {
-    const result = internals.splitIgnoreKey('logging\\.domain\\.corp/operation.!\t@#$%^&*()_+=-<>.bar\\.2')
+  t.test('splitPropertyKey splits nested escaped key with special characters', async t => {
+    const result = internals.splitPropertyKey('logging\\.domain\\.corp/operation.!\t@#$%^&*()_+=-<>.bar\\.2')
     t.same(result, ['logging.domain.corp/operation', '!\t@#$%^&*()_+=-<>', 'bar.2'])
+  })
+
+  t.end()
+})
+
+tap.test('#getPropertyValue', t => {
+  t.test('getPropertyValue returns the value of the property', async t => {
+    const result = internals.getPropertyValue({
+      foo: 'bar'
+    }, 'foo')
+    t.same(result, 'bar')
+  })
+
+  t.test('getPropertyValue returns the value of the nested property', async t => {
+    const result = internals.getPropertyValue({ extra: { foo: { value: 'bar' } } }, 'extra.foo.value')
+    t.same(result, 'bar')
+  })
+
+  t.test('getPropertyValue returns the value of the nested property using the array of nested property keys', async t => {
+    const result = internals.getPropertyValue({ extra: { foo: { value: 'bar' } } }, ['extra', 'foo', 'value'])
+    t.same(result, 'bar')
+  })
+
+  t.test('getPropertyValue returns undefined for non-existing properties', async t => {
+    const result = internals.getPropertyValue({ extra: { foo: { value: 'bar' } } }, 'extra.foo.value-2')
+    t.same(result, undefined)
+  })
+
+  t.test('getPropertyValue returns undefined for non-existing properties using the array of nested property keys', async t => {
+    const result = internals.getPropertyValue({ extra: { foo: { value: 'bar' } } }, ['extra', 'foo', 'value-2'])
+    t.same(result, undefined)
   })
 
   t.end()
