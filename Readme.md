@@ -68,8 +68,8 @@ node app.js | pino-pretty
   error like objects. Default: `err,error`.
 - `--messageKey` (`-m`): Define the key that contains the main log message.
   Default: `msg`.
-- `--levelKey` (`--levelKey`): Define the key that contains the level of the log, nested keys are supported with each property delimited by a dot character (`.`),
-  keys may be escaped to target property names that contains the delimiter itself:
+- `--levelKey` (`--levelKey`): Define the key that contains the level of the log. Nested keys are supported with each property delimited by a dot character (`.`).
+  Keys may be escaped to target property names that contains the delimiter itself:
   (`--levelKey tags\\.level`).
   Default: `level`.
 - `--levelLabel` (`-b`): Output the log level using the specified label.
