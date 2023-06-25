@@ -133,6 +133,7 @@ test('basic prettifier tests', (t) => {
     }))
     log.info('baz')
   })
+  
   t.test('can print message key value when its a number', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
