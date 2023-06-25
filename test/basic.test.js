@@ -149,7 +149,8 @@ test('basic prettifier tests', (t) => {
     }))
     log.info(42)
   })
-  t.test('can print message key value when its a string', (t) => {
+  
+  t.test('can print message key value when its a boolean', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({}, new Writable({
