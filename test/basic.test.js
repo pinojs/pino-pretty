@@ -165,6 +165,7 @@ test('basic prettifier tests', (t) => {
     }))
     log.info(true)
   })
+  
   t.test('can use different message keys', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ messageKey: 'bar' })
