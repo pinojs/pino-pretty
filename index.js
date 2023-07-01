@@ -162,7 +162,7 @@ function prettyFactory (options) {
       line += ':'
     }
 
-    if (prettifiedMessage) {
+    if (prettifiedMessage !== undefined) {
       if (line.length > 0) {
         line = `${line} ${prettifiedMessage}`
       } else {
