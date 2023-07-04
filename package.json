@@ -1,6 +1,6 @@
 {
   "name": "pino-pretty",
-  "version": "9.4.1",
+  "version": "10.0.1",
   "description": "Prettifier for Pino log lines",
   "type": "commonjs",
   "main": "index.js",
