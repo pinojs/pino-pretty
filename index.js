@@ -162,7 +162,7 @@ function prettyFactory (options) {
       line += ':'
     }
 
-    if (prettifiedMessage) {
+    if (prettifiedMessage !== undefined) {
       if (line.length > 0) {
         line = `${line} ${prettifiedMessage}`
       } else {
@@ -186,7 +186,7 @@ function prettyFactory (options) {
       if (singleLine) line += EOL
       line += prettifiedErrorLog
     } else if (!hideObject) {
-      const skipKeys = [messageKey, levelKey, timestampKey].filter(key => typeof log[key] === 'string' || typeof log[key] === 'number')
+      const skipKeys = [messageKey, levelKey, timestampKey].filter(key => typeof log[key] === 'string' || typeof log[key] === 'number' || typeof log[key] === 'boolean')
       const prettifiedObject = prettifyObject({
         input: log,
         skipKeys,

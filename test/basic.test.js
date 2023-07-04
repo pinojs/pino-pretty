@@ -118,6 +118,70 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
+  t.test('can print message key value when its a string', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${formattedEpoch}] INFO (${pid}): baz\n`
+        )
+        cb()
+      }
+    }))
+    log.info('baz')
+  })
+
+  t.test('can print message key value when its a number', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${formattedEpoch}] INFO (${pid}): 42\n`
+        )
+        cb()
+      }
+    }))
+    log.info(42)
+  })
+
+  t.test('can print message key value when its a Number(0)', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${formattedEpoch}] INFO (${pid}): 0\n`
+        )
+        cb()
+      }
+    }))
+    log.info(0)
+  })
+
+  t.test('can print message key value when its a boolean', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory()
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${formattedEpoch}] INFO (${pid}): true\n`
+        )
+        cb()
+      }
+    }))
+    log.info(true)
+  })
+
   t.test('can use different message keys', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ messageKey: 'bar' })
