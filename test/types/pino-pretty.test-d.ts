@@ -34,33 +34,8 @@ const options: PinoPretty.PrettyOptions = {
       return value.toString().toUpperCase();
     }
   },
-  sync: false,
-  destination: 2,
-  append: true,
-  mkdir: true,
-};
-
-const options2: PrettyOptions = {
-  colorize: true,
-  crlf: false,
-  errorLikeObjectKeys: ["err", "error"],
-  errorProps: "",
-  hideObject: true,
-  levelKey: "level",
-  levelLabel: "foo",
-  messageFormat: false,
-  ignore: "",
-  levelFirst: false,
-  messageKey: "msg",
-  timestampKey: "timestamp",
-  minimumLevel: "trace",
-  translateTime: "UTC:h:MM:ss TT Z",
-  singleLine: false,
-  customPrettifiers: {
-    key: (value) => {
-      return value.toString().toUpperCase();
-    }
-  },
+  customLevels: 'verbose:5',
+  customColors: 'default:white,verbose:gray',
   sync: false,
   destination: 2,
   append: true,
@@ -76,5 +51,5 @@ expectType<PrettyStream>(PinoPrettyStar.default(options));
 expectType<PrettyStream>(PinoPrettyCjsImport.PinoPretty(options));
 expectType<PrettyStream>(PinoPrettyCjsImport.default(options));
 expectType<any>(PinoPrettyCjs(options));
-expectType<PinoPretty.ColorizerFactory>(colorizerFactory)
-expectType<PinoPretty.PrettyFactory>(prettyFactory)
+expectType<PinoPretty.ColorizerFactory>(colorizerFactory);
+expectType<PinoPretty.PrettyFactory>(prettyFactory);
