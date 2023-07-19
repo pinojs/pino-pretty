@@ -34,6 +34,8 @@ const options: PinoPretty.PrettyOptions = {
       return value.toString().toUpperCase();
     }
   },
+  customLevels: 'verbose:5',
+  customColors: 'default:white,verbose:gray',
   sync: false,
   destination: 2,
   append: true,
