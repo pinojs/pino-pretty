@@ -189,6 +189,16 @@ interface PrettyOptions_ {
    * @example ( Object ) customLevels: { info: 10, some_level: 40 }
    */
   customLevels?: string|object;
+  /**
+   * Change the level colors to an user custom preset.
+   *
+   * Can be a CSV string in 'level_name:color_value' format or an object.
+   * Also supports 'default' as level_name for fallback color.
+   *
+   * @example ( CSV ) customColors: 'info:white,some_level:red'
+   * @example ( Object ) customColors: { info: 'white', some_level: 'red' }
+   */
+  customColors?: string|object;
 }
 
 declare namespace PinoPretty {
