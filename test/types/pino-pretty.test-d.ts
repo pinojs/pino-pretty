@@ -40,33 +40,6 @@ const options: PinoPretty.PrettyOptions = {
   mkdir: true,
 };
 
-const options2: PrettyOptions = {
-  colorize: true,
-  crlf: false,
-  errorLikeObjectKeys: ["err", "error"],
-  errorProps: "",
-  hideObject: true,
-  levelKey: "level",
-  levelLabel: "foo",
-  messageFormat: false,
-  ignore: "",
-  levelFirst: false,
-  messageKey: "msg",
-  timestampKey: "timestamp",
-  minimumLevel: "trace",
-  translateTime: "UTC:h:MM:ss TT Z",
-  singleLine: false,
-  customPrettifiers: {
-    key: (value) => {
-      return value.toString().toUpperCase();
-    }
-  },
-  sync: false,
-  destination: 2,
-  append: true,
-  mkdir: true,
-};
-
 expectType<PrettyStream>(pretty()); // #326
 expectType<PrettyStream>(pretty(options));
 expectType<PrettyStream>(PinoPrettyNamed(options));
