@@ -222,3 +222,29 @@ tap.test('#getPropertyValue', t => {
 
   t.end()
 })
+
+tap.test('#parseMessageFormat', t => {
+  const logData = {
+    level: 30,
+    data1: {
+      data2: 'bar'
+    }
+  }
+
+  t.test('parseMessageFormat translates if / else statement to found property value', async t => {
+    const log = fastCopy(logData)
+    t.equal(internals.parseMessageFormat('{level} - {if data1.data2}{data1.data2}{end}', log), '{level} - bar')
+  })
+
+  t.test('parseMessageFormat removes unescaped if statements', async t => {
+    const log = fastCopy(logData)
+    t.equal(internals.parseMessageFormat('{level} - {if data1.data2}{data1.data2}', log), '{level} - {data1.data2}')
+  })
+
+  t.test('parseMessageFormat removes unescaped end statements', async t => {
+    const log = fastCopy(logData)
+    t.equal(internals.parseMessageFormat('{level} - {data1.data2}{end}', log), '{level} - {data1.data2}')
+  })
+
+  t.end()
+})
