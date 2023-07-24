@@ -347,7 +347,7 @@ In addition to this, if / end statement blocks can also be specified. Else state
 
 ```js
 {
-  messageFormat: '{levelLabel} - {if pid}{pid}{end} - url:{req.url}'
+  messageFormat: '{levelLabel} - {if pid}{pid} - {end}url:{req.url}'
 }
 ```
 
