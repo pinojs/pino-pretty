@@ -11,7 +11,7 @@
   "scripts": {
     "ci": "standard && tap --coverage-report=lcovonly && npm run test-types",
     "lint": "standard | snazzy",
-    "test": "tap --100 --color",
+    "test": "tap",
     "test-types": "tsc && tsd"
   },
   "repository": {
