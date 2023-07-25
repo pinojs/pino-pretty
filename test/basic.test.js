@@ -118,6 +118,26 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
+  t.test('can hide date and level', (t) => {
+    t.plan(1)
+    const destination = new Writable({
+      write (formatted, enc, cb) {
+        t.equal(
+          formatted.toString(),
+          'foo\n'
+        )
+        cb()
+      }
+    })
+    const pretty = pinoPretty({
+      destination,
+      hideMetadata: true,
+      colorize: false
+    })
+    const log = pino({}, pretty)
+    log.info('foo')
+  })
+
   t.test('can print message key value when its a string', (t) => {
     t.plan(1)
     const pretty = prettyFactory()

@@ -58,7 +58,8 @@ let opts = minimist(process.argv, {
     ignore: 'i',
     include: 'I',
     hideObject: 'H',
-    singleLine: 'S'
+    singleLine: 'S',
+    hideMetadata: 'M'
   },
   default: {
     messageKey: DEFAULT_VALUE,

@@ -100,6 +100,7 @@ node app.js | pino-pretty
 - `--hideObject` (`-H`): Hide objects from output (but not error object)
 - `--singleLine` (`-S`): Print each log message on a single line (errors will still be multi-line)
 - `--config`: Specify a path to a config file containing the pino-pretty options.  pino-pretty will attempt to read from a `.pino-prettyrc` in your current directory (`process.cwd`) if not specified
+- `--hideMetadata` (`-M`): Hide Metadata (e.g. `timestamp` and `level`) in the beginning of each log line
 
 <a id="integration"></a>
 ## Programmatic Integration
@@ -258,6 +259,7 @@ The options accepted have keys corresponding to the options described in [CLI Ar
   levelLabel: 'levelLabel', // --levelLabel
   minimumLevel: 'info', // --minimumLevel
   useOnlyCustomProps: true, // --useOnlyCustomProps
+  hideMetadata: true, // --hideMetadata
   // The file or file descriptor (1 is stdout) to write to
   destination: 1,
 

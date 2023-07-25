@@ -37,6 +37,19 @@ test('cli', (t) => {
     })
   })
 
+  ;['--hideMetadata', '-M'].forEach((optionName) => {
+    t.test(`hides epoch, level and metadata via ${optionName}`, (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, optionName], { env })
+      child.on('error', t.threw)
+      child.stdout.on('data', (data) => {
+        t.equal(data.toString(), 'hello world\n')
+      })
+      child.stdin.write(logLine)
+      t.teardown(() => child.kill())
+    })
+  })
+
   ;['--translateTime', '-t'].forEach((optionName) => {
     t.test(`translates time to default format via ${optionName}`, (t) => {
       t.plan(1)
