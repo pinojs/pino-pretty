@@ -65,34 +65,6 @@ jobs:
       - name: Run tests
         run: npm run ci
 
-      - name: Coveralls Parallel
-        id: coveralls-parallel
-        uses: coverallsapp/github-action@v2.2.0
-        continue-on-error: true
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel: true
-          flag-name: run-${{ matrix.node-version }}-${{ matrix.os }}
-
-      - name: Should Trigger coverallsapp/github-action@master
-        id: coveralls-trigger
-        # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
-        # when continue-on-error failed, outcome is failure and conclusion is success
-        if: steps.coveralls-parallel.conclusion == 'success' && steps.coveralls-parallel.outcome != 'success'
-        run: |
-          echo "::set-output name=COVERALLS_TRIGGER::failure"
-
-  coverage:
-    needs: test
-    runs-on: ubuntu-latest
-    if: needs.test.outputs.COVERALLS != 'failure'
-    steps:
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@v2.2.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true
-
   automerge:
     name: Automerge Dependabot PRs
     if: >

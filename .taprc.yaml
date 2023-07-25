@@ -1,0 +1,5 @@
+coverage: true
+reporter: terse
+
+files:
+  - 'test/**/*.test.js'

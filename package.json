@@ -1,6 +1,6 @@
 {
   "name": "pino-pretty",
-  "version": "10.1.0",
+  "version": "10.2.0",
   "description": "Prettifier for Pino log lines",
   "type": "commonjs",
   "main": "index.js",
@@ -11,7 +11,7 @@
   "scripts": {
     "ci": "standard && tap --coverage-report=lcovonly && npm run test-types",
     "lint": "standard | snazzy",
-    "test": "tap --100 --color",
+    "test": "tap",
     "test-types": "tsc && tsd"
   },
   "repository": {
