@@ -343,6 +343,14 @@ const levelPrettifier = logLevel => `LEVEL: ${levelColorize(logLevel)}`
 }
 ```
 
+In addition to this, if / end statement blocks can also be specified. Else statements and nested conditions are not supported.
+
+```js
+{
+  messageFormat: '{levelLabel} - {if pid}{pid} - {end}url:{req.url}'
+}
+```
+
 This option can also be defined as a `function` with this prototype:
 
 ```js
