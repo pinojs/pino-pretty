@@ -131,39 +131,7 @@ function prettyFactory (options) {
     let line = ''
 
     if (!opts.hideMetadata) {
-      const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, ...customProps })
-      const prettifiedMetadata = prettifyMetadata({ log, prettifiers: customPrettifiers })
-      const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey, prettifier: customPrettifiers.time })
-
-      if (opts.levelFirst && prettifiedLevel) {
-        line = `${prettifiedLevel}`
-      }
-
-      if (prettifiedTime && line === '') {
-        line = `${prettifiedTime}`
-      } else if (prettifiedTime) {
-        line = `${line} ${prettifiedTime}`
-      }
-
-      if (!opts.levelFirst && prettifiedLevel) {
-        if (line.length > 0) {
-          line = `${line} ${prettifiedLevel}`
-        } else {
-          line = prettifiedLevel
-        }
-      }
-
-      if (prettifiedMetadata) {
-        if (line.length > 0) {
-          line = `${line} ${prettifiedMetadata}:`
-        } else {
-          line = prettifiedMetadata
-        }
-      }
-
-      if (line.endsWith(':') === false && line !== '') {
-        line += ':'
-      }
+      line += createLineMetadata()
     }
 
     if (prettifiedMessage !== undefined) {
@@ -210,6 +178,46 @@ function prettyFactory (options) {
     }
 
     return line
+
+    function createLineMetadata () {
+      let lineMetadata = ''
+
+      const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, ...customProps })
+      const prettifiedMetadata = prettifyMetadata({ log, prettifiers: customPrettifiers })
+      const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey, prettifier: customPrettifiers.time })
+
+      if (opts.levelFirst && prettifiedLevel) {
+        lineMetadata = `${prettifiedLevel}`
+      }
+
+      if (prettifiedTime && lineMetadata === '') {
+        lineMetadata = `${prettifiedTime}`
+      } else if (prettifiedTime) {
+        lineMetadata = `${lineMetadata} ${prettifiedTime}`
+      }
+
+      if (!opts.levelFirst && prettifiedLevel) {
+        if (lineMetadata.length > 0) {
+          lineMetadata = `${lineMetadata} ${prettifiedLevel}`
+        } else {
+          lineMetadata = prettifiedLevel
+        }
+      }
+
+      if (prettifiedMetadata) {
+        if (lineMetadata.length > 0) {
+          lineMetadata = `${lineMetadata} ${prettifiedMetadata}:`
+        } else {
+          lineMetadata = prettifiedMetadata
+        }
+      }
+
+      if (lineMetadata.endsWith(':') === false && lineMetadata !== '') {
+        lineMetadata += ':'
+      }
+
+      return lineMetadata
+    }
   }
 }
 
