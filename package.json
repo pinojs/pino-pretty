@@ -12,7 +12,8 @@
     "ci": "standard && tap --coverage-report=lcovonly && npm run test-types",
     "lint": "standard | snazzy",
     "test": "tap",
-    "test-types": "tsc && tsd"
+    "test-types": "tsc && tsd",
+    "test:watch": "tap --no-coverage-report -w"
   },
   "repository": {
     "type": "git",
