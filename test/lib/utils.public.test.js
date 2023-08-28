@@ -565,16 +565,16 @@ tap.test('buildSafeSonicBoom', t => {
   t.end()
 })
 
-tap.test('handleCustomlevelsOpts', t => {
-  const { handleCustomlevelsOpts } = utils
+tap.test('handleCustomLevelsOpts', t => {
+  const { handleCustomLevelsOpts } = utils
 
   t.test('returns a empty object `{}` for unknown parameter', async t => {
-    const handledCustomLevel = handleCustomlevelsOpts(123)
+    const handledCustomLevel = handleCustomLevelsOpts(123)
     t.same(handledCustomLevel, {})
   })
 
   t.test('returns a filled object for string parameter', async t => {
-    const handledCustomLevel = handleCustomlevelsOpts('ok:10,warn:20,error:35')
+    const handledCustomLevel = handleCustomLevelsOpts('ok:10,warn:20,error:35')
     t.same(handledCustomLevel, {
       10: 'OK',
       20: 'WARN',
@@ -584,7 +584,7 @@ tap.test('handleCustomlevelsOpts', t => {
   })
 
   t.test('returns a filled object for object parameter', async t => {
-    const handledCustomLevel = handleCustomlevelsOpts({
+    const handledCustomLevel = handleCustomLevelsOpts({
       ok: 10,
       warn: 20,
       error: 35
@@ -600,16 +600,16 @@ tap.test('handleCustomlevelsOpts', t => {
   t.end()
 })
 
-tap.test('handleCustomlevelNamesOpts', t => {
-  const { handleCustomlevelNamesOpts } = utils
+tap.test('handleCustomLevelsNamesOpts', t => {
+  const { handleCustomLevelsNamesOpts } = utils
 
   t.test('returns a empty object `{}` for unknown parameter', async t => {
-    const handledCustomLevelNames = handleCustomlevelNamesOpts(123)
+    const handledCustomLevelNames = handleCustomLevelsNamesOpts(123)
     t.same(handledCustomLevelNames, {})
   })
 
   t.test('returns a filled object for string parameter', async t => {
-    const handledCustomLevelNames = handleCustomlevelNamesOpts('ok:10,warn:20,error:35')
+    const handledCustomLevelNames = handleCustomLevelsNamesOpts('ok:10,warn:20,error:35')
     t.same(handledCustomLevelNames, {
       ok: 10,
       warn: 20,
@@ -618,7 +618,7 @@ tap.test('handleCustomlevelNamesOpts', t => {
   })
 
   t.test('returns a filled object for object parameter', async t => {
-    const handledCustomLevelNames = handleCustomlevelNamesOpts({
+    const handledCustomLevelNames = handleCustomLevelsNamesOpts({
       ok: 10,
       warn: 20,
       error: 35
