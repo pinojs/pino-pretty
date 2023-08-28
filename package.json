@@ -13,7 +13,8 @@
     "lint": "standard | snazzy",
     "test": "tap",
     "test-types": "tsc && tsd",
-    "test:watch": "tap --no-coverage-report -w"
+    "test:watch": "tap --no-coverage-report -w",
+    "test:report": "tap --coverage-report=html"
   },
   "repository": {
     "type": "git",
