@@ -6,7 +6,14 @@ const { Transform } = require('readable-stream')
 const abstractTransport = require('pino-abstract-transport')
 const sjs = require('secure-json-parse')
 const colors = require('./lib/colors')
-const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = require('./lib/constants')
+const {
+  ERROR_LIKE_KEYS,
+  MESSAGE_KEY,
+  TIMESTAMP_KEY,
+  LEVELS,
+  LEVEL_KEY,
+  LEVEL_NAMES
+} = require('./lib/constants')
 const {
   isObject,
   prettifyErrorLog,
@@ -17,8 +24,7 @@ const {
   prettifyTime,
   buildSafeSonicBoom,
   filterLog,
-  handleCustomLevelsOpts,
-  handleCustomLevelsNamesOpts
+  parseFactoryOptions
 } = require('./lib/utils')
 
 const jsonParser = input => {
@@ -55,6 +61,9 @@ const jsonParser = input => {
  * When a string, defines how the prettified line should be formatted according
  * to defined tokens. When a function, a synchronous function that returns a
  * formatted string.
+ * @property {undefined|string|number} [minimumLevel=undefined] The minimum
+ * level for logs that should be processed. Any logs below this level will
+ * be omitted.
  * @property {string} [timestampKey='time'] Defines the key in incoming logs
  * that contains the timestamp of the log, if present.
  * @property {boolean} [translateTime=true] When true, will translate a
@@ -92,6 +101,7 @@ const defaultOptions = {
   levelFirst: false,
   messageKey: MESSAGE_KEY,
   messageFormat: null,
+  minimumLevel: undefined,
   timestampKey: TIMESTAMP_KEY,
   translateTime: true,
   outputStream: process.stdout,
@@ -110,53 +120,8 @@ const defaultOptions = {
  * @returns {LogPrettifierFunc}
  */
 function prettyFactory (options) {
-  const opts = Object.assign({}, defaultOptions, options)
-  const EOL = opts.crlf ? '\r\n' : '\n'
-  const IDENT = '    '
-  const messageKey = opts.messageKey
-  const levelKey = opts.levelKey
-  const levelLabel = opts.levelLabel
-  const minimumLevel = opts.minimumLevel
-  const messageFormat = opts.messageFormat
-  const timestampKey = opts.timestampKey
-  const errorLikeObjectKeys = opts.errorLikeObjectKeys
-  const errorProps = opts.errorProps.split(',')
-  const useOnlyCustomProps = typeof opts.useOnlyCustomProps === 'boolean' ? opts.useOnlyCustomProps : opts.useOnlyCustomProps === 'true'
-  const customLevels = handleCustomLevelsOpts(opts.customLevels)
-  const customLevelNames = handleCustomLevelsNamesOpts(opts.customLevels)
-
-  const customColors = opts.customColors
-    ? opts.customColors
-      .split(',')
-      .reduce((agg, value) => {
-        const [level, color] = value.split(':')
-
-        const condition = useOnlyCustomProps ? opts.customLevels : customLevelNames[level] !== undefined
-        const levelNum = condition ? customLevelNames[level] : LEVEL_NAMES[level]
-        const colorIdx = levelNum !== undefined ? levelNum : level
-
-        agg.push([colorIdx, color])
-
-        return agg
-      }, [])
-    : undefined
-  const customProps = {
-    customLevels,
-    customLevelNames
-  }
-  if (useOnlyCustomProps && !opts.customLevels) {
-    customProps.customLevels = undefined
-    customProps.customLevelNames = undefined
-  }
-  const customPrettifiers = opts.customPrettifiers
-  const includeKeys = opts.include !== undefined ? new Set(opts.include.split(',')) : undefined
-  const ignoreKeys = (!includeKeys && opts.ignore) ? new Set(opts.ignore.split(',')) : undefined
-  const hideObject = opts.hideObject
-  const singleLine = opts.singleLine
-  const colorizer = colors(opts.colorize, customColors, useOnlyCustomProps)
-  const objectColorizer = opts.colorizeObjects ? colorizer : colors(false, [], false)
-
-  return pretty
+  const context = parseFactoryOptions(Object.assign({}, defaultOptions, options))
+  return pretty.bind({ ...context, context })
 
   /**
    * Orchestrates processing the received log data according to the provided
@@ -172,32 +137,78 @@ function prettyFactory (options) {
       const parsed = jsonParser(inputData)
       if (parsed.err || !isObject(parsed.value)) {
         // pass through
-        return inputData + EOL
+        return inputData + this.EOL
       }
       log = parsed.value
     } else {
       log = inputData
     }
 
-    if (minimumLevel) {
-      const condition = useOnlyCustomProps ? opts.customLevels : customLevelNames[minimumLevel] !== undefined
-      const minimum = (condition ? customLevelNames[minimumLevel] : LEVEL_NAMES[minimumLevel]) || Number(minimumLevel)
-      const level = log[levelKey === undefined ? LEVEL_KEY : levelKey]
+    if (this.minimumLevel) {
+      // We need to figure out if the custom levels has the desired minimum
+      // level & use that one if found. If not, determine if the level exists
+      // in the standard levels. In both cases, make sure we have the level
+      // number instead of the level name.
+      let condition
+      if (this.useOnlyCustomProps) {
+        condition = this.customLevels
+      } else {
+        condition = this.customLevelNames[this.minimumLevel] !== undefined
+      }
+      let minimum
+      if (condition) {
+        minimum = this.customLevelNames[this.minimumLevel]
+      } else {
+        minimum = LEVEL_NAMES[this.minimumLevel]
+      }
+      if (!minimum) {
+        minimum = typeof this.minimumLevel === 'string'
+          ? LEVEL_NAMES[this.minimumLevel]
+          : LEVEL_NAMES[LEVELS[this.minimumLevel].toLowerCase()]
+      }
+
+      const level = log[this.levelKey === undefined ? LEVEL_KEY : this.levelKey]
       if (level < minimum) return
     }
 
-    const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel, ...customProps, useOnlyCustomProps })
+    const prettifiedMessage = prettifyMessage({
+      log,
+      messageKey: this.messageKey,
+      colorizer: this.colorizer,
+      messageFormat: this.messageFormat,
+      levelLabel: this.levelLabel,
+      ...this.customProperties,
+      useOnlyCustomProps: this.useOnlyCustomProps
+    })
 
-    if (ignoreKeys || includeKeys) {
-      log = filterLog({ log, ignoreKeys, includeKeys })
+    if (this.ignoreKeys || this.includeKeys) {
+      log = filterLog({
+        log,
+        ignoreKeys: this.ignoreKeys,
+        includeKeys: this.includeKeys
+      })
     }
 
-    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, ...customProps })
-    const prettifiedMetadata = prettifyMetadata({ log, prettifiers: customPrettifiers })
-    const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey, prettifier: customPrettifiers.time })
+    const prettifiedLevel = prettifyLevel({
+      log,
+      colorizer: this.colorizer,
+      levelKey: this.levelKey,
+      prettifier: this.customPrettifiers.level,
+      ...this.customProperties
+    })
+    const prettifiedMetadata = prettifyMetadata({
+      log,
+      prettifiers: this.customPrettifiers
+    })
+    const prettifiedTime = prettifyTime({
+      log,
+      translateFormat: this.translateTime,
+      timestampKey: this.timestampKey,
+      prettifier: this.customPrettifiers.time
+    })
 
     let line = ''
-    if (opts.levelFirst && prettifiedLevel) {
+    if (this.levelFirst && prettifiedLevel) {
       line = `${prettifiedLevel}`
     }
 
@@ -207,7 +218,7 @@ function prettyFactory (options) {
       line = `${line} ${prettifiedTime}`
     }
 
-    if (!opts.levelFirst && prettifiedLevel) {
+    if (!this.levelFirst && prettifiedLevel) {
       if (line.length > 0) {
         line = `${line} ${prettifiedLevel}`
       } else {
@@ -235,36 +246,44 @@ function prettyFactory (options) {
       }
     }
 
-    if (line.length > 0 && !singleLine) {
-      line += EOL
+    if (line.length > 0 && !this.singleLine) {
+      line += this.EOL
     }
 
     // pino@7+ does not log this anymore
     if (log.type === 'Error' && log.stack) {
       const prettifiedErrorLog = prettifyErrorLog({
         log,
-        errorLikeKeys: errorLikeObjectKeys,
-        errorProperties: errorProps,
-        ident: IDENT,
-        eol: EOL
+        errorLikeKeys: this.errorLikeObjectKeys,
+        errorProperties: this.errorProps,
+        ident: this.IDENT,
+        eol: this.EOL
       })
-      if (singleLine) line += EOL
+      if (this.singleLine) line += this.EOL
       line += prettifiedErrorLog
-    } else if (!hideObject) {
-      const skipKeys = [messageKey, levelKey, timestampKey].filter(key => typeof log[key] === 'string' || typeof log[key] === 'number' || typeof log[key] === 'boolean')
+    } else if (!this.hideObject) {
+      const skipKeys = [
+        this.messageKey,
+        this.levelKey,
+        this.timestampKey
+      ].filter(key => {
+        return typeof log[key] === 'string' ||
+          typeof log[key] === 'number' ||
+          typeof log[key] === 'boolean'
+      })
       const prettifiedObject = prettifyObject({
         input: log,
         skipKeys,
-        customPrettifiers,
-        errorLikeKeys: errorLikeObjectKeys,
-        eol: EOL,
-        ident: IDENT,
-        singleLine,
-        colorizer: objectColorizer
+        customPrettifiers: this.customPrettifiers,
+        errorLikeKeys: this.errorLikeObjectKeys,
+        eol: this.EOL,
+        ident: this.IDENT,
+        singleLine: this.singleLine,
+        colorizer: this.objectColorizer
       })
 
       // In single line mode, include a space only if prettified version isn't empty
-      if (singleLine && !/^\s$/.test(prettifiedObject)) {
+      if (this.singleLine && !/^\s$/.test(prettifiedObject)) {
         line += ' '
       }
       line += prettifiedObject
