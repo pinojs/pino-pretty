@@ -4,36 +4,17 @@ const { isColorSupported } = require('colorette')
 const pump = require('pump')
 const { Transform } = require('readable-stream')
 const abstractTransport = require('pino-abstract-transport')
-const sjs = require('secure-json-parse')
 const colors = require('./lib/colors')
 const {
   ERROR_LIKE_KEYS,
   MESSAGE_KEY,
-  TIMESTAMP_KEY,
-  LEVELS,
-  LEVEL_KEY,
-  LEVEL_NAMES
+  TIMESTAMP_KEY
 } = require('./lib/constants')
 const {
-  isObject,
-  prettifyErrorLog,
-  prettifyLevel,
-  prettifyMessage,
-  prettifyMetadata,
-  prettifyObject,
-  prettifyTime,
   buildSafeSonicBoom,
-  filterLog,
   parseFactoryOptions
 } = require('./lib/utils')
-
-const jsonParser = input => {
-  try {
-    return { value: sjs.parse(input, { protoAction: 'remove' }) }
-  } catch (err) {
-    return { err }
-  }
-}
+const pretty = require('./lib/pretty')
 
 /**
  * @typedef {object} PinoPrettyOptions
@@ -122,175 +103,6 @@ const defaultOptions = {
 function prettyFactory (options) {
   const context = parseFactoryOptions(Object.assign({}, defaultOptions, options))
   return pretty.bind({ ...context, context })
-
-  /**
-   * Orchestrates processing the received log data according to the provided
-   * configuration and returns a prettified log string.
-   *
-   * @typedef {function} LogPrettifierFunc
-   * @param {string|object} inputData A log string or a log-like object.
-   * @returns {string} A string that represents the prettified log data.
-   */
-  function pretty (inputData) {
-    let log
-    if (!isObject(inputData)) {
-      const parsed = jsonParser(inputData)
-      if (parsed.err || !isObject(parsed.value)) {
-        // pass through
-        return inputData + this.EOL
-      }
-      log = parsed.value
-    } else {
-      log = inputData
-    }
-
-    if (this.minimumLevel) {
-      // We need to figure out if the custom levels has the desired minimum
-      // level & use that one if found. If not, determine if the level exists
-      // in the standard levels. In both cases, make sure we have the level
-      // number instead of the level name.
-      let condition
-      if (this.useOnlyCustomProps) {
-        condition = this.customLevels
-      } else {
-        condition = this.customLevelNames[this.minimumLevel] !== undefined
-      }
-      let minimum
-      if (condition) {
-        minimum = this.customLevelNames[this.minimumLevel]
-      } else {
-        minimum = LEVEL_NAMES[this.minimumLevel]
-      }
-      if (!minimum) {
-        minimum = typeof this.minimumLevel === 'string'
-          ? LEVEL_NAMES[this.minimumLevel]
-          : LEVEL_NAMES[LEVELS[this.minimumLevel].toLowerCase()]
-      }
-
-      const level = log[this.levelKey === undefined ? LEVEL_KEY : this.levelKey]
-      if (level < minimum) return
-    }
-
-    const prettifiedMessage = prettifyMessage({
-      log,
-      messageKey: this.messageKey,
-      colorizer: this.colorizer,
-      messageFormat: this.messageFormat,
-      levelLabel: this.levelLabel,
-      ...this.customProperties,
-      useOnlyCustomProps: this.useOnlyCustomProps
-    })
-
-    if (this.ignoreKeys || this.includeKeys) {
-      log = filterLog({
-        log,
-        ignoreKeys: this.ignoreKeys,
-        includeKeys: this.includeKeys
-      })
-    }
-
-    const prettifiedLevel = prettifyLevel({
-      log,
-      colorizer: this.colorizer,
-      levelKey: this.levelKey,
-      prettifier: this.customPrettifiers.level,
-      ...this.customProperties
-    })
-    const prettifiedMetadata = prettifyMetadata({
-      log,
-      prettifiers: this.customPrettifiers
-    })
-    const prettifiedTime = prettifyTime({
-      log,
-      translateFormat: this.translateTime,
-      timestampKey: this.timestampKey,
-      prettifier: this.customPrettifiers.time
-    })
-
-    let line = ''
-    if (this.levelFirst && prettifiedLevel) {
-      line = `${prettifiedLevel}`
-    }
-
-    if (prettifiedTime && line === '') {
-      line = `${prettifiedTime}`
-    } else if (prettifiedTime) {
-      line = `${line} ${prettifiedTime}`
-    }
-
-    if (!this.levelFirst && prettifiedLevel) {
-      if (line.length > 0) {
-        line = `${line} ${prettifiedLevel}`
-      } else {
-        line = prettifiedLevel
-      }
-    }
-
-    if (prettifiedMetadata) {
-      if (line.length > 0) {
-        line = `${line} ${prettifiedMetadata}:`
-      } else {
-        line = prettifiedMetadata
-      }
-    }
-
-    if (line.endsWith(':') === false && line !== '') {
-      line += ':'
-    }
-
-    if (prettifiedMessage !== undefined) {
-      if (line.length > 0) {
-        line = `${line} ${prettifiedMessage}`
-      } else {
-        line = prettifiedMessage
-      }
-    }
-
-    if (line.length > 0 && !this.singleLine) {
-      line += this.EOL
-    }
-
-    // pino@7+ does not log this anymore
-    if (log.type === 'Error' && log.stack) {
-      const prettifiedErrorLog = prettifyErrorLog({
-        log,
-        errorLikeKeys: this.errorLikeObjectKeys,
-        errorProperties: this.errorProps,
-        ident: this.IDENT,
-        eol: this.EOL
-      })
-      if (this.singleLine) line += this.EOL
-      line += prettifiedErrorLog
-    } else if (!this.hideObject) {
-      const skipKeys = [
-        this.messageKey,
-        this.levelKey,
-        this.timestampKey
-      ].filter(key => {
-        return typeof log[key] === 'string' ||
-          typeof log[key] === 'number' ||
-          typeof log[key] === 'boolean'
-      })
-      const prettifiedObject = prettifyObject({
-        input: log,
-        skipKeys,
-        customPrettifiers: this.customPrettifiers,
-        errorLikeKeys: this.errorLikeObjectKeys,
-        eol: this.EOL,
-        ident: this.IDENT,
-        singleLine: this.singleLine,
-        colorizer: this.objectColorizer
-      })
-
-      // In single line mode, include a space only if prettified version isn't empty
-      if (this.singleLine && !/^\s$/.test(prettifiedObject)) {
-        line += ' '
-      }
-      line += prettifiedObject
-    }
-
-    return line
-  }
 }
 
 /**
