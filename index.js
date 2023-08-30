@@ -65,8 +65,9 @@ const pretty = require('./lib/pretty')
  * lines.
  * @property {string} [timestampKey='time'] Defines the key in incoming logs
  * that contains the timestamp of the log, if present.
- * @property {boolean} [translateTime=true] When true, will translate a
- * JavaScript date integer into a human-readable string.
+ * @property {boolean|string} [translateTime=true] When true, will translate a
+ * JavaScript date integer into a human-readable string. If set to a string,
+ * it must be a format string.
  * @property {boolean} [useOnlyCustomProps=true] When true, only custom levels
  * and colors will be used if they have been provided.
  */
