@@ -313,7 +313,7 @@ test('error like objects tests', (t) => {
       '    statusCode: 500',
       '    originalStack: original stack',
       '    dataBaseSpecificError: {',
-      '        erroMessage: "some database error message"',
+      '        errorMessage: "some database error message"',
       '        evenMoreSpecificStuff: {',
       '          "someErrorRelatedObject": "error"',
       '        }',
@@ -331,7 +331,7 @@ test('error like objects tests', (t) => {
     error.statusCode = 500
     error.originalStack = 'original stack'
     error.dataBaseSpecificError = {
-      erroMessage: 'some database error message',
+      errorMessage: 'some database error message',
       evenMoreSpecificStuff: {
         someErrorRelatedObject: 'error'
       }
