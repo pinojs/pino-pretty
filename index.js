@@ -4,30 +4,19 @@ const { isColorSupported } = require('colorette')
 const pump = require('pump')
 const { Transform } = require('readable-stream')
 const abstractTransport = require('pino-abstract-transport')
-const sjs = require('secure-json-parse')
 const colors = require('./lib/colors')
-const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = require('./lib/constants')
 const {
-  isObject,
-  prettifyErrorLog,
-  prettifyLevel,
-  prettifyMessage,
-  prettifyMetadata,
-  prettifyObject,
-  prettifyTime,
+  ERROR_LIKE_KEYS,
+  LEVEL_KEY,
+  LEVEL_LABEL,
+  MESSAGE_KEY,
+  TIMESTAMP_KEY
+} = require('./lib/constants')
+const {
   buildSafeSonicBoom,
-  filterLog,
-  handleCustomLevelsOpts,
-  handleCustomLevelsNamesOpts
+  parseFactoryOptions
 } = require('./lib/utils')
-
-const jsonParser = input => {
-  try {
-    return { value: sjs.parse(input, { protoAction: 'remove' }) }
-  } catch (err) {
-    return { err }
-  }
-}
+const pretty = require('./lib/pretty')
 
 /**
  * @typedef {object} PinoPrettyOptions
@@ -37,32 +26,16 @@ const jsonParser = input => {
  * @property {boolean} [colorizeObjects=true] Apply coloring to rendered objects
  * when coloring is enabled.
  * @property {boolean} [crlf=false] End lines with `\r\n` instead of `\n`.
+ * @property {string|null} [customColors=null] A comma separated list of colors
+ * to use for specific level labels, e.g. `err:red,info:blue`.
+ * @property {string|null} [customLevels=null] A comma separated list of user
+ * defined level names and numbers, e.g. `err:99,info:1`.
+ * @property {CustomPrettifiers} [customPrettifiers={}] A set of prettifier
+ * functions to apply to keys defined in this object.
  * @property {K_ERROR_LIKE_KEYS} [errorLikeObjectKeys] A list of string property
  * names to consider as error objects.
  * @property {string} [errorProps=''] A comma separated list of properties on
  * error objects to include in the output.
- * @property {string|null} [customLevels=null] A comma separated list of user
- * defined level names and numbers, e.g. `err:99,info:1`.
- * @property {string|null} [customColors=null] A comma separated list of colors
- * to use for specific level labels, e.g. `err:red,info:blue`.
- * @property {boolean} [useOnlyCustomProps=true] When true, only custom levels
- * and colors will be used if they have been provided.
- * @property {boolean} [levelFirst=false] When true, the log level will be the
- * first field in the prettified output.
- * @property {string} [messageKey='msg'] Defines the key in incoming logs that
- * contains the message of the log, if present.
- * @property {null|MessageFormatString|MessageFormatFunction} [messageFormat=null]
- * When a string, defines how the prettified line should be formatted according
- * to defined tokens. When a function, a synchronous function that returns a
- * formatted string.
- * @property {string} [timestampKey='time'] Defines the key in incoming logs
- * that contains the timestamp of the log, if present.
- * @property {boolean} [translateTime=true] When true, will translate a
- * JavaScript date integer into a human-readable string.
- * @property {object} [outputStream=process.stdout] The stream to write
- * prettified log lines to.
- * @property {CustomPrettifiers} [customPrettifiers={}] A set of prettifier
- * functions to apply to keys defined in this object.
  * @property {boolean} [hideObject=false] When `true`, data objects will be
  * omitted from the output (except for error objects).
  * @property {string} [ignore='hostname'] A comma separated list of log keys
@@ -70,9 +43,33 @@ const jsonParser = input => {
  * @property {undefined|string} [include=undefined] A comma separated list of
  * log keys to include in the prettified log information. Only the keys in this
  * list will be included in the output.
+ * @property {boolean} [levelFirst=false] When true, the log level will be the
+ * first field in the prettified output.
+ * @property {string} [levelKey='level'] The key name in the log data that
+ * contains the level value for the log.
+ * @property {string} [levelLabel='levelLabel'] Token name to use in
+ * `messageFormat` to represent the name of the logged level.
+ * @property {null|MessageFormatString|MessageFormatFunction} [messageFormat=null]
+ * When a string, defines how the prettified line should be formatted according
+ * to defined tokens. When a function, a synchronous function that returns a
+ * formatted string.
+ * @property {string} [messageKey='msg'] Defines the key in incoming logs that
+ * contains the message of the log, if present.
+ * @property {undefined|string|number} [minimumLevel=undefined] The minimum
+ * level for logs that should be processed. Any logs below this level will
+ * be omitted.
+ * @property {object} [outputStream=process.stdout] The stream to write
+ * prettified log lines to.
  * @property {boolean} [singleLine=false] When `true` any objects, except error
  * objects, in the log data will be printed as a single line instead as multiple
  * lines.
+ * @property {string} [timestampKey='time'] Defines the key in incoming logs
+ * that contains the timestamp of the log, if present.
+ * @property {boolean|string} [translateTime=true] When true, will translate a
+ * JavaScript date integer into a human-readable string. If set to a string,
+ * it must be a format string.
+ * @property {boolean} [useOnlyCustomProps=true] When true, only custom levels
+ * and colors will be used if they have been provided.
  */
 
 /**
@@ -84,22 +81,25 @@ const defaultOptions = {
   colorize: isColorSupported,
   colorizeObjects: true,
   crlf: false,
+  customColors: null,
+  customLevels: null,
+  customPrettifiers: {},
   errorLikeObjectKeys: ERROR_LIKE_KEYS,
   errorProps: '',
-  customLevels: null,
-  customColors: null,
-  useOnlyCustomProps: true,
-  levelFirst: false,
-  messageKey: MESSAGE_KEY,
-  messageFormat: null,
-  timestampKey: TIMESTAMP_KEY,
-  translateTime: true,
-  outputStream: process.stdout,
-  customPrettifiers: {},
   hideObject: false,
   ignore: 'hostname',
   include: undefined,
-  singleLine: false
+  levelFirst: false,
+  levelKey: LEVEL_KEY,
+  levelLabel: LEVEL_LABEL,
+  messageFormat: null,
+  messageKey: MESSAGE_KEY,
+  minimumLevel: undefined,
+  outputStream: process.stdout,
+  singleLine: false,
+  timestampKey: TIMESTAMP_KEY,
+  translateTime: true,
+  useOnlyCustomProps: true
 }
 
 /**
@@ -110,168 +110,8 @@ const defaultOptions = {
  * @returns {LogPrettifierFunc}
  */
 function prettyFactory (options) {
-  const opts = Object.assign({}, defaultOptions, options)
-  const EOL = opts.crlf ? '\r\n' : '\n'
-  const IDENT = '    '
-  const messageKey = opts.messageKey
-  const levelKey = opts.levelKey
-  const levelLabel = opts.levelLabel
-  const minimumLevel = opts.minimumLevel
-  const messageFormat = opts.messageFormat
-  const timestampKey = opts.timestampKey
-  const errorLikeObjectKeys = opts.errorLikeObjectKeys
-  const errorProps = opts.errorProps.split(',')
-  const useOnlyCustomProps = typeof opts.useOnlyCustomProps === 'boolean' ? opts.useOnlyCustomProps : opts.useOnlyCustomProps === 'true'
-  const customLevels = handleCustomLevelsOpts(opts.customLevels)
-  const customLevelNames = handleCustomLevelsNamesOpts(opts.customLevels)
-
-  const customColors = opts.customColors
-    ? opts.customColors
-      .split(',')
-      .reduce((agg, value) => {
-        const [level, color] = value.split(':')
-
-        const condition = useOnlyCustomProps ? opts.customLevels : customLevelNames[level] !== undefined
-        const levelNum = condition ? customLevelNames[level] : LEVEL_NAMES[level]
-        const colorIdx = levelNum !== undefined ? levelNum : level
-
-        agg.push([colorIdx, color])
-
-        return agg
-      }, [])
-    : undefined
-  const customProps = {
-    customLevels,
-    customLevelNames
-  }
-  if (useOnlyCustomProps && !opts.customLevels) {
-    customProps.customLevels = undefined
-    customProps.customLevelNames = undefined
-  }
-  const customPrettifiers = opts.customPrettifiers
-  const includeKeys = opts.include !== undefined ? new Set(opts.include.split(',')) : undefined
-  const ignoreKeys = (!includeKeys && opts.ignore) ? new Set(opts.ignore.split(',')) : undefined
-  const hideObject = opts.hideObject
-  const singleLine = opts.singleLine
-  const colorizer = colors(opts.colorize, customColors, useOnlyCustomProps)
-  const objectColorizer = opts.colorizeObjects ? colorizer : colors(false, [], false)
-
-  return pretty
-
-  /**
-   * Orchestrates processing the received log data according to the provided
-   * configuration and returns a prettified log string.
-   *
-   * @typedef {function} LogPrettifierFunc
-   * @param {string|object} inputData A log string or a log-like object.
-   * @returns {string} A string that represents the prettified log data.
-   */
-  function pretty (inputData) {
-    let log
-    if (!isObject(inputData)) {
-      const parsed = jsonParser(inputData)
-      if (parsed.err || !isObject(parsed.value)) {
-        // pass through
-        return inputData + EOL
-      }
-      log = parsed.value
-    } else {
-      log = inputData
-    }
-
-    if (minimumLevel) {
-      const condition = useOnlyCustomProps ? opts.customLevels : customLevelNames[minimumLevel] !== undefined
-      const minimum = (condition ? customLevelNames[minimumLevel] : LEVEL_NAMES[minimumLevel]) || Number(minimumLevel)
-      const level = log[levelKey === undefined ? LEVEL_KEY : levelKey]
-      if (level < minimum) return
-    }
-
-    const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel, ...customProps, useOnlyCustomProps })
-
-    if (ignoreKeys || includeKeys) {
-      log = filterLog({ log, ignoreKeys, includeKeys })
-    }
-
-    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, ...customProps })
-    const prettifiedMetadata = prettifyMetadata({ log, prettifiers: customPrettifiers })
-    const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey, prettifier: customPrettifiers.time })
-
-    let line = ''
-    if (opts.levelFirst && prettifiedLevel) {
-      line = `${prettifiedLevel}`
-    }
-
-    if (prettifiedTime && line === '') {
-      line = `${prettifiedTime}`
-    } else if (prettifiedTime) {
-      line = `${line} ${prettifiedTime}`
-    }
-
-    if (!opts.levelFirst && prettifiedLevel) {
-      if (line.length > 0) {
-        line = `${line} ${prettifiedLevel}`
-      } else {
-        line = prettifiedLevel
-      }
-    }
-
-    if (prettifiedMetadata) {
-      if (line.length > 0) {
-        line = `${line} ${prettifiedMetadata}:`
-      } else {
-        line = prettifiedMetadata
-      }
-    }
-
-    if (line.endsWith(':') === false && line !== '') {
-      line += ':'
-    }
-
-    if (prettifiedMessage !== undefined) {
-      if (line.length > 0) {
-        line = `${line} ${prettifiedMessage}`
-      } else {
-        line = prettifiedMessage
-      }
-    }
-
-    if (line.length > 0 && !singleLine) {
-      line += EOL
-    }
-
-    // pino@7+ does not log this anymore
-    if (log.type === 'Error' && log.stack) {
-      const prettifiedErrorLog = prettifyErrorLog({
-        log,
-        errorLikeKeys: errorLikeObjectKeys,
-        errorProperties: errorProps,
-        ident: IDENT,
-        eol: EOL
-      })
-      if (singleLine) line += EOL
-      line += prettifiedErrorLog
-    } else if (!hideObject) {
-      const skipKeys = [messageKey, levelKey, timestampKey].filter(key => typeof log[key] === 'string' || typeof log[key] === 'number' || typeof log[key] === 'boolean')
-      const prettifiedObject = prettifyObject({
-        input: log,
-        skipKeys,
-        customPrettifiers,
-        errorLikeKeys: errorLikeObjectKeys,
-        eol: EOL,
-        ident: IDENT,
-        singleLine,
-        colorizer: objectColorizer
-      })
-
-      // In single line mode, include a space only if prettified version isn't empty
-      if (singleLine && !/^\s$/.test(prettifiedObject)) {
-        line += ' '
-      }
-      line += prettifiedObject
-    }
-
-    return line
-  }
+  const context = parseFactoryOptions(Object.assign({}, defaultOptions, options))
+  return pretty.bind({ ...context, context })
 }
 
 /**
