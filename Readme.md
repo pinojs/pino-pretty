@@ -298,8 +298,8 @@ const prettifyQuery = value => {
 }
 ```
 
-Additionally, `customPrettifiers` can be used to format the `time`, `hostname`, `pid`, `name`, `caller` and `level`
-outputs:
+Additionally, `customPrettifiers` can be used to format the `time`, `hostname`,
+`pid`, `name`, `caller` and `level` outputs:
 
 ```js
 {
@@ -335,11 +335,21 @@ const levelPrettifier = logLevel => `LEVEL: ${levelColorize(logLevel)}`
 }
 ```
 
-`messageFormat` option allows you to customize the message output. A template `string` like this can define the format:
+`messageFormat` option allows you to customize the message output.
+A template `string` like this can define the format:
 
 ```js
 {
   messageFormat: '{levelLabel} - {pid} - url:{req.url}'
+}
+```
+
+In addition to this, if / end statement blocks can also be specified.
+Else statements and nested conditions are not supported.
+
+```js
+{
+  messageFormat: '{levelLabel} - {if pid}{pid} - {end}url:{req.url}'
 }
 ```
 
