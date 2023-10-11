@@ -1,0 +1,10 @@
+/.github/
+/docs/
+/help/
+/test/
+.taprc.yaml
+/benchmark.js
+/coverage-map.js
+/tsconfig.json
+
+*.test.js
