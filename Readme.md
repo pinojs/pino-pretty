@@ -252,7 +252,6 @@ The options accepted have keys corresponding to the options described in [CLI Ar
   include: 'level,time', // --include
   hideObject: false, // --hideObject
   singleLine: false, // --singleLine
-  config: '/path/to/config/', // --config
   customColors: 'err:red,info:blue', // --customColors
   customLevels: 'err:99,info:1', // --customLevels
   levelLabel: 'levelLabel', // --levelLabel
