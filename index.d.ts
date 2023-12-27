@@ -201,6 +201,8 @@ interface PrettyOptions_ {
   customColors?: string|object;
 }
 
+declare function build(options: PrettyOptions_): PinoPretty.PrettyStream;
+
 declare namespace PinoPretty {
   type Prettifier = (inputData: string | object) => string;
   type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string) => string;
@@ -208,7 +210,8 @@ declare namespace PinoPretty {
   type PrettyStream = Transform & OnUnknown;
   type ColorizerFactory = typeof colorizerFactory;
   type PrettyFactory = typeof prettyFactory;
+  type Build = typeof build;
 }
 
 export default PinoPretty;
-export { PinoPretty, PrettyOptions_ as PrettyOptions, colorizerFactory, prettyFactory };
+export { build, PinoPretty, PrettyOptions_ as PrettyOptions, colorizerFactory, prettyFactory };
