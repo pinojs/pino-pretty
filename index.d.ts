@@ -179,7 +179,7 @@ interface PrettyOptions_ {
    * }
    * ```
    */
-  customPrettifiers?: Record<string, PinoPretty.Prettifier>;
+  customPrettifiers?: Record<string, PinoPretty.Prettifier> & {level?: PinoPretty.LevelPrettifier};
   /**
    * Change the level names and values to an user custom preset.
    *
@@ -204,7 +204,8 @@ interface PrettyOptions_ {
 declare function build(options: PrettyOptions_): PinoPretty.PrettyStream;
 
 declare namespace PinoPretty {
-  type Prettifier = (inputData: string | object) => string;
+  type Prettifier = (inputData: string | object, ...rest: any[]) => string;
+  type LevelPrettifier = ((level: string | object | number) => string) | ((level: string | object | number, label: string) => string) | ((level: string | object | number, label: string, colorized: string) => string);
   type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string) => string;
   type PrettyOptions = PrettyOptions_;
   type PrettyStream = Transform & OnUnknown;
