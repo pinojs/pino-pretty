@@ -356,9 +356,11 @@ This option can also be defined as a `function` with this prototype:
 
 ```js
 {
-  messageFormat: (log, messageKey, levelLabel) => {
+  messageFormat: (log, messageKey, levelLabel, colors) => {
     // do some log message customization
-    return customized_message;
+    //
+    // `colors` is a Colorette object with colors enabled based on `colorize` option
+    return `This is a ${color.red('colorized')}, custom message: ${log[messageKey]}`;
   }
 }
 ```

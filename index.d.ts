@@ -10,6 +10,7 @@ import { Transform } from 'stream';
 import { OnUnknown } from 'pino-abstract-transport';
 // @ts-ignore fall back to any if pino is not available, i.e. when running pino tests
 import { DestinationStream, Level } from 'pino';
+import * as Colorette from "colorette";
 
 type LogDescriptor = Record<string, unknown>;
 
@@ -205,7 +206,7 @@ declare function build(options: PrettyOptions_): PinoPretty.PrettyStream;
 
 declare namespace PinoPretty {
   type Prettifier = (inputData: string | object) => string;
-  type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string) => string;
+  type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string, colors: Colorette.Colorette) => string;
   type PrettyOptions = PrettyOptions_;
   type PrettyStream = Transform & OnUnknown;
   type ColorizerFactory = typeof colorizerFactory;
