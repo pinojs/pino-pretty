@@ -311,6 +311,9 @@ Additionally, `customPrettifiers` can be used to format the `time`, `hostname`,
     // on if the levelKey option is used or not.
     // By default this will be the same numerics as the Pino default:
     level: logLevel => `LEVEL: ${logLevel}`,
+    // Additionally, optional second and third arguments arguments can be provided
+    // to get the level label as a string and the colorized version (if `colorize: true`), respectively:
+    level: (logLevel, levelLabel, coloredLevelLabel) => `LEVEL: ${logLevel} LABEL: ${levelLabel} COLORIZED LABEL: ${coloredLevelLabel}`,
 
     // other prettifiers can be used for the other keys if needed, for example
     hostname: hostname => colorGreen(hostname),
@@ -321,18 +324,7 @@ Additionally, `customPrettifiers` can be used to format the `time`, `hostname`,
 }
 ```
 
-Note that prettifiers do not include any coloring, if the stock coloring on
-`level` is desired, it can be accomplished using the following:
-
-```js
-const { colorizerFactory } = require('pino-pretty')
-const levelColorize = colorizerFactory(true)
-const levelPrettifier = logLevel => `LEVEL: ${levelColorize(logLevel)}`
-//...
-{
-  customPrettifiers: { level: levelPrettifier }
-}
-```
+Note that prettifiers, other than `level`, do not include any coloring.
 
 `messageFormat` option allows you to customize the message output.
 A template `string` like this can define the format:
