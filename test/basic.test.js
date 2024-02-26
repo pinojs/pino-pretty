@@ -259,7 +259,7 @@ test('basic prettifier tests', (t) => {
   t.test('can use a customPrettifier to get final level label (no color)', (t) => {
     t.plan(1)
     const customPrettifiers = {
-      level: (level, { label }) => {
+      level: (level, key, logThis, { label }) => {
         return `LEVEL: ${label}`
       }
     }
@@ -280,7 +280,7 @@ test('basic prettifier tests', (t) => {
   t.test('can use a customPrettifier to get final level label (colorized)', (t) => {
     t.plan(1)
     const customPrettifiers = {
-      level: (level, { label, labelColorized }) => {
+      level: (level, key, logThis, { label, labelColorized }) => {
         return `LEVEL: ${labelColorized}`
       }
     }
