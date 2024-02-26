@@ -205,9 +205,9 @@ interface PrettyOptions_ {
 declare function build(options: PrettyOptions_): PinoPretty.PrettyStream;
 
 declare namespace PinoPretty {
-  type Prettifier<T = object> = (inputData: string | object, extras: PrettifierExtras<T>) => string;
-  type PrettifierExtras<T = object> = object & T;
-  type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string, extras: PrettifierExtras<{colors: Colorette.Colorette}>) => string;
+  type Prettifier<T = object> = (inputData: string | object, key: string, log: object, extras: PrettifierExtras<T>) => string;
+  type PrettifierExtras<T = object> = {colors: Colorette.Colorette} & T;
+  type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string, extras: PrettifierExtras) => string;
   type PrettyOptions = PrettyOptions_;
   type PrettyStream = Transform & OnUnknown;
   type ColorizerFactory = typeof colorizerFactory;
