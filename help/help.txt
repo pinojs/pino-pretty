@@ -1,4 +1,4 @@
-  Usage: pino pretty [options] [command]
+  Usage: pino-pretty [options] [command]
   
   Commands:
     help     Display help
