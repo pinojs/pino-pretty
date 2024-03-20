@@ -297,8 +297,23 @@ const prettifyQuery = value => {
 }
 ```
 
+All prettifiers use this function signature:
+
+```js
+['logObjKey']: (output, keyName, logObj, extras) => string
+```
+
+* `logObjKey` - name of the key of the property in the log object that should have this function applied to it
+* `output` - the value of the property in the log object
+* `keyName` - the name of the property (useful for `level` and `message` when `levelKey` or `messageKey` is used)
+* `logObj` - the full log object, for context
+* `extras` - an object containing **additional** data/functions created in the context of this pino-pretty logger or specific to the key (see `level` prettifying below)
+  * All `extras` objects contain `colors` which is a [Colorette](https://github.com/jorgebucaran/colorette?tab=readme-ov-file#supported-colors) object containing color functions. Colors are enabled based on `colorize` provided to pino-pretty or `colorette.isColorSupported` if `colorize` was not provided.
+
 Additionally, `customPrettifiers` can be used to format the `time`, `hostname`,
-`pid`, `name`, `caller` and `level` outputs:
+`pid`, `name`, `caller` and `level` outputs AS WELL AS any arbitrary key-value that exists on a given log object.
+
+An example usage of `customPrettifiers` using all parameters from the function signature:
 
 ```js
 {
@@ -311,26 +326,18 @@ Additionally, `customPrettifiers` can be used to format the `time`, `hostname`,
     // on if the levelKey option is used or not.
     // By default this will be the same numerics as the Pino default:
     level: logLevel => `LEVEL: ${logLevel}`,
+    // level provides additional data in `extras`:
+    // * label => derived level label string
+    // * labelColorized => derived level label string with colorette colors applied based on customColors and whether colors are supported
+    level: (logLevel, key, log, { label, labelColorized, colors }) => `LEVEL: ${logLevel} LABEL: ${levelLabel} COLORIZED LABEL: ${labelColorized}`,
 
     // other prettifiers can be used for the other keys if needed, for example
-    hostname: hostname => colorGreen(hostname),
-    pid: pid => colorRed(pid),
-    name: name => colorBlue(name),
-    caller: caller => colorCyan(caller)
+    hostname: hostname => `MY HOST: ${hostname}`,
+    pid: pid => pid,
+    name: (name, key, log, { colors }) => `${colors.blue(name)}`,
+    caller: (caller, key, log, { colors }) => `${colors.greenBright(caller)}`,
+    myCustomLogProp: (value, key, log, { colors }) => `My Prop -> ${colors.bold(value)} <--`
   }
-}
-```
-
-Note that prettifiers do not include any coloring, if the stock coloring on
-`level` is desired, it can be accomplished using the following:
-
-```js
-const { colorizerFactory } = require('pino-pretty')
-const levelColorize = colorizerFactory(true)
-const levelPrettifier = logLevel => `LEVEL: ${levelColorize(logLevel)}`
-//...
-{
-  customPrettifiers: { level: levelPrettifier }
 }
 ```
 
@@ -352,13 +359,15 @@ Else statements and nested conditions are not supported.
 }
 ```
 
-This option can also be defined as a `function` with this prototype:
+This option can also be defined as a `function` with this function signature:
 
 ```js
 {
-  messageFormat: (log, messageKey, levelLabel) => {
+  messageFormat: (log, messageKey, levelLabel, { colors }) => {
     // do some log message customization
-    return customized_message;
+    //
+    // `colors` is a Colorette object with colors enabled based on `colorize` option
+    return `This is a ${color.red('colorized')}, custom message: ${log[messageKey]}`;
   }
 }
 ```

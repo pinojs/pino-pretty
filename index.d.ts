@@ -10,6 +10,8 @@ import { Transform } from 'stream';
 import { OnUnknown } from 'pino-abstract-transport';
 // @ts-ignore fall back to any if pino is not available, i.e. when running pino tests
 import { DestinationStream, Level } from 'pino';
+import LevelPrettifierExtras = PinoPretty.LevelPrettifierExtras;
+import * as Colorette from "colorette";
 
 type LogDescriptor = Record<string, unknown>;
 
@@ -179,7 +181,10 @@ interface PrettyOptions_ {
    * }
    * ```
    */
-  customPrettifiers?: Record<string, PinoPretty.Prettifier>;
+  customPrettifiers?: Record<string, PinoPretty.Prettifier> &
+    {
+      level?: PinoPretty.Prettifier<PinoPretty.LevelPrettifierExtras>
+    };
   /**
    * Change the level names and values to an user custom preset.
    *
@@ -204,8 +209,10 @@ interface PrettyOptions_ {
 declare function build(options: PrettyOptions_): PinoPretty.PrettyStream;
 
 declare namespace PinoPretty {
-  type Prettifier = (inputData: string | object) => string;
-  type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string) => string;
+  type Prettifier<T = object> = (inputData: string | object, key: string, log: object, extras: PrettifierExtras<T>) => string;
+  type PrettifierExtras<T = object> = {colors: Colorette.Colorette} & T;
+  type LevelPrettifierExtras = {label: string, labelColorized: string}
+  type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string, extras: PrettifierExtras) => string;
   type PrettyOptions = PrettyOptions_;
   type PrettyStream = Transform & OnUnknown;
   type ColorizerFactory = typeof colorizerFactory;

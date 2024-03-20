@@ -256,6 +256,48 @@ test('basic prettifier tests', (t) => {
     log.info({ msg: 'foo', bar: 'warn' })
   })
 
+  t.test('can use a customPrettifier to get final level label (no color)', (t) => {
+    t.plan(1)
+    const customPrettifiers = {
+      level: (level, key, logThis, { label }) => {
+        return `LEVEL: ${label}`
+      }
+    }
+    const pretty = prettyFactory({ customPrettifiers, colorize: false, useOnlyCustomProps: false })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${formattedEpoch}] LEVEL: INFO (${pid}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info({ msg: 'foo' })
+  })
+
+  t.test('can use a customPrettifier to get final level label (colorized)', (t) => {
+    t.plan(1)
+    const customPrettifiers = {
+      level: (level, key, logThis, { label, labelColorized }) => {
+        return `LEVEL: ${labelColorized}`
+      }
+    }
+    const pretty = prettyFactory({ customPrettifiers, colorize: true, useOnlyCustomProps: false })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${formattedEpoch}] LEVEL: [32mINFO[39m (${pid}): [36mfoo[39m\n`
+        )
+        cb()
+      }
+    }))
+    log.info({ msg: 'foo' })
+  })
+
   t.test('can use a customPrettifier on name output', (t) => {
     t.plan(1)
     const customPrettifiers = {

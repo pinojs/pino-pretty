@@ -32,6 +32,9 @@ const options: PinoPretty.PrettyOptions = {
   customPrettifiers: {
     key: (value) => {
       return value.toString().toUpperCase();
+    },
+    level: (level, label, colorized) => {
+      return level.toString();
     }
   },
   customLevels: 'verbose:5',
