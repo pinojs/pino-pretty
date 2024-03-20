@@ -1103,6 +1103,32 @@ test('basic prettifier tests', (t) => {
     t.equal(formatted, `[${formattedEpoch}] INFO (${pid}): message {"extra":{"foo":"bar","number":42},"upper":"foobar"}\n`)
   })
 
+  t.test('support custom colors object', async (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({
+      colorize: true,
+      customColors: {
+        trace: 'cyan',
+        debug: 'blue',
+        info: 'green',
+        warn: 'yellow',
+        error: 'red',
+        fatal: 'red'
+      }
+    })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${formattedEpoch}] \u001B[32mINFO\u001B[39m (${pid}): \u001B[36mfoo\u001B[39m\n`
+        )
+        cb()
+      }
+    }))
+    log.info('foo')
+  })
+
   t.end()
 })
 

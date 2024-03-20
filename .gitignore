@@ -150,3 +150,6 @@ profile-*
 
 # Run Configuration
 test/.tmp*
+
+# Local History
+.history
