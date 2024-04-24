@@ -918,6 +918,32 @@ test('basic prettifier tests', (t) => {
     t.equal(arst, 'INFO: hello world\n')
   })
 
+  t.test('log error-like object', (t) => {
+    t.plan(7)
+    const expectedLines = [
+      '    type: "Error"',
+      '    message: "m"',
+      '    stack: [',
+      '      "line1",',
+      '      "line2"',
+      '    ]'
+    ]
+    const pretty = prettyFactory()
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        const lines = formatted.split('\n')
+        t.equal(lines.length, expectedLines.length + 2)
+        lines.shift(); lines.pop()
+        for (let i = 0; i < lines.length; i += 1) {
+          t.equal(lines[i], expectedLines[i])
+        }
+        cb()
+      }
+    }))
+    log.error({ type: 'Error', message: 'm', stack: ['line1', 'line2'] })
+  })
+
   t.test('include should override ignore', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'time,level', include: 'time,level' })
