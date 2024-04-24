@@ -27,6 +27,9 @@ function prettyFactory (opts) {
   return _prettyFactory(opts)
 }
 
+const Empty = function () {}
+Empty.prototype = Object.create(null)
+
 // All dates are computed from 'Fri, 30 Mar 2018 17:35:28 GMT'
 const epoch = 1522431328992
 const formattedEpoch = '17:35:28.992'
@@ -881,6 +884,22 @@ test('basic prettifier tests', (t) => {
     const pretty = prettyFactory({ ignore: 'time,level', include: 'time,level' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.equal(arst, `[${formattedEpoch}] INFO: hello world\n`)
+  })
+
+  t.test('inlude a single key with null object', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ include: 'level' })
+    const obj = new Empty()
+    obj.nested = 'property'
+    const arst = pretty({
+      msg: 'hello world',
+      pid: `${pid}`,
+      hostname,
+      time: epoch,
+      obj,
+      level: 30
+    })
+    t.equal(arst, 'INFO: hello world\n')
   })
 
   t.test('prettifies trace caller', (t) => {
