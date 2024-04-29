@@ -11,6 +11,7 @@ const path = require('path')
 const rimraf = require('rimraf')
 const { join } = require('path')
 const fs = require('fs')
+const semver = require('semver')
 const pinoPretty = require('..')
 const SonicBoom = require('sonic-boom')
 const _prettyFactory = pinoPretty.prettyFactory
@@ -1074,7 +1075,7 @@ test('basic prettifier tests', (t) => {
   t.test('stream usage', async (t) => {
     t.plan(1)
     const tmpDir = path.join(__dirname, '.tmp_' + Date.now())
-    t.teardown(() => rimraf(tmpDir, noop))
+    t.teardown(() => rimraf.sync(tmpDir))
 
     const destination = join(tmpDir, 'output')
 
@@ -1102,24 +1103,28 @@ test('basic prettifier tests', (t) => {
   t.test('sync option', async (t) => {
     t.plan(1)
     const tmpDir = path.join(__dirname, '.tmp_' + Date.now())
-    t.teardown(() => rimraf(tmpDir, noop))
+    t.teardown(() => rimraf.sync(tmpDir))
 
     const destination = join(tmpDir, 'output')
 
-    const pretty = pinoPretty({
-      singleLine: true,
-      colorize: false,
-      mkdir: true,
-      append: false,
-      sync: true,
-      destination
-    })
-    const log = pino(pretty)
-    log.info({ msg: 'message', extra: { foo: 'bar', number: 42 }, upper: 'foobar' })
+    const log = pino(pino.transport({
+      target: '..',
+      options: {
+        singleLine: true,
+        colorize: false,
+        mkdir: true,
+        append: false,
+        sync: true,
+        destination
+      }
+    }))
+    log.info({ msg: 'message', extra: { foo: 'bar', number: 43 }, upper: 'foobar' })
+
+    await watchFileCreated(destination)
 
     const formatted = fs.readFileSync(destination, 'utf8')
 
-    t.equal(formatted, `[${formattedEpoch}] INFO (${pid}): message {"extra":{"foo":"bar","number":42},"upper":"foobar"}\n`)
+    t.equal(formatted, `[${formattedEpoch}] INFO (${pid}): message {"extra":{"foo":"bar","number":43},"upper":"foobar"}\n`)
   })
 
   t.test('support custom colors object', async (t) => {
@@ -1151,6 +1156,59 @@ test('basic prettifier tests', (t) => {
   t.end()
 })
 
+if (semver.gte(pino.version, '8.21.0')) {
+  test('using pino config', (t) => {
+    t.beforeEach(() => {
+      Date.originalNow = Date.now
+      Date.now = () => epoch
+    })
+    t.afterEach(() => {
+      Date.now = Date.originalNow
+      delete Date.originalNow
+    })
+
+    t.test('can use different message keys', (t) => {
+      t.plan(1)
+      const destination = new Writable({
+        write (formatted, enc, cb) {
+          t.equal(
+            formatted.toString(),
+            `[${formattedEpoch}] INFO (${pid}): baz\n`
+          )
+          cb()
+        }
+      })
+      const pretty = pinoPretty({
+        destination,
+        colorize: false
+      })
+      const log = pino({ messageKey: 'bar' }, pretty)
+      log.info({ bar: 'baz' })
+    })
+
+    t.test('handles customLogLevels', (t) => {
+      t.plan(1)
+      const destination = new Writable({
+        write (formatted, enc, cb) {
+          t.equal(
+            formatted.toString(),
+            `[${formattedEpoch}] TESTCUSTOM (${pid}): test message\n`
+          )
+          cb()
+        }
+      })
+      const pretty = pinoPretty({
+        destination,
+        colorize: false
+      })
+      const log = pino({ customLevels: { testCustom: 35 } }, pretty)
+      log.testCustom('test message')
+    })
+
+    t.end()
+  })
+}
+
 function watchFileCreated (filename) {
   return new Promise((resolve, reject) => {
     const TIMEOUT = 2000
@@ -1171,5 +1229,3 @@ function watchFileCreated (filename) {
     }, INTERVAL)
   })
 }
-
-function noop () {}

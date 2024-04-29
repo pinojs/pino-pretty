@@ -131,8 +131,18 @@ function prettyFactory (options) {
  * @returns {Transform | (Transform & OnUnknown)}
  */
 function build (opts = {}) {
-  const pretty = prettyFactory(opts)
+  let pretty = prettyFactory(opts)
   return abstractTransport(function (source) {
+    source.on('message', function pinoConfigListener (message) {
+      if (!message || message.code !== 'PINO_CONFIG') return
+      Object.assign(opts, {
+        messageKey: message.config.messageKey,
+        errorLikeObjectKeys: Array.from(new Set([...(opts.errorLikeObjectKeys || ERROR_LIKE_KEYS), message.config.errorKey])),
+        customLevels: message.config.levels.values
+      })
+      pretty = prettyFactory(opts)
+      source.off('message', pinoConfigListener)
+    })
     const stream = new Transform({
       objectMode: true,
       autoDestroy: true,

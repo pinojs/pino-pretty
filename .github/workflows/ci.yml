@@ -40,8 +40,14 @@ jobs:
       contents: read
     strategy:
       matrix:
-        node-version: [14, 16, 18]
+        node-version: [14, 16, 18, 20]
         os: [ubuntu-latest]
+        pino-version: [8.20.0, ^8.21.0, ^9.0.0]
+        exclude:
+          - node-version: 14
+            pino-version: ^9.0.0
+          - node-version: 16
+            pino-version: ^9.0.0
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -61,6 +67,9 @@ jobs:
 
       - name: Install dependencies
         run: npm i --ignore-scripts
+
+      - name: Install pino ${{ matrix.pino-version }}
+        run: npm i --no-save pino@${{ matrix.pino-version }}
 
       - name: Run tests
         run: npm run ci

@@ -5,8 +5,10 @@ process.env.TZ = 'UTC'
 const Writable = require('stream').Writable
 const test = require('tap').test
 const pino = require('pino')
+const semver = require('semver')
 const serializers = pino.stdSerializers
-const _prettyFactory = require('../').prettyFactory
+const pinoPretty = require('../')
+const _prettyFactory = pinoPretty.prettyFactory
 
 function prettyFactory (opts) {
   if (!opts) {
@@ -452,3 +454,46 @@ test('error like objects tests', (t) => {
 
   t.end()
 })
+
+if (semver.gte(pino.version, '8.21.0')) {
+  test('using pino config', (t) => {
+    t.beforeEach(() => {
+      Date.originalNow = Date.now
+      Date.now = () => epoch
+    })
+    t.afterEach(() => {
+      Date.now = Date.originalNow
+      delete Date.originalNow
+    })
+
+    t.test('prettifies Error in custom errorKey', (t) => {
+      t.plan(8)
+      const destination = new Writable({
+        write (chunk, enc, cb) {
+          const formatted = chunk.toString()
+          const lines = formatted.split('\n')
+          t.equal(lines.length, expected.length + 7)
+          t.equal(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
+          t.match(lines[1], /\s{4}customErrorKey: {/)
+          t.match(lines[2], /\s{6}"type": "Error",/)
+          t.match(lines[3], /\s{6}"message": "hello world",/)
+          t.match(lines[4], /\s{6}"stack":/)
+          t.match(lines[5], /\s{6}Error: hello world/)
+          // Node 12 labels the test `<anonymous>`
+          t.match(lines[6], /\s{10}(at Test.t.test|at Test.<anonymous>)/)
+          cb()
+        }
+      })
+      const pretty = pinoPretty({
+        destination,
+        colorize: false
+      })
+      const log = pino({ errorKey: 'customErrorKey' }, pretty)
+      const err = Error('hello world')
+      const expected = err.stack.split('\n')
+      log.info({ customErrorKey: err })
+    })
+
+    t.end()
+  })
+}

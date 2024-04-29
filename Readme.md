@@ -240,10 +240,10 @@ The options accepted have keys corresponding to the options described in [CLI Ar
   colorize: colorette.isColorSupported, // --colorize
   colorizeObjects: true, //--colorizeObjects
   crlf: false, // --crlf
-  errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys
+  errorLikeObjectKeys: ['err', 'error'], // --errorLikeObjectKeys (not required to match custom errorKey with pino >=8.21.0)
   errorProps: '', // --errorProps
   levelFirst: false, // --levelFirst
-  messageKey: 'msg', // --messageKey
+  messageKey: 'msg', // --messageKey (not required with pino >=8.21.0)
   levelKey: 'level', // --levelKey
   messageFormat: false, // --messageFormat
   timestampKey: 'time', // --timestampKey
@@ -253,7 +253,7 @@ The options accepted have keys corresponding to the options described in [CLI Ar
   hideObject: false, // --hideObject
   singleLine: false, // --singleLine
   customColors: 'err:red,info:blue', // --customColors
-  customLevels: 'err:99,info:1', // --customLevels
+  customLevels: 'err:99,info:1', // --customLevels (not required with pino >=8.21.0)
   levelLabel: 'levelLabel', // --levelLabel
   minimumLevel: 'info', // --minimumLevel
   useOnlyCustomProps: true, // --useOnlyCustomProps
