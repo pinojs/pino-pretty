@@ -52,7 +52,7 @@
   "devDependencies": {
     "@types/node": "^20.1.0",
     "fastbench": "^1.0.1",
-    "pino": "^8.0.0",
+    "pino": "^9.0.0",
     "pre-commit": "^1.2.2",
     "rimraf": "^3.0.2",
     "snazzy": "^9.0.0",
