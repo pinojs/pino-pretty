@@ -71,6 +71,8 @@ interface PrettyOptions_ {
   /**
    * The key in the JSON object to use as the highlighted message.
    * @default "msg"
+   *
+   * Not required when used with pino >= 8.21.0
    */
   messageKey?: string;
   /**
@@ -122,6 +124,8 @@ interface PrettyOptions_ {
   /**
    * Define the log keys that are associated with error like objects.
    * @default ["err", "error"]
+   *
+   * Not required to handle custom errorKey when used with pino >= 8.21.0
    */
   errorLikeObjectKeys?: string[];
   /**
@@ -192,6 +196,8 @@ interface PrettyOptions_ {
    *
    * @example ( CSV ) customLevels: 'info:10,some_level:40'
    * @example ( Object ) customLevels: { info: 10, some_level: 40 }
+   *
+   * Not required when used with pino >= 8.21.0
    */
   customLevels?: string|object;
   /**
