@@ -54,7 +54,7 @@
     "fastbench": "^1.0.1",
     "pino": "^9.0.0",
     "pre-commit": "^1.2.2",
-    "rimraf": "^3.0.2",
+    "rimraf": "^5.0.7",
     "semver": "^7.6.0",
     "snazzy": "^9.0.0",
     "standard": "^17.0.0",
