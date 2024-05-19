@@ -1,10 +1,11 @@
 {
-  "name": "pino-pretty",
-  "version": "11.0.0",
+  "name": "@logkatt/pino-pretty",
+  "version": "11.1.0",
   "description": "Prettifier for Pino log lines",
   "type": "commonjs",
   "main": "index.js",
   "types": "index.d.ts",
+  "packageManager": "yarn@1.22.19",
   "bin": {
     "pino-pretty": "./bin.js"
   },
@@ -34,33 +35,34 @@
     "test"
   ],
   "dependencies": {
-    "colorette": "^2.0.7",
-    "dateformat": "^4.6.3",
-    "fast-copy": "^3.0.2",
-    "fast-safe-stringify": "^2.1.1",
-    "help-me": "^5.0.0",
-    "joycon": "^3.1.1",
-    "minimist": "^1.2.6",
-    "on-exit-leak-free": "^2.1.0",
-    "pino-abstract-transport": "^1.0.0",
-    "pump": "^3.0.0",
-    "readable-stream": "^4.0.0",
-    "secure-json-parse": "^2.4.0",
-    "sonic-boom": "^4.0.1",
-    "strip-json-comments": "^3.1.1"
+    "colorette": "2.0.20",
+    "dateformat": "4.6.3",
+    "fast-copy": "3.0.2",
+    "fast-safe-stringify": "2.1.1",
+    "help-me": "5.0.0",
+    "joycon": "3.1.1",
+    "json-bigint": "1.0.0",
+    "minimist": "1.2.8",
+    "on-exit-leak-free": "2.1.2",
+    "pino-abstract-transport": "1.2.0",
+    "pump": "3.0.0",
+    "readable-stream": "4.5.2",
+    "secure-json-parse": "2.7.0",
+    "sonic-boom": "4.0.1",
+    "strip-json-comments": "3.1.1"
   },
   "devDependencies": {
-    "@types/node": "^20.1.0",
-    "fastbench": "^1.0.1",
-    "pino": "^9.0.0",
-    "pre-commit": "^1.2.2",
-    "rimraf": "^3.0.2",
-    "semver": "^7.6.0",
+    "@types/node": "20.12.12",
+    "fastbench": "1.0.1",
+    "pino": "9.1.0",
+    "pre-commit": "1.2.2",
+    "rimraf": "3.0.2",
+    "semver": "7.6.2",
     "snazzy": "^9.0.0",
-    "standard": "^17.0.0",
-    "tap": "^16.0.0",
-    "tsd": "^0.31.0",
-    "typescript": "^5.0.2"
+    "standard": "17.1.0",
+    "tap": "16.3.10",
+    "tsd": "0.31.0",
+    "typescript": "5.4.5"
   },
   "tsd": {
     "directory": "./test/types"
