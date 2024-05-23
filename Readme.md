@@ -230,6 +230,19 @@ module.exports = opts => require('pino-pretty')({
 })
 ```
 
+### Checking color support in TTY
+
+This boolean returns whether the currently used TTY supports colorizing the logs.
+
+```js
+import pretty from 'pino-pretty'
+
+if (pretty.isColorSupported) {
+  ...
+}
+
+```
+
 <a id="options"></a>
 ### Options
 
