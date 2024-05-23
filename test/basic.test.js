@@ -1179,6 +1179,12 @@ test('basic prettifier tests', (t) => {
     log.info('foo')
   })
 
+  t.test('check support for colors', (t) => {
+    t.plan(1)
+    const isColorSupported = pinoPretty.isColorSupported
+    t.type(isColorSupported, 'boolean')
+  })
+
   t.end()
 })
 
