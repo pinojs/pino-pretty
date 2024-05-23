@@ -213,6 +213,7 @@ interface PrettyOptions_ {
 }
 
 declare function build(options: PrettyOptions_): PinoPretty.PrettyStream;
+type isColorSupported = PinoPretty.isColorSupported
 
 declare namespace PinoPretty {
   type Prettifier<T = object> = (inputData: string | object, key: string, log: object, extras: PrettifierExtras<T>) => string;
@@ -224,7 +225,8 @@ declare namespace PinoPretty {
   type ColorizerFactory = typeof colorizerFactory;
   type PrettyFactory = typeof prettyFactory;
   type Build = typeof build;
+  type isColorSupported = typeof Colorette.isColorSupported;
 }
 
 export default PinoPretty;
-export { build, PinoPretty, PrettyOptions_ as PrettyOptions, colorizerFactory, prettyFactory };
+export { build, PinoPretty, PrettyOptions_ as PrettyOptions, colorizerFactory, prettyFactory, isColorSupported };

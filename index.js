@@ -178,4 +178,5 @@ module.exports = build
 module.exports.build = build
 module.exports.prettyFactory = prettyFactory
 module.exports.colorizerFactory = colors
+module.exports.isColorSupported = isColorSupported
 module.exports.default = build
