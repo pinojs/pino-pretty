@@ -210,6 +210,12 @@ interface PrettyOptions_ {
    * @example ( Object ) customColors: { info: 'white', some_level: 'red' }
    */
   customColors?: string|object;
+  /**
+   * Only use custom levels and colors (if provided); else fallback to default levels and colors.
+   *
+   * @default true
+   */
+  useOnlyCustomProps?: boolean;
 }
 
 declare function build(options: PrettyOptions_): PinoPretty.PrettyStream;
