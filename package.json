@@ -12,7 +12,7 @@
     "ci": "standard && tap --coverage-report=lcovonly && npm run test-types",
     "lint": "standard | snazzy",
     "test": "tap",
-    "test-types": "tsc && tsd",
+    "test-types": "tsc && tsd && attw --pack .",
     "test:watch": "tap --no-coverage-report -w",
     "test:report": "tap --coverage-report=html"
   },
@@ -50,6 +50,7 @@
     "strip-json-comments": "^3.1.1"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.15.3",
     "@types/node": "^20.1.0",
     "fastbench": "^1.0.1",
     "pino": "^9.0.0",
