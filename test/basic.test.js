@@ -955,7 +955,7 @@ test('basic prettifier tests', (t) => {
     t.equal(arst, `[${formattedEpoch}] INFO: hello world\n`)
   })
 
-  t.test('inlude a single key with null object', (t) => {
+  t.test('include a single key with null object', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ include: 'level' })
     const obj = new Empty()
