@@ -176,6 +176,7 @@ function build (opts = {}) {
 
 module.exports = build
 module.exports.build = build
+module.exports.PinoPretty = build
 module.exports.prettyFactory = prettyFactory
 module.exports.colorizerFactory = colors
 module.exports.isColorSupported = isColorSupported
