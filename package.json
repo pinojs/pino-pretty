@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
-    "@types/node": "^20.1.0",
+    "@types/node": "^22.0.0",
     "fastbench": "^1.0.1",
     "pino": "^9.0.0",
     "pre-commit": "^1.2.2",
