@@ -6,7 +6,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/github/pinojs/pino-pretty)](https://coveralls.io/github/pinojs/pino-pretty?branch=master)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
-This module provides a basic [ndjson](http://ndjson.org/) formatter to be used in __development__. If an
+This module provides a basic [ndjson](https://github.com/ndjson/ndjson-spec) formatter to be used in __development__. If an
 incoming line looks like it could be a log line from an ndjson logger, in
 particular the [Pino](https://getpino.io/) logging library, then it will apply
 extra formatting by considering things like the log level and timestamp.
