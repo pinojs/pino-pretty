@@ -132,6 +132,7 @@ function prettyFactory (options) {
  */
 function build (opts = {}) {
   let pretty = prettyFactory(opts)
+  let destination
   return abstractTransport(function (source) {
     source.on('message', function pinoConfigListener (message) {
       if (!message || message.code !== 'PINO_CONFIG') return
@@ -152,8 +153,6 @@ function build (opts = {}) {
       }
     })
 
-    let destination
-
     if (typeof opts.destination === 'object' && typeof opts.destination.write === 'function') {
       destination = opts.destination
     } else {
@@ -171,7 +170,14 @@ function build (opts = {}) {
 
     pump(source, stream, destination)
     return stream
-  }, { parse: 'lines' })
+  }, {
+    parse: 'lines',
+    close (err, cb) {
+      destination.on('close', () => {
+        cb(err)
+      })
+    }
+  })
 }
 
 module.exports = build
