@@ -1,7 +1,8 @@
 'use strict'
 
 const { isColorSupported } = require('colorette')
-const { Transform, pipeline: pump } = require('node:stream')
+const pump = require('pump')
+const { Transform } = require('readable-stream')
 const abstractTransport = require('pino-abstract-transport')
 const colors = require('./lib/colors')
 const {
@@ -167,7 +168,7 @@ function build (opts = {}) {
       destination.write(line + '\n')
     })
 
-    pump(source, stream, destination, () => {})
+    pump(source, stream, destination)
     return stream
   }, {
     parse: 'lines',
