@@ -1098,6 +1098,38 @@ test('basic prettifier tests', (t) => {
     t.equal(closeCalled, false)
   })
 
+  t.test('wait for close event from destination', (t) => {
+    t.plan(2)
+    const destination = pino.destination({ minLength: 4096, sync: true })
+    const prettyDestination = pinoPretty({ destination, colorize: false })
+    const log = pino(prettyDestination)
+    log.info('this message has been buffered')
+    const chunks = []
+    const { close, writeSync } = fs
+    fs.close = new Proxy(close, {
+      apply: (target, self, args) => {
+      }
+    })
+    fs.writeSync = new Proxy(writeSync, {
+      apply: (target, self, args) => {
+        chunks.push(args[1])
+        return args[1].length
+      }
+    })
+    t.teardown(() => {
+      Object.assign(fs, { close, writeSync })
+    })
+    let destinationClosed = false
+    destination.on('close', () => {
+      destinationClosed = true
+    })
+    prettyDestination.on('close', () => {
+      t.match(chunks.join(''), /INFO .+: this message has been buffered/)
+      t.equal(destinationClosed, true)
+    })
+    prettyDestination.end()
+  })
+
   t.test('stream usage', async (t) => {
     t.plan(1)
     const tmpDir = path.join(__dirname, '.tmp_' + Date.now())
