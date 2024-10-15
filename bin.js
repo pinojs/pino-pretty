@@ -6,7 +6,7 @@ const help = require('help-me')({
   dir: path.join(__dirname, 'help'),
   ext: '.txt'
 })
-const pump = require('pump')
+const { pipeline } = require('stream')
 const sjp = require('secure-json-parse')
 const JoyCon = require('joycon')
 const stripJsonComments = require('strip-json-comments')
@@ -79,7 +79,7 @@ if (cmd.h || cmd.help) {
   opts.errorProps = opts.errorProps || ''
 
   const res = build(opts)
-  pump(process.stdin, res)
+  pipeline(process.stdin, res, () => {})
 
   // https://github.com/pinojs/pino/pull/358
   /* istanbul ignore next */
