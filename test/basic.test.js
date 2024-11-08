@@ -218,6 +218,22 @@ test('basic prettifier tests', (t) => {
     log.info({ msg: 'foo', bar: 'warn' })
   })
 
+  t.test('can use nested level keys', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ levelKey: 'log\\.level' })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${formattedEpoch}] WARN (${pid}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info({ msg: 'foo', 'log.level': 'warn' })
+  })
+
   t.test('can use a customPrettifier on default level output', (t) => {
     t.plan(1)
     const veryCustomLevels = {
