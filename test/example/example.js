@@ -2,7 +2,7 @@
 
 const _prettyFactory = require('../../')
 const pino = require('pino')
-const { Writable } = require('readable-stream')
+const { Writable } = require('stream')
 
 function prettyFactory () {
   return _prettyFactory({

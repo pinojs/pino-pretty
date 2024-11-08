@@ -2,7 +2,7 @@
 
 process.env.TZ = 'UTC'
 
-const { Writable } = require('readable-stream')
+const { Writable } = require('stream')
 const os = require('os')
 const test = require('tap').test
 const pino = require('pino')
