@@ -2,7 +2,7 @@
 
 const { isColorSupported } = require('colorette')
 const pump = require('pump')
-const { Transform } = require('readable-stream')
+const { Transform } = require('stream')
 const abstractTransport = require('pino-abstract-transport')
 const colors = require('./lib/colors')
 const {
