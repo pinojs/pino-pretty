@@ -40,7 +40,7 @@ prettified logs will look like:
 ## Install
 
 ```sh
-$ npm install -g pino-pretty
+npm install -g pino-pretty
 ```
 
 <a id="usage"></a>
