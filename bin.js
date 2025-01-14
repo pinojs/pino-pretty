@@ -41,7 +41,6 @@ if (cmd.h || cmd.help) {
   let opts = minimist(process.argv, {
     alias: {
       colorize: 'c',
-      colorizeObjects: 'C',
       crlf: 'f',
       errorProps: 'e',
       levelFirst: 'l',
