@@ -185,7 +185,7 @@ declare namespace PinoPretty {
      */
     customPrettifiers?: Record<string, Prettifier> &
       {
-        level?: Prettifier<LevelPrettifierExtras>
+        level?: Prettifier
       };
     /**
      * Change the level names and values to an user custom preset.
@@ -218,9 +218,8 @@ declare namespace PinoPretty {
 
   function build(options: PrettyOptions): PrettyStream;
 
-  type Prettifier<T = object> = (inputData: string | object, key: string, log: object, extras: PrettifierExtras<T>) => string;
-  type PrettifierExtras<T = object> = {colors: Colorette.Colorette} & T;
-  type LevelPrettifierExtras = {label: string, labelColorized: string}
+  type Prettifier = (inputData: string | object, key: string, log: object, extras: PrettifierExtras) => string;
+  type PrettifierExtras = {colors: Colorette.Colorette, label: string, labelColorized: string};
   type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string, extras: PrettifierExtras) => string;
   type PrettyStream = Transform & OnUnknown;
   type ColorizerFactory = typeof colorizerFactory;
