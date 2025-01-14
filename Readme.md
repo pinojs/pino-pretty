@@ -57,7 +57,7 @@ node app.js | pino-pretty
 ### CLI Arguments
 
 - `--colorize` (`-c`): Adds terminal color escape sequences to the output.
-- `--colorizeObjects` (`-C`): Allows suppressing colorization of objects when set to `false`. In combination with `--singleLine`, this ensures that the end of each line is parsable JSON.
+- `--no-colorizeObjects`: Suppress colorization of objects.
 - `--crlf` (`-f`): Appends carriage return and line feed, instead of just a line
   feed, to the formatted log line.
 - `--errorProps` (`-e`): When formatting an error object, display this list
