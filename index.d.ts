@@ -165,17 +165,17 @@ declare namespace PinoPretty {
     mkdir?: boolean;
     /**
      * Provides the ability to add a custom prettify function for specific log properties.
-     * `customPrettifiers` is an object, where keys are log properties that will be prettified
+     * `customPrettifiers` is a Map, where keys are log properties that will be prettified
      * and value is the prettify function itself.
      * For example, if a log line contains a query property, you can specify a prettifier for it:
-     * @default {}
+     * @default new Map()
      *
      * @example
      * ```typescript
      * {
-     *   customPrettifiers: {
-     *     query: prettifyQuery
-     *   }
+     *   customPrettifiers: new Map([
+     *     ['query', prettifyQuery]
+     *   ])
      * }
      * //...
      * const prettifyQuery = value => {
@@ -183,10 +183,7 @@ declare namespace PinoPretty {
      * }
      * ```
      */
-    customPrettifiers?: Record<string, Prettifier> &
-      {
-        level?: Prettifier
-      };
+    customPrettifiers?: CustomPrettifiers;
     /**
      * Change the level names and values to an user custom preset.
      *
@@ -218,8 +215,10 @@ declare namespace PinoPretty {
 
   function build(options: PrettyOptions): PrettyStream;
 
-  type Prettifier = (inputData: string | object, key: string, log: object, extras: PrettifierExtras) => string;
-  type PrettifierExtras = {colors: Colorette.Colorette, label: string, labelColorized: string};
+  type CustomPrettifiers = Map<'level', Prettifier<LevelPrettifierExtras>> & Map<string, Prettifier>
+  type Prettifier<T = object> = (inputData: string | object, key: string, log: object, extras: PrettifierExtras<T>) => string;
+  type PrettifierExtras<T = object> = {colors: Colorette.Colorette} & T;
+  type LevelPrettifierExtras = {label: string, labelColorized: string}
   type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string, extras: PrettifierExtras) => string;
   type PrettyStream = Transform & OnUnknown;
   type ColorizerFactory = typeof colorizerFactory;
@@ -227,7 +226,7 @@ declare namespace PinoPretty {
   type Build = typeof build;
   type isColorSupported = typeof Colorette.isColorSupported;
 
-  export { build, PinoPretty, PrettyOptions, PrettyStream, colorizerFactory, prettyFactory, isColorSupported };
+  export { build, PinoPretty, PrettyOptions, CustomPrettifiers, PrettyStream, colorizerFactory, prettyFactory, isColorSupported };
 }
 
 export = PinoPretty;

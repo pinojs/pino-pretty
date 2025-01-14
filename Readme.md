@@ -282,7 +282,7 @@ The options accepted have keys corresponding to the options described in [CLI Ar
   mkdir: true, // create the target destination
 
 
-  customPrettifiers: {}
+  customPrettifiers: new Map()
 }
 ```
 
@@ -293,16 +293,16 @@ The defaults for `sync`, `append`, `mkdir` inherit from
 [`SonicBoom(opts)`](https://github.com/pinojs/sonic-boom#API).
 
 `customPrettifiers` option provides the ability to add a custom prettify function
-for specific log properties. `customPrettifiers` is an object, where keys are
-log properties that will be prettified and value is the prettify function itself.
+for specific log properties. `customPrettifiers` is a `Map`, where keys are log
+properties that will be prettified and value is the prettify function itself.
 For example, if a log line contains a `query` property,
 you can specify a prettifier for it:
 
 ```js
 {
-  customPrettifiers: {
-    query: prettifyQuery
-  }
+  customPrettifiers: new Map([
+    ['query', prettifyQuery]
+  ])
 }
 //...
 const prettifyQuery = value => {
@@ -330,27 +330,27 @@ An example usage of `customPrettifiers` using all parameters from the function s
 
 ```js
 {
-  customPrettifiers: {
+  customPrettifiers: new Map([
     // The argument for this function will be the same
     // string that's at the start of the log-line by default:
-    time: timestamp => `🕰 ${timestamp}`,
+    ['time', timestamp => `🕰 ${timestamp}`],
 
     // The argument for the level-prettifier may vary depending
     // on if the levelKey option is used or not.
     // By default this will be the same numerics as the Pino default:
-    level: logLevel => `LEVEL: ${logLevel}`,
+    ['level', logLevel => `LEVEL: ${logLevel}`],
     // level provides additional data in `extras`:
     // * label => derived level label string
     // * labelColorized => derived level label string with colorette colors applied based on customColors and whether colors are supported
-    level: (logLevel, key, log, { label, labelColorized, colors }) => `LEVEL: ${logLevel} LABEL: ${levelLabel} COLORIZED LABEL: ${labelColorized}`,
+    ['level', (logLevel, key, log, { label, labelColorized, colors }) => `LEVEL: ${logLevel} LABEL: ${levelLabel} COLORIZED LABEL: ${labelColorized}`],
 
     // other prettifiers can be used for the other keys if needed, for example
-    hostname: hostname => `MY HOST: ${hostname}`,
-    pid: pid => pid,
-    name: (name, key, log, { colors }) => `${colors.blue(name)}`,
-    caller: (caller, key, log, { colors }) => `${colors.greenBright(caller)}`,
-    myCustomLogProp: (value, key, log, { colors }) => `My Prop -> ${colors.bold(value)} <--`
-  }
+    ['hostname', hostname => `MY HOST: ${hostname}`],
+    ['pid', pid => pid],
+    ['name', (name, key, log, { colors }) => `${colors.blue(name)}`],
+    ['caller', (caller, key, log, { colors }) => `${colors.greenBright(caller)}`],
+    ['myCustomLogProp', (value, key, log, { colors }) => `My Prop -> ${colors.bold(value)} <--`]
+  ])
 }
 ```
 

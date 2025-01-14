@@ -240,9 +240,9 @@ test('basic prettifier tests', (t) => {
       30: 'ok',
       40: 'not great'
     }
-    const customPrettifiers = {
-      level: (level) => `LEVEL: ${veryCustomLevels[level]}`
-    }
+    const customPrettifiers = new Map([
+      ['level', (level) => `LEVEL: ${veryCustomLevels[level]}`]
+    ])
     const pretty = prettyFactory({ customPrettifiers })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -259,9 +259,9 @@ test('basic prettifier tests', (t) => {
 
   t.test('can use a customPrettifier on different-level-key output', (t) => {
     t.plan(1)
-    const customPrettifiers = {
-      level: (level) => `LEVEL: ${level.toUpperCase()}`
-    }
+    const customPrettifiers = new Map([
+      ['level', (level) => `LEVEL: ${level.toUpperCase()}`]
+    ])
     const pretty = prettyFactory({ levelKey: 'bar', customPrettifiers })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -278,11 +278,14 @@ test('basic prettifier tests', (t) => {
 
   t.test('can use a customPrettifier to get final level label (no color)', (t) => {
     t.plan(1)
-    const customPrettifiers = {
-      level: (level, key, logThis, { label }) => {
-        return `LEVEL: ${label}`
-      }
-    }
+    const customPrettifiers = new Map([
+      [
+        'level',
+        (level, key, logThis, { label }) => {
+          return `LEVEL: ${label}`
+        }
+      ]
+    ])
     const pretty = prettyFactory({ customPrettifiers, colorize: false, useOnlyCustomProps: false })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -299,11 +302,14 @@ test('basic prettifier tests', (t) => {
 
   t.test('can use a customPrettifier to get final level label (colorized)', (t) => {
     t.plan(1)
-    const customPrettifiers = {
-      level: (level, key, logThis, { label, labelColorized }) => {
-        return `LEVEL: ${labelColorized}`
-      }
-    }
+    const customPrettifiers = new Map([
+      [
+        'level',
+        (level, key, logThis, { label, labelColorized }) => {
+          return `LEVEL: ${labelColorized}`
+        }
+      ]
+    ])
     const pretty = prettyFactory({ customPrettifiers, colorize: true, useOnlyCustomProps: false })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -320,9 +326,9 @@ test('basic prettifier tests', (t) => {
 
   t.test('can use a customPrettifier on name output', (t) => {
     t.plan(1)
-    const customPrettifiers = {
-      name: (hostname) => `NAME: ${hostname}`
-    }
+    const customPrettifiers = new Map([
+      ['name', (hostname) => `NAME: ${hostname}`]
+    ])
     const pretty = prettyFactory({ customPrettifiers })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -340,10 +346,10 @@ test('basic prettifier tests', (t) => {
 
   t.test('can use a customPrettifier on hostname and pid output', (t) => {
     t.plan(1)
-    const customPrettifiers = {
-      hostname: (hostname) => `HOSTNAME: ${hostname}`,
-      pid: (pid) => `PID: ${pid}`
-    }
+    const customPrettifiers = new Map([
+      ['hostname', (hostname) => `HOSTNAME: ${hostname}`],
+      ['pid', (pid) => `PID: ${pid}`]
+    ])
     const pretty = prettyFactory({ customPrettifiers, ignore: '' })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -360,9 +366,9 @@ test('basic prettifier tests', (t) => {
 
   t.test('can use a customPrettifier on default time output', (t) => {
     t.plan(1)
-    const customPrettifiers = {
-      time: (timestamp) => `TIME: ${timestamp}`
-    }
+    const customPrettifiers = new Map([
+      ['time', (timestamp) => `TIME: ${timestamp}`]
+    ])
     const pretty = prettyFactory({ customPrettifiers })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -379,9 +385,9 @@ test('basic prettifier tests', (t) => {
 
   t.test('can use a customPrettifier on the caller', (t) => {
     t.plan(1)
-    const customPrettifiers = {
-      caller: (caller) => `CALLER: ${caller}`
-    }
+    const customPrettifiers = new Map([
+      ['caller', (caller) => `CALLER: ${caller}`]
+    ])
     const pretty = prettyFactory({ customPrettifiers })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -398,9 +404,9 @@ test('basic prettifier tests', (t) => {
 
   t.test('can use a customPrettifier on translateTime-time output', (t) => {
     t.plan(1)
-    const customPrettifiers = {
-      time: (timestamp) => `TIME: ${timestamp}`
-    }
+    const customPrettifiers = new Map([
+      ['time', (timestamp) => `TIME: ${timestamp}`]
+    ])
     const pretty = prettyFactory({ customPrettifiers, translateTime: true })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -824,10 +830,10 @@ test('basic prettifier tests', (t) => {
   t.test('prettifies custom key', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
-      customPrettifiers: {
-        foo: val => `${val}_baz\nmultiline`,
-        cow: val => val.toUpperCase()
-      }
+      customPrettifiers: new Map([
+        ['foo', val => `${val}_baz\nmultiline`],
+        ['cow', val => val.toUpperCase()]
+      ])
     })
     const arst = pretty('{"msg":"hello world", "foo": "bar", "cow": "moo", "level":30}')
     t.equal(arst, 'INFO: hello world\n    foo: bar_baz\n    multiline\n    cow: MOO\n')
@@ -836,9 +842,9 @@ test('basic prettifier tests', (t) => {
   t.test('does not add trailing space if prettified value begins with eol', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
-      customPrettifiers: {
-        calls: val => '\n' + val.map(it => '  ' + it).join('\n')
-      }
+      customPrettifiers: new Map([
+        ['calls', val => '\n' + val.map(it => '  ' + it).join('\n')]
+      ])
     })
     const arst = pretty('{"msg":"doing work","calls":["step 1","step 2","step 3"],"level":30}')
     t.equal(arst, 'INFO: doing work\n    calls:\n      step 1\n      step 2\n      step 3\n')
@@ -847,10 +853,10 @@ test('basic prettifier tests', (t) => {
   t.test('does not prettify custom key that does not exists', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
-      customPrettifiers: {
-        foo: val => `${val}_baz`,
-        cow: val => val.toUpperCase()
-      }
+      customPrettifiers: new Map([
+        ['foo', val => `${val}_baz`],
+        ['cow', val => val.toUpperCase()]
+      ])
     })
     const arst = pretty('{"msg":"hello world", "foo": "bar", "level":30}')
     t.equal(arst, 'INFO: hello world\n    foo: bar_baz\n')
@@ -1054,10 +1060,10 @@ test('basic prettifier tests', (t) => {
     const pretty = prettyFactory({
       singleLine: true,
       colorize: false,
-      customPrettifiers: {
-        upper: val => val.toUpperCase(),
-        undef: () => undefined
-      }
+      customPrettifiers: new Map([
+        ['upper', val => val.toUpperCase()],
+        ['undef', () => undefined]
+      ])
     })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
@@ -1159,10 +1165,10 @@ test('basic prettifier tests', (t) => {
       mkdir: true,
       append: false,
       destination: new SonicBoom({ dest: destination, async: false, mkdir: true, append: true }),
-      customPrettifiers: {
-        upper: val => val.toUpperCase(),
-        undef: () => undefined
-      }
+      customPrettifiers: new Map([
+        ['upper', val => val.toUpperCase()],
+        ['undef', () => undefined]
+      ])
     })
     const log = pino(pretty)
     log.info({ msg: 'message', extra: { foo: 'bar', number: 42 }, upper: 'foobar', undef: 'this will not show up' })
