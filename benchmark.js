@@ -51,14 +51,14 @@ const run = bench([
 
   function customPrettifiers (cb) {
     const pretty = prettyFactory({
-      customPrettifiers: new Map([
-        ['time', (tstamp) => {
+      customPrettifiers: {
+        time (tstamp) {
           return tstamp
-        }],
-        ['pid', () => {
+        },
+        pid () {
           return ''
-        }]
-      ])
+        }
+      }
     })
     const input = `{"time":${tstampMillis},"pid":1,"hostname":"foo","msg":"benchmark","foo":"foo","bar":{"bar":"bar"}}\n`
     for (var i = 0; i < max; i += 1) {

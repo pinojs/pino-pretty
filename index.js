@@ -30,7 +30,7 @@ const pretty = require('./lib/pretty')
  * to use for specific level labels, e.g. `err:red,info:blue`.
  * @property {string|null} [customLevels=null] A comma separated list of user
  * defined level names and numbers, e.g. `err:99,info:1`.
- * @property {CustomPrettifiers} [customPrettifiers=Map] A set of prettifier
+ * @property {CustomPrettifiers} [customPrettifiers={}] A set of prettifier
  * functions to apply to keys defined in this object.
  * @property {K_ERROR_LIKE_KEYS} [errorLikeObjectKeys] A list of string property
  * names to consider as error objects.
@@ -83,7 +83,7 @@ const defaultOptions = {
   crlf: false,
   customColors: null,
   customLevels: null,
-  customPrettifiers: new Map(),
+  customPrettifiers: {},
   errorLikeObjectKeys: ERROR_LIKE_KEYS,
   errorProps: '',
   hideObject: false,
@@ -110,6 +110,9 @@ const defaultOptions = {
  * @returns {LogPrettifierFunc}
  */
 function prettyFactory (options) {
+  if (options.customPrettifiers instanceof Map) {
+    options.customPrettifiers = Object.fromEntries(options.customPrettifiers)
+  }
   const context = parseFactoryOptions(Object.assign({}, defaultOptions, options))
   return pretty.bind({ ...context, context })
 }

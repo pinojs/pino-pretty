@@ -151,9 +151,9 @@ test('error like objects tests', (t) => {
     t.plan(4)
     const pretty = prettyFactory({
       errorLikeObjectKeys: ['err'],
-      customPrettifiers: new Map([
-        ['err', val => `error is ${val.message}`]
-      ])
+      customPrettifiers: {
+        err: val => `error is ${val.message}`
+      }
     })
 
     const err = Error('hello world')
