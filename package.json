@@ -60,7 +60,7 @@
     "standard": "^17.0.0",
     "tap": "^16.0.0",
     "tsd": "^0.31.0",
-    "typescript": "~5.7.2"
+    "typescript": "~5.8.2"
   },
   "tsd": {
     "directory": "./test/types"
