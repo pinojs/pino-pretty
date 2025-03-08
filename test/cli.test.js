@@ -2,9 +2,9 @@
 
 process.env.TZ = 'UTC'
 
-const path = require('path')
-const spawn = require('child_process').spawn
-const test = require('tap').test
+const path = require('node:path')
+const { spawn } = require('node:child_process')
+const { test } = require('tap')
 
 const bin = require.resolve(path.join(__dirname, '..', 'bin.js'))
 const epoch = 1522431328992

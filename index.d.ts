@@ -6,7 +6,7 @@
 
 /// <reference types="node" />
 
-import { Transform } from 'stream';
+import { Transform } from 'node:stream';
 import { OnUnknown } from 'pino-abstract-transport';
 // @ts-ignore fall back to any if pino is not available, i.e. when running pino tests
 import { DestinationStream, Level } from 'pino';
