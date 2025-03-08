@@ -6,17 +6,16 @@ const path = require('node:path')
 const { spawn } = require('node:child_process')
 const { test } = require('tap')
 const fs = require('node:fs')
-const rimraf = require('rimraf')
+const { rimraf } = require('rimraf')
 
 const bin = require.resolve('../bin')
 const logLine = '{"level":30,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
-const noop = () => {}
 
 test('cli', (t) => {
   const tmpDir = path.join(__dirname, '.tmp_' + Date.now())
   fs.mkdirSync(tmpDir)
 
-  t.teardown(() => rimraf(tmpDir, noop))
+  t.teardown(() => rimraf(tmpDir))
 
   t.test('loads and applies default config file: pino-pretty.config.js', (t) => {
     t.plan(1)
