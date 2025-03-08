@@ -2,7 +2,7 @@
 
 process.env.TZ = 'UTC'
 
-const test = require('tap').test
+const { test } = require('tap')
 const _prettyFactory = require('../').prettyFactory
 
 function prettyFactory (opts) {

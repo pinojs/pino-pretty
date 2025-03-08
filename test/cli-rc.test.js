@@ -2,10 +2,10 @@
 
 process.env.TZ = 'UTC'
 
-const path = require('path')
-const spawn = require('child_process').spawn
-const test = require('tap').test
-const fs = require('fs')
+const path = require('node:path')
+const { spawn } = require('node:child_process')
+const { test } = require('tap')
+const fs = require('node:fs')
 const rimraf = require('rimraf')
 
 const bin = require.resolve('../bin')

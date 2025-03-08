@@ -2,15 +2,14 @@
 
 process.env.TZ = 'UTC'
 
-const { Writable } = require('stream')
-const os = require('os')
-const test = require('tap').test
+const { Writable } = require('node:stream')
+const os = require('node:os')
+const { test } = require('tap')
 const pino = require('pino')
 const dateformat = require('dateformat')
-const path = require('path')
 const rimraf = require('rimraf')
-const { join } = require('path')
-const fs = require('fs')
+const { join } = require('node:path')
+const fs = require('node:fs')
 const semver = require('semver')
 const pinoPretty = require('..')
 const SonicBoom = require('sonic-boom')
@@ -1148,7 +1147,7 @@ test('basic prettifier tests', (t) => {
 
   t.test('stream usage', async (t) => {
     t.plan(1)
-    const tmpDir = path.join(__dirname, '.tmp_' + Date.now())
+    const tmpDir = join(__dirname, '.tmp_' + Date.now())
     t.teardown(() => rimraf.sync(tmpDir))
 
     const destination = join(tmpDir, 'output')
@@ -1176,7 +1175,7 @@ test('basic prettifier tests', (t) => {
 
   t.test('sync option', async (t) => {
     t.plan(1)
-    const tmpDir = path.join(__dirname, '.tmp_' + Date.now())
+    const tmpDir = join(__dirname, '.tmp_' + Date.now())
     t.teardown(() => rimraf.sync(tmpDir))
 
     const destination = join(tmpDir, 'output')

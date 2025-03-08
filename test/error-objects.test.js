@@ -2,8 +2,8 @@
 
 process.env.TZ = 'UTC'
 
-const Writable = require('stream').Writable
-const test = require('tap').test
+const { Writable } = require('node:stream')
+const { test } = require('tap')
 const pino = require('pino')
 const semver = require('semver')
 const serializers = pino.stdSerializers
