@@ -1,3 +1,5 @@
+'use strict'
+
 // Run this to see how colouring works
 
 const _prettyFactory = require('../../')
