@@ -6,7 +6,7 @@ const path = require('node:path')
 const { spawn } = require('node:child_process')
 const { test } = require('tap')
 const fs = require('node:fs')
-const rimraf = require('rimraf')
+const { rimraf } = require('rimraf')
 
 const bin = require.resolve('../bin')
 const logLine = '{"level":30,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
