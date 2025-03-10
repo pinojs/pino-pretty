@@ -33,8 +33,11 @@ const options: PinoPretty.PrettyOptions = {
     key: (value) => {
       return value.toString().toUpperCase();
     },
-    level: (level, label, colorized) => {
+    level: (level, levelKey, log, { label, labelColorized, colors }) => {
       return level.toString();
+    },
+    foo: (value, key, log, { colors }) => {
+      return value.toString();
     }
   },
   customLevels: 'verbose:5',
