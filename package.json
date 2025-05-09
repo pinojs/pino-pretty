@@ -9,12 +9,12 @@
     "pino-pretty": "./bin.js"
   },
   "scripts": {
-    "ci": "standard && tap --coverage-report=lcovonly && npm run test-types",
+    "ci": "standard && borp --check-coverage && npm run test-types",
     "lint": "standard | snazzy",
-    "test": "tap",
+    "test": "borp",
     "test-types": "tsc && tsd && attw --pack .",
-    "test:watch": "tap --no-coverage-report -w",
-    "test:report": "tap --coverage-report=html"
+    "test:watch": "borp -w --reporter gh",
+    "test:report": "c8 --reporter html borp"
   },
   "repository": {
     "type": "git",
@@ -50,7 +50,9 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.0",
+    "@jsumners/line-reporter": "^1.0.1",
     "@types/node": "^22.0.0",
+    "borp": "^0.19.0",
     "fastbench": "^1.0.1",
     "pino": "^9.0.0",
     "pre-commit": "^1.2.2",
