@@ -40,7 +40,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        node-version: [20, 22]
+        node-version: [20, 22, 24]
         os: [ubuntu-latest]
         pino-version: [^9.0.0]
     steps:
