@@ -8,6 +8,7 @@ const { test } = require('node:test')
 const match = require('@jsumners/assert-match')
 const fs = require('node:fs')
 const { rimraf } = require('rimraf')
+const { once } = require('./helper')
 
 const bin = require.resolve('../bin')
 const logLine = '{"level":30,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
@@ -27,11 +28,8 @@ test('cli', async (t) => {
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.assert.fail)
-    const endPromise = new Promise(resolve => {
-      child.stdout.on('data', (data) => {
-        t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
-        resolve()
-      })
+    const endPromise = once(child.stdout, 'data', (data) => {
+      t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     await endPromise
@@ -53,11 +51,8 @@ test('cli', async (t) => {
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.assert.fail)
-    const endPromise = new Promise(resolve => {
-      child.stdout.on('data', (data) => {
-        t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
-        resolve()
-      })
+    const endPromise = once(child.stdout, 'data', (data) => {
+      t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     await endPromise
@@ -77,11 +72,8 @@ test('cli', async (t) => {
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.assert.fail)
-    const endPromise = new Promise(resolve => {
-      child.stdout.on('data', (data) => {
-        t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
-        resolve()
-      })
+    const endPromise = once(child.stdout, 'data', (data) => {
+      t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     await endPromise
@@ -100,11 +92,8 @@ test('cli', async (t) => {
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.assert.fail)
-    const endPromise = new Promise(resolve => {
-      child.stdout.on('data', (data) => {
-        t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
-        resolve()
-      })
+    const endPromise = once(child.stdout, 'data', (data) => {
+      t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     await endPromise
@@ -123,11 +112,8 @@ test('cli', async (t) => {
     const child = spawn(process.argv[0], [bin, '--config', configFile], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.assert.fail)
-    const endPromise = new Promise(resolve => {
-      child.stdout.on('data', (data) => {
-        t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
-        resolve()
-      })
+    const endPromise = once(child.stdout, 'data', (data) => {
+      t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     await endPromise
@@ -143,18 +129,15 @@ test('cli', async (t) => {
     const child = spawn(process.argv[0], [bin, '--config', configFile], { env, cwd: tmpDir })
     // Validate that the time has been translated
     child.on('error', t.assert.fail)
-    const endPromise = new Promise(resolve => {
-      child.stdout.on('data', (data) => {
-        t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
-        resolve()
-      })
+    const endPromise = once(child.stdout, 'data', (data) => {
+      t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
     })
     child.stdin.write(logLine)
     await endPromise
     t.after(() => child.kill())
   })
 
-  await Promise.all(['--messageKey', '-m'].map(async (optionName) => {
+  for (const optionName of ['--messageKey', '-m']) {
     await t.test(`cli options override config options via ${optionName}`, async (t) => {
       t.plan(1)
       // Set translateTime: true on run configuration
@@ -170,11 +153,8 @@ test('cli', async (t) => {
       const child = spawn(process.argv[0], [bin, optionName, 'new_msg'], { env, cwd: tmpDir })
       // Validate that the time has been translated and correct message key has been used
       child.on('error', t.assert.fail)
-      const endPromise = new Promise(resolve => {
-        child.stdout.on('data', (data) => {
-          t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
-          resolve()
-        })
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), '[17:35:28.992] INFO (42): hello world\n')
       })
       child.stdin.write(logLine.replace(/"msg"/, '"new_msg"'))
       await endPromise
@@ -183,7 +163,7 @@ test('cli', async (t) => {
         child.kill()
       })
     })
-  }))
+  }
 
   await t.test('cli options with defaults can be overridden by config', async (t) => {
     t.plan(1)
@@ -199,11 +179,8 @@ test('cli', async (t) => {
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
     // Validate that the time has been translated and correct message key has been used
     child.on('error', t.assert.fail)
-    const endPromise = new Promise(resolve => {
-      child.stdout.on('data', (data) => {
-        t.assert.strictEqual(data.toString(), '[21:31:36.006] FATAL: There was an error starting the process.\n    QueryError: Error during sql query: syntax error at or near SELECTT\n        at /home/me/projects/example/sql.js\n        at /home/me/projects/example/index.js\n    querySql: SELECTT * FROM "test" WHERE id = $1;\n    queryArgs: 12\n')
-        resolve()
-      })
+    const endPromise = once(child.stdout, 'data', (data) => {
+      t.assert.strictEqual(data.toString(), '[21:31:36.006] FATAL: There was an error starting the process.\n    QueryError: Error during sql query: syntax error at or near SELECTT\n        at /home/me/projects/example/sql.js\n        at /home/me/projects/example/index.js\n    querySql: SELECTT * FROM "test" WHERE id = $1;\n    queryArgs: 12\n')
     })
     child.stdin.write('{"level":60,"time":1594416696006,"msg":"There was an error starting the process.","type":"Error","stack":"QueryError: Error during sql query: syntax error at or near SELECTT\\n    at /home/me/projects/example/sql.js\\n    at /home/me/projects/example/index.js","querySql":"SELECTT * FROM \\"test\\" WHERE id = $1;","queryArgs":[12]}\n')
     await endPromise
@@ -218,20 +195,20 @@ test('cli', async (t) => {
     const args = [bin, '--config', 'pino-pretty.config.missing.json']
     const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
+    const endPromise1 = once(child, 'close', (code) => {
+      t.assert.strictEqual(code, 1)
+    })
     child.stdout.pipe(process.stdout)
     child.stderr.setEncoding('utf8')
     let data = ''
     child.stderr.on('data', (chunk) => {
       data += chunk
     })
-    await new Promise(resolve => {
-      child.on('close', function (code) {
-        t.assert.strictEqual(code, 1)
-        match(
-          data.toString(), 'Error: Failed to load runtime configuration file: pino-pretty.config.missing.json', t)
-        resolve()
-      })
+    const endPromise2 = once(child, 'close', () => {
+      match(
+        data.toString(), 'Error: Failed to load runtime configuration file: pino-pretty.config.missing.json', t)
     })
+    await Promise.all([endPromise1, endPromise2])
     t.after(() => child.kill())
   })
 
@@ -241,19 +218,19 @@ test('cli', async (t) => {
     fs.writeFileSync(configFile, 'module.exports = () => {}')
     const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], [bin], { env, cwd: tmpDir })
+    const endPromise1 = once(child, 'close', (code) => {
+      t.assert.strictEqual(code, 1)
+    })
     child.stdout.pipe(process.stdout)
     child.stderr.setEncoding('utf8')
     let data = ''
     child.stderr.on('data', (chunk) => {
       data += chunk
     })
-    await new Promise(resolve => {
-      child.on('close', function (code) {
-        t.assert.strictEqual(code, 1)
-        match(data, 'Error: Invalid runtime configuration file: pino-pretty.config.js', t)
-        resolve()
-      })
+    const endPromise2 = once(child, 'close', () => {
+      match(data, 'Error: Invalid runtime configuration file: pino-pretty.config.js', t)
     })
+    await Promise.all([endPromise1, endPromise2])
     t.after(() => child.kill())
   })
 
@@ -264,19 +241,19 @@ test('cli', async (t) => {
     const args = [bin, '--config', path.relative(tmpDir, configFile)]
     const env = { TERM: ' dumb', TZ: 'UTC' }
     const child = spawn(process.argv[0], args, { env, cwd: tmpDir })
+    const endPromise1 = once(child, 'close', (code) => {
+      t.assert.strictEqual(code, 1)
+    })
     child.stdout.pipe(process.stdout)
     child.stderr.setEncoding('utf8')
     let data = ''
     child.stderr.on('data', (chunk) => {
       data += chunk
     })
-    await new Promise(resolve => {
-      child.on('close', function (code) {
-        t.assert.strictEqual(code, 1)
-        match(data, 'Error: Invalid runtime configuration file: pino-pretty.config.invalid.js', t)
-        resolve()
-      })
+    const endPromise2 = once(child, 'close', () => {
+      match(data, 'Error: Invalid runtime configuration file: pino-pretty.config.invalid.js', t)
     })
+    await Promise.all([endPromise1, endPromise2])
     t.after(() => child.kill())
   })
 
