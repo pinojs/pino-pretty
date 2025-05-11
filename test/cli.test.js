@@ -26,227 +26,215 @@ test('cli', async (t) => {
     t.after(() => child.kill())
   })
 
-  await Promise.all(['--levelFirst', '-l']
-    .map(async (optionName) => {
-      await t.test(`flips epoch and level via ${optionName}`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, optionName], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `INFO [${formattedEpoch}] (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
+  for (const optionName of ['--levelFirst', '-l']) {
+    await t.test(`flips epoch and level via ${optionName}`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, optionName], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `INFO [${formattedEpoch}] (42): hello world\n`)
       })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
     })
-  )
+  }
 
-  await Promise.all(['--translateTime', '-t']
-    .map(async (optionName) => {
-      await t.test(`translates time to default format via ${optionName}`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, optionName], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
+  for (const optionName of ['--translateTime', '-t']) {
+    await t.test(`translates time to default format via ${optionName}`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, optionName], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
       })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
     })
-  )
+  }
 
-  await Promise.all(['--ignore', '-i']
-    .map(async (optionName) => {
-      await t.test('does ignore multiple keys', async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, optionName, 'pid,hostname'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO: hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
+  for (const optionName of ['--ignore', '-i']) {
+    await t.test('does ignore multiple keys', async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, optionName, 'pid,hostname'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO: hello world\n`)
       })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
     })
-  )
+  }
 
-  await Promise.all(['--customLevels', '-x']
-    .map(async (optionName) => {
-      await t.test(`customize levels via ${optionName}`, async (t) => {
-        t.plan(1)
-        const logLine = '{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
-        const child = spawn(process.argv[0], [bin, optionName, 'err:99,info:1'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
+  for (const optionName of ['--customLevels', '-x']) {
+    await t.test(`customize levels via ${optionName}`, async (t) => {
+      t.plan(1)
+      const logLine = '{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
+      const child = spawn(process.argv[0], [bin, optionName, 'err:99,info:1'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
       })
-
-      await t.test(`customize levels via ${optionName} without index`, async (t) => {
-        t.plan(1)
-        const logLine = '{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
-        const child = spawn(process.argv[0], [bin, optionName, 'err:99,info'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
-      })
-
-      await t.test(`customize levels via ${optionName} with minimumLevel`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, '--minimumLevel', 'err', optionName, 'err:99,info:1'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] ERR (42): hello world\n`)
-        })
-        child.stdin.write('{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
-        child.stdin.write('{"level":99,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
-        await endPromise
-        t.after(() => child.kill())
-      })
-
-      await t.test(`customize levels via ${optionName} with minimumLevel, customLevels and useOnlyCustomProps false`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, '--minimumLevel', 'custom', '--useOnlyCustomProps', 'false', optionName, 'custom:99,info:1'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] CUSTOM (42): hello world\n`)
-        })
-        child.stdin.write('{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
-        child.stdin.write('{"level":99,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
-        await endPromise
-        t.after(() => child.kill())
-      })
-
-      await t.test(`customize levels via ${optionName} with minimumLevel, customLevels and useOnlyCustomProps true`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, '--minimumLevel', 'custom', '--useOnlyCustomProps', 'true', optionName, 'custom:99,info:1'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] CUSTOM (42): hello world\n`)
-        })
-        child.stdin.write('{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
-        child.stdin.write('{"level":99,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
-        await endPromise
-        t.after(() => child.kill())
-      })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
     })
-  )
 
-  await Promise.all(['--customColors', '-X']
-    .map(async (optionName) => {
-      await t.test(`customize levels via ${optionName}`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, optionName, 'info:blue,message:red'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
+    await t.test(`customize levels via ${optionName} without index`, async (t) => {
+      t.plan(1)
+      const logLine = '{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
+      const child = spawn(process.argv[0], [bin, optionName, 'err:99,info'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
       })
-
-      await t.test(`customize levels via ${optionName} with customLevels`, async (t) => {
-        t.plan(1)
-        const logLine = '{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
-        const child = spawn(process.argv[0], [bin, '--customLevels', 'err:99,info', optionName, 'info:blue,message:red'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
-      })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
     })
-  )
 
-  await Promise.all(['--useOnlyCustomProps', '-U']
-    .map(async (optionName) => {
-      await t.test(`customize levels via ${optionName} false and customColors`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, '--customColors', 'err:blue,info:red', optionName, 'false'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
+    await t.test(`customize levels via ${optionName} with minimumLevel`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--minimumLevel', 'err', optionName, 'err:99,info:1'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] ERR (42): hello world\n`)
       })
-
-      await t.test(`customize levels via ${optionName} true and customColors`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, '--customColors', 'err:blue,info:red', optionName, 'true'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
-      })
-
-      await t.test(`customize levels via ${optionName} true and customLevels`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, '--customLevels', 'err:99,custom:30', optionName, 'true'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] CUSTOM (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
-      })
-
-      await t.test(`customize levels via ${optionName} true and no customLevels`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, optionName, 'true'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
-      })
-
-      await t.test(`customize levels via ${optionName} false and customLevels`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, '--customLevels', 'err:99,custom:25', optionName, 'false'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
-      })
-
-      await t.test(`customize levels via ${optionName} false and no customLevels`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, optionName, 'false'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
-        })
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
-      })
+      child.stdin.write('{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
+      child.stdin.write('{"level":99,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
+      await endPromise
+      t.after(() => child.kill())
     })
-  )
+
+    await t.test(`customize levels via ${optionName} with minimumLevel, customLevels and useOnlyCustomProps false`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--minimumLevel', 'custom', '--useOnlyCustomProps', 'false', optionName, 'custom:99,info:1'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] CUSTOM (42): hello world\n`)
+      })
+      child.stdin.write('{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
+      child.stdin.write('{"level":99,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
+      await endPromise
+      t.after(() => child.kill())
+    })
+
+    await t.test(`customize levels via ${optionName} with minimumLevel, customLevels and useOnlyCustomProps true`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--minimumLevel', 'custom', '--useOnlyCustomProps', 'true', optionName, 'custom:99,info:1'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] CUSTOM (42): hello world\n`)
+      })
+      child.stdin.write('{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
+      child.stdin.write('{"level":99,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n')
+      await endPromise
+      t.after(() => child.kill())
+    })
+  }
+
+  for (const optionName of ['--customColors', '-X']) {
+    await t.test(`customize levels via ${optionName}`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, optionName, 'info:blue,message:red'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
+    })
+
+    await t.test(`customize levels via ${optionName} with customLevels`, async (t) => {
+      t.plan(1)
+      const logLine = '{"level":1,"time":1522431328992,"msg":"hello world","pid":42,"hostname":"foo"}\n'
+      const child = spawn(process.argv[0], [bin, '--customLevels', 'err:99,info', optionName, 'info:blue,message:red'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
+    })
+  }
+
+  for (const optionName of ['--useOnlyCustomProps', '-U']) {
+    await t.test(`customize levels via ${optionName} false and customColors`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--customColors', 'err:blue,info:red', optionName, 'false'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
+    })
+
+    await t.test(`customize levels via ${optionName} true and customColors`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--customColors', 'err:blue,info:red', optionName, 'true'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
+    })
+
+    await t.test(`customize levels via ${optionName} true and customLevels`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--customLevels', 'err:99,custom:30', optionName, 'true'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] CUSTOM (42): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
+    })
+
+    await t.test(`customize levels via ${optionName} true and no customLevels`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, optionName, 'true'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
+    })
+
+    await t.test(`customize levels via ${optionName} false and customLevels`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, '--customLevels', 'err:99,custom:25', optionName, 'false'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
+    })
+
+    await t.test(`customize levels via ${optionName} false and no customLevels`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, optionName, 'false'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
+    })
+  }
 
   await t.test('does ignore escaped keys', async (t) => {
     t.plan(1)
@@ -299,45 +287,41 @@ test('cli', async (t) => {
     t.after(() => child.kill())
   })
 
-  await Promise.all(['--timestampKey', '-a']
-    .map(async (optionName) => {
-      await t.test(`uses specified timestamp key via ${optionName}`, async (t) => {
-        t.plan(1)
-        const child = spawn(process.argv[0], [bin, optionName, '@timestamp'], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO: hello world\n`)
-        })
-        const logLine = '{"level":30,"@timestamp":1522431328992,"msg":"hello world"}\n'
-        child.stdin.write(logLine)
-        await endPromise
-        t.after(() => child.kill())
+  for (const optionName of ['--timestampKey', '-a']) {
+    await t.test(`uses specified timestamp key via ${optionName}`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, optionName, '@timestamp'], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO: hello world\n`)
       })
+      const logLine = '{"level":30,"@timestamp":1522431328992,"msg":"hello world"}\n'
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
     })
-  )
+  }
 
-  await Promise.all(['--singleLine', '-S']
-    .map(async (optionName) => {
-      await t.test(`singleLine=true via ${optionName}`, async (t) => {
-        t.plan(1)
-        const logLineWithExtra = JSON.stringify(Object.assign(JSON.parse(logLine), {
-          extra: {
-            foo: 'bar',
-            number: 42
-          }
-        })) + '\n'
+  for (const optionName of ['--singleLine', '-S']) {
+    await t.test(`singleLine=true via ${optionName}`, async (t) => {
+      t.plan(1)
+      const logLineWithExtra = JSON.stringify(Object.assign(JSON.parse(logLine), {
+        extra: {
+          foo: 'bar',
+          number: 42
+        }
+      })) + '\n'
 
-        const child = spawn(process.argv[0], [bin, optionName], { env })
-        child.on('error', t.assert.fail)
-        const endPromise = once(child.stdout, 'data', (data) => {
-          t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world {"extra":{"foo":"bar","number":42}}\n`)
-        })
-        child.stdin.write(logLineWithExtra)
-        await endPromise
-        t.after(() => child.kill())
+      const child = spawn(process.argv[0], [bin, optionName], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world {"extra":{"foo":"bar","number":42}}\n`)
       })
+      child.stdin.write(logLineWithExtra)
+      await endPromise
+      t.after(() => child.kill())
     })
-  )
+  }
 
   await t.test('does ignore nested keys', async (t) => {
     t.plan(1)
