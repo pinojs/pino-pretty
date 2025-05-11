@@ -1,3 +1,5 @@
+'use strict'
+
 function once (obj, event, fn) {
   return new Promise(resolve => {
     obj.on(event, (...args) => {
