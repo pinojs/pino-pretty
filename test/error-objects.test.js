@@ -3,7 +3,7 @@
 process.env.TZ = 'UTC'
 
 const { Writable } = require('node:stream')
-const { test } = require('tap')
+const { test } = require('node:test')
 const pino = require('pino')
 const semver = require('semver')
 const serializers = pino.stdSerializers
@@ -24,7 +24,7 @@ const epoch = 1522431328992
 const formattedEpoch = '17:35:28.992'
 const pid = process.pid
 
-test('error like objects tests', (t) => {
+test('error like objects tests', async (t) => {
   t.beforeEach(() => {
     Date.originalNow = Date.now
     Date.now = () => epoch
@@ -34,7 +34,7 @@ test('error like objects tests', (t) => {
     delete Date.originalNow
   })
 
-  t.test('pino transform prettifies Error', (t) => {
+  await t.test('pino transform prettifies Error', (t) => {
     t.plan(2)
     const pretty = prettyFactory()
     const err = Error('hello world')
@@ -45,8 +45,8 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.equal(lines.length, expected.length + 6)
-        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
+        t.assert.strictEqual(lines.length, expected.length + 6)
+        t.assert.strictEqual(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
         cb()
       }
     }))
@@ -54,15 +54,15 @@ test('error like objects tests', (t) => {
     log.info(err)
   })
 
-  t.test('errorProps recognizes user specified properties', (t) => {
+  await t.test('errorProps recognizes user specified properties', (t) => {
     t.plan(3)
     const pretty = prettyFactory({ errorProps: 'statusCode,originalStack' })
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.match(formatted, /\s{4}error stack/)
-        t.match(formatted, /"statusCode": 500/)
-        t.match(formatted, /"originalStack": "original stack"/)
+        t.assert.match(formatted, /\s{4}error stack/)
+        t.assert.match(formatted, /"statusCode": 500/)
+        t.assert.match(formatted, /"originalStack": "original stack"/)
         cb()
       }
     }))
@@ -75,14 +75,13 @@ test('error like objects tests', (t) => {
     log.error(error)
   })
 
-  t.test('prettifies ignores undefined errorLikeObject', (t) => {
+  await t.test('prettifies ignores undefined errorLikeObject', (t) => {
     const pretty = prettyFactory()
     pretty({ err: undefined })
     pretty({ error: undefined })
-    t.end()
   })
 
-  t.test('prettifies Error in property within errorLikeObjectKeys', (t) => {
+  await t.test('prettifies Error in property within errorLikeObjectKeys', (t) => {
     t.plan(8)
     const pretty = prettyFactory({
       errorLikeObjectKeys: ['err']
@@ -96,15 +95,15 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.equal(lines.length, expected.length + 6)
-        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
-        t.match(lines[1], /\s{4}err: {/)
-        t.match(lines[2], /\s{6}"type": "Error",/)
-        t.match(lines[3], /\s{6}"message": "hello world",/)
-        t.match(lines[4], /\s{6}"stack":/)
-        t.match(lines[5], /\s{6}Error: hello world/)
+        t.assert.strictEqual(lines.length, expected.length + 6)
+        t.assert.strictEqual(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
+        t.assert.match(lines[1], /\s{4}err: {/)
+        t.assert.match(lines[2], /\s{6}"type": "Error",/)
+        t.assert.match(lines[3], /\s{6}"message": "hello world",/)
+        t.assert.match(lines[4], /\s{6}"stack":/)
+        t.assert.match(lines[5], /\s{6}Error: hello world/)
         // Node 12 labels the test `<anonymous>`
-        t.match(lines[6], /\s{10}(at Test.t.test|at Test.<anonymous>)/)
+        t.assert.match(lines[6], /\s{10}at TestContext.<anonymous>/)
         cb()
       }
     }))
@@ -112,7 +111,7 @@ test('error like objects tests', (t) => {
     log.info({ err })
   })
 
-  t.test('prettifies Error in property with singleLine=true', (t) => {
+  await t.test('prettifies Error in property with singleLine=true', (t) => {
     // singleLine=true doesn't apply to errors
     t.plan(8)
     const pretty = prettyFactory({
@@ -131,15 +130,15 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.equal(lines.length, expected.length + 5)
-        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world {"extra":{"a":1,"b":2}}`)
-        t.match(lines[1], /\s{4}err: {/)
-        t.match(lines[2], /\s{6}"type": "Error",/)
-        t.match(lines[3], /\s{6}"message": "hello world",/)
-        t.match(lines[4], /\s{6}"stack":/)
-        t.match(lines[5], /\s{6}Error: hello world/)
+        t.assert.strictEqual(lines.length, expected.length + 5)
+        t.assert.strictEqual(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world {"extra":{"a":1,"b":2}}`)
+        t.assert.match(lines[1], /\s{4}err: {/)
+        t.assert.match(lines[2], /\s{6}"type": "Error",/)
+        t.assert.match(lines[3], /\s{6}"message": "hello world",/)
+        t.assert.match(lines[4], /\s{6}"stack":/)
+        t.assert.match(lines[5], /\s{6}Error: hello world/)
         // Node 12 labels the test `<anonymous>`
-        t.match(lines[6], /\s{10}(at Test.t.test|at Test.<anonymous>)/)
+        t.assert.match(lines[6], /\s{10}at TestContext.<anonymous>/)
         cb()
       }
     }))
@@ -147,7 +146,7 @@ test('error like objects tests', (t) => {
     log.info({ err, extra: { a: 1, b: 2 } })
   })
 
-  t.test('prettifies Error in property within errorLikeObjectKeys with custom function', (t) => {
+  await t.test('prettifies Error in property within errorLikeObjectKeys with custom function', (t) => {
     t.plan(4)
     const pretty = prettyFactory({
       errorLikeObjectKeys: ['err'],
@@ -165,10 +164,10 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.equal(lines.length, 3)
-        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
-        t.equal(lines[1], '    err: error is hello world')
-        t.equal(lines[2], '')
+        t.assert.strictEqual(lines.length, 3)
+        t.assert.strictEqual(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
+        t.assert.strictEqual(lines[1], '    err: error is hello world')
+        t.assert.strictEqual(lines[2], '')
 
         cb()
       }
@@ -177,7 +176,7 @@ test('error like objects tests', (t) => {
     log.info({ err })
   })
 
-  t.test('prettifies Error in property within errorLikeObjectKeys when stack has escaped characters', (t) => {
+  await t.test('prettifies Error in property within errorLikeObjectKeys when stack has escaped characters', (t) => {
     t.plan(8)
     const pretty = prettyFactory({
       errorLikeObjectKeys: ['err']
@@ -192,14 +191,14 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.equal(lines.length, expected.length + 6)
-        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
-        t.match(lines[1], /\s{4}err: {$/)
-        t.match(lines[2], /\s{6}"type": "Error",$/)
-        t.match(lines[3], /\s{6}"message": "hello world",$/)
-        t.match(lines[4], /\s{6}"stack":$/)
-        t.match(lines[5], /\s{10}Error: hello world$/)
-        t.match(lines[6], /\s{10}at anonymous \(C:\\project\\node_modules\\example\\index.js\)$/)
+        t.assert.strictEqual(lines.length, expected.length + 6)
+        t.assert.strictEqual(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
+        t.assert.match(lines[1], /\s{4}err: {$/)
+        t.assert.match(lines[2], /\s{6}"type": "Error",$/)
+        t.assert.match(lines[3], /\s{6}"message": "hello world",$/)
+        t.assert.match(lines[4], /\s{6}"stack":$/)
+        t.assert.match(lines[5], /\s{10}Error: hello world$/)
+        t.assert.match(lines[6], /\s{10}at anonymous \(C:\\project\\node_modules\\example\\index.js\)$/)
         cb()
       }
     }))
@@ -207,7 +206,7 @@ test('error like objects tests', (t) => {
     log.info({ err })
   })
 
-  t.test('prettifies Error in property within errorLikeObjectKeys when stack is not the last property', (t) => {
+  await t.test('prettifies Error in property within errorLikeObjectKeys when stack is not the last property', (t) => {
     t.plan(9)
     const pretty = prettyFactory({
       errorLikeObjectKeys: ['err']
@@ -222,16 +221,16 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.equal(lines.length, expected.length + 7)
-        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
-        t.match(lines[1], /\s{4}err: {/)
-        t.match(lines[2], /\s{6}"type": "Error",/)
-        t.match(lines[3], /\s{6}"message": "hello world",/)
-        t.match(lines[4], /\s{6}"stack":/)
-        t.match(lines[5], /\s{6}Error: hello world/)
+        t.assert.strictEqual(lines.length, expected.length + 7)
+        t.assert.strictEqual(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
+        t.assert.match(lines[1], /\s{4}err: {/)
+        t.assert.match(lines[2], /\s{6}"type": "Error",/)
+        t.assert.match(lines[3], /\s{6}"message": "hello world",/)
+        t.assert.match(lines[4], /\s{6}"stack":/)
+        t.assert.match(lines[5], /\s{6}Error: hello world/)
         // Node 12 labels the test `<anonymous>`
-        t.match(lines[6], /\s{10}(at Test.t.test|at Test.<anonymous>)/)
-        t.match(lines[lines.length - 3], /\s{6}"anotherField": "dummy value"/)
+        t.assert.match(lines[6], /\s{10}at TestContext.<anonymous>/)
+        t.assert.match(lines[lines.length - 3], /\s{6}"anotherField": "dummy value"/)
         cb()
       }
     }))
@@ -239,7 +238,7 @@ test('error like objects tests', (t) => {
     log.info({ err })
   })
 
-  t.test('errorProps flag with "*" (print all nested props)', function (t) {
+  await t.test('errorProps flag with "*" (print all nested props)', function (t) {
     const pretty = prettyFactory({ errorProps: '*' })
     const expectedLines = [
       '    err: {',
@@ -264,7 +263,7 @@ test('error like objects tests', (t) => {
         const lines = formatted.split('\n')
         lines.shift(); lines.pop()
         for (let i = 0; i < lines.length; i += 1) {
-          t.equal(lines[i], expectedLines[i])
+          t.assert.strictEqual(lines[i], expectedLines[i])
         }
         cb()
       }
@@ -284,7 +283,7 @@ test('error like objects tests', (t) => {
     log.error(error)
   })
 
-  t.test('prettifies legacy error object at top level when singleLine=true', function (t) {
+  await t.test('prettifies legacy error object at top level when singleLine=true', function (t) {
     t.plan(4)
     const pretty = prettyFactory({ singleLine: true })
     const err = Error('hello world')
@@ -295,10 +294,10 @@ test('error like objects tests', (t) => {
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
         const lines = formatted.split('\n')
-        t.equal(lines.length, expected.length + 1)
-        t.equal(lines[0], `[${formattedEpoch}] INFO (${pid}): ${expected[0]}`)
-        t.equal(lines[1], `    ${expected[1]}`)
-        t.equal(lines[2], `    ${expected[2]}`)
+        t.assert.strictEqual(lines.length, expected.length + 1)
+        t.assert.strictEqual(lines[0], `[${formattedEpoch}] INFO (${pid}): ${expected[0]}`)
+        t.assert.strictEqual(lines[1], `    ${expected[1]}`)
+        t.assert.strictEqual(lines[2], `    ${expected[2]}`)
         cb()
       }
     }))
@@ -306,7 +305,7 @@ test('error like objects tests', (t) => {
     log.info({ type: 'Error', stack: err.stack, msg: err.message })
   })
 
-  t.test('errorProps: legacy error object at top level', function (t) {
+  await t.test('errorProps: legacy error object at top level', function (t) {
     const pretty = prettyFactory({ errorProps: '*' })
     const expectedLines = [
       'INFO:',
@@ -342,11 +341,11 @@ test('error like objects tests', (t) => {
     const formatted = pretty(JSON.stringify(error))
     const lines = formatted.split('\n')
     for (let i = 0; i < lines.length; i += 1) {
-      t.equal(lines[i], expectedLines[i])
+      t.assert.strictEqual(lines[i], expectedLines[i])
     }
   })
 
-  t.test('errorProps flag with a single property', function (t) {
+  await t.test('errorProps flag with a single property', function (t) {
     const pretty = prettyFactory({ errorProps: 'originalStack' })
     const expectedLines = [
       'INFO:',
@@ -373,11 +372,11 @@ test('error like objects tests', (t) => {
     const formatted = pretty(JSON.stringify(error))
     const lines = formatted.split('\n')
     for (let i = 0; i < lines.length; i += 1) {
-      t.equal(lines[i], expectedLines[i])
+      t.assert.strictEqual(lines[i], expectedLines[i])
     }
   })
 
-  t.test('errorProps flag with a single property non existent', function (t) {
+  await t.test('errorProps flag with a single property non existent', function (t) {
     const pretty = prettyFactory({ errorProps: 'originalStackABC' })
     const expectedLines = [
       'INFO:',
@@ -403,18 +402,18 @@ test('error like objects tests', (t) => {
     const formatted = pretty(JSON.stringify(error))
     const lines = formatted.split('\n')
     for (let i = 0; i < lines.length; i += 1) {
-      t.equal(lines[i], expectedLines[i])
+      t.assert.strictEqual(lines[i], expectedLines[i])
     }
   })
 
-  t.test('handles errors with a null stack', (t) => {
+  await t.test('handles errors with a null stack', (t) => {
     t.plan(2)
     const pretty = prettyFactory()
     const log = pino({}, new Writable({
       write (chunk, enc, cb) {
         const formatted = pretty(chunk.toString())
-        t.match(formatted, /\s{4}message: "foo"/)
-        t.match(formatted, /\s{4}stack: null/)
+        t.assert.match(formatted, /\s{4}message: "foo"/)
+        t.assert.match(formatted, /\s{4}stack: null/)
         cb()
       }
     }))
@@ -423,7 +422,7 @@ test('error like objects tests', (t) => {
     log.error(error)
   })
 
-  t.test('handles errors with a null stack for Error object', (t) => {
+  await t.test('handles errors with a null stack for Error object', (t) => {
     const pretty = prettyFactory()
     const expectedLines = [
       '      "type": "Error",',
@@ -439,7 +438,7 @@ test('error like objects tests', (t) => {
         const lines = formatted.split('\n')
         lines.shift(); lines.shift(); lines.pop(); lines.pop()
         for (let i = 0; i < lines.length; i += 1) {
-          t.ok(lines[i].includes(expectedLines[i]))
+          t.assert.ok(lines[i].includes(expectedLines[i]))
         }
         cb()
       }
@@ -451,12 +450,10 @@ test('error like objects tests', (t) => {
 
     log.error(error)
   })
-
-  t.end()
 })
 
 if (semver.gte(pino.version, '8.21.0')) {
-  test('using pino config', (t) => {
+  test('using pino config', async (t) => {
     t.beforeEach(() => {
       Date.originalNow = Date.now
       Date.now = () => epoch
@@ -466,21 +463,21 @@ if (semver.gte(pino.version, '8.21.0')) {
       delete Date.originalNow
     })
 
-    t.test('prettifies Error in custom errorKey', (t) => {
+    await t.test('prettifies Error in custom errorKey', (t) => {
       t.plan(8)
       const destination = new Writable({
         write (chunk, enc, cb) {
           const formatted = chunk.toString()
           const lines = formatted.split('\n')
-          t.equal(lines.length, expected.length + 7)
-          t.equal(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
-          t.match(lines[1], /\s{4}customErrorKey: {/)
-          t.match(lines[2], /\s{6}"type": "Error",/)
-          t.match(lines[3], /\s{6}"message": "hello world",/)
-          t.match(lines[4], /\s{6}"stack":/)
-          t.match(lines[5], /\s{6}Error: hello world/)
+          t.assert.strictEqual(lines.length, expected.length + 7)
+          t.assert.strictEqual(lines[0], `[${formattedEpoch}] INFO (${pid}): hello world`)
+          t.assert.match(lines[1], /\s{4}customErrorKey: {/)
+          t.assert.match(lines[2], /\s{6}"type": "Error",/)
+          t.assert.match(lines[3], /\s{6}"message": "hello world",/)
+          t.assert.match(lines[4], /\s{6}"stack":/)
+          t.assert.match(lines[5], /\s{6}Error: hello world/)
           // Node 12 labels the test `<anonymous>`
-          t.match(lines[6], /\s{10}(at Test.t.test|at Test.<anonymous>)/)
+          t.assert.match(lines[6], /\s{10}(at Test.await t.test|at Test.<anonymous>)/)
           cb()
         }
       })
@@ -493,7 +490,5 @@ if (semver.gte(pino.version, '8.21.0')) {
       const expected = err.stack.split('\n')
       log.info({ customErrorKey: err })
     })
-
-    t.end()
   })
 }
