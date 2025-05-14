@@ -4,7 +4,7 @@ process.env.TZ = 'UTC'
 
 const { Writable } = require('node:stream')
 const os = require('node:os')
-const { test } = require('node:test')
+const { describe, test, beforeEach, afterEach } = require('node:test')
 const match = require('@jsumners/assert-match')
 const pino = require('pino')
 const dateformat = require('dateformat')
@@ -37,24 +37,24 @@ const formattedEpoch = '17:35:28.992'
 const pid = process.pid
 const hostname = os.hostname()
 
-test('basic prettifier tests', async (t) => {
-  t.beforeEach(() => {
+describe('basic prettifier tests', () => {
+  beforeEach(() => {
     Date.originalNow = Date.now
     Date.now = () => epoch
   })
-  t.afterEach(() => {
+  afterEach(() => {
     Date.now = Date.originalNow
     delete Date.originalNow
   })
 
-  await t.test('preserves output if not valid JSON', (t) => {
+  test('preserves output if not valid JSON', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const formatted = pretty('this is not json\nit\'s just regular output\n')
     t.assert.strictEqual(formatted, 'this is not json\nit\'s just regular output\n\n')
   })
 
-  await t.test('formats a line without any extra options', (t) => {
+  test('formats a line without any extra options', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({}, new Writable({
@@ -70,7 +70,7 @@ test('basic prettifier tests', async (t) => {
     log.info('foo')
   })
 
-  await t.test('will add color codes', (t) => {
+  test('will add color codes', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ colorize: true })
     const log = pino({}, new Writable({
@@ -86,7 +86,7 @@ test('basic prettifier tests', async (t) => {
     log.info('foo')
   })
 
-  await t.test('will omit color codes from objects when colorizeObjects = false', (t) => {
+  test('will omit color codes from objects when colorizeObjects = false', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ colorize: true, singleLine: true, colorizeObjects: false })
     const log = pino({}, new Writable({
@@ -102,7 +102,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ foo: 'bar' }, 'foo')
   })
 
-  await t.test('can swap date and level position', (t) => {
+  test('can swap date and level position', (t) => {
     t.plan(1)
     const destination = new Writable({
       write (formatted, enc, cb) {
@@ -122,7 +122,7 @@ test('basic prettifier tests', async (t) => {
     log.info('foo')
   })
 
-  await t.test('can print message key value when its a string', (t) => {
+  test('can print message key value when its a string', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({}, new Writable({
@@ -138,7 +138,7 @@ test('basic prettifier tests', async (t) => {
     log.info('baz')
   })
 
-  await t.test('can print message key value when its a number', (t) => {
+  test('can print message key value when its a number', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({}, new Writable({
@@ -154,7 +154,7 @@ test('basic prettifier tests', async (t) => {
     log.info(42)
   })
 
-  await t.test('can print message key value when its a Number(0)', (t) => {
+  test('can print message key value when its a Number(0)', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({}, new Writable({
@@ -170,7 +170,7 @@ test('basic prettifier tests', async (t) => {
     log.info(0)
   })
 
-  await t.test('can print message key value when its a boolean', (t) => {
+  test('can print message key value when its a boolean', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({}, new Writable({
@@ -186,7 +186,7 @@ test('basic prettifier tests', async (t) => {
     log.info(true)
   })
 
-  await t.test('can use different message keys', (t) => {
+  test('can use different message keys', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ messageKey: 'bar' })
     const log = pino({}, new Writable({
@@ -202,7 +202,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ bar: 'baz' })
   })
 
-  await t.test('can use different level keys', (t) => {
+  test('can use different level keys', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ levelKey: 'bar' })
     const log = pino({}, new Writable({
@@ -218,7 +218,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'foo', bar: 'warn' })
   })
 
-  await t.test('can use nested level keys', (t) => {
+  test('can use nested level keys', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ levelKey: 'log\\.level' })
     const log = pino({}, new Writable({
@@ -234,7 +234,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'foo', 'log.level': 'warn' })
   })
 
-  await t.test('can use a customPrettifier on default level output', (t) => {
+  test('can use a customPrettifier on default level output', (t) => {
     t.plan(1)
     const veryCustomLevels = {
       30: 'ok',
@@ -257,7 +257,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'foo' })
   })
 
-  await t.test('can use a customPrettifier on different-level-key output', (t) => {
+  test('can use a customPrettifier on different-level-key output', (t) => {
     t.plan(1)
     const customPrettifiers = {
       level: (level) => `LEVEL: ${level.toUpperCase()}`
@@ -276,7 +276,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'foo', bar: 'warn' })
   })
 
-  await t.test('can use a customPrettifier to get final level label (no color)', (t) => {
+  test('can use a customPrettifier to get final level label (no color)', (t) => {
     t.plan(1)
     const customPrettifiers = {
       level: (level, key, logThis, { label }) => {
@@ -297,7 +297,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'foo' })
   })
 
-  await t.test('can use a customPrettifier to get final level label (colorized)', (t) => {
+  test('can use a customPrettifier to get final level label (colorized)', (t) => {
     t.plan(1)
     const customPrettifiers = {
       level: (level, key, logThis, { label, labelColorized }) => {
@@ -318,7 +318,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'foo' })
   })
 
-  await t.test('can use a customPrettifier on name output', (t) => {
+  test('can use a customPrettifier on name output', (t) => {
     t.plan(1)
     const customPrettifiers = {
       name: (hostname) => `NAME: ${hostname}`
@@ -338,7 +338,7 @@ test('basic prettifier tests', async (t) => {
     child.info({ msg: 'foo' })
   })
 
-  await t.test('can use a customPrettifier on hostname and pid output', (t) => {
+  test('can use a customPrettifier on hostname and pid output', (t) => {
     t.plan(1)
     const customPrettifiers = {
       hostname: (hostname) => `HOSTNAME: ${hostname}`,
@@ -358,7 +358,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'foo' })
   })
 
-  await t.test('can use a customPrettifier on default time output', (t) => {
+  test('can use a customPrettifier on default time output', (t) => {
     t.plan(1)
     const customPrettifiers = {
       time: (timestamp) => `TIME: ${timestamp}`
@@ -377,7 +377,7 @@ test('basic prettifier tests', async (t) => {
     log.info('foo')
   })
 
-  await t.test('can use a customPrettifier on the caller', (t) => {
+  test('can use a customPrettifier on the caller', (t) => {
     t.plan(1)
     const customPrettifiers = {
       caller: (caller) => `CALLER: ${caller}`
@@ -396,7 +396,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'foo', caller: 'test.js:10' })
   })
 
-  await t.test('can use a customPrettifier on translateTime-time output', (t) => {
+  test('can use a customPrettifier on translateTime-time output', (t) => {
     t.plan(1)
     const customPrettifiers = {
       time: (timestamp) => `TIME: ${timestamp}`
@@ -415,7 +415,7 @@ test('basic prettifier tests', async (t) => {
     log.info('foo')
   })
 
-  await t.test('will format time to UTC', (t) => {
+  test('will format time to UTC', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ translateTime: true })
     const log = pino({}, new Writable({
@@ -431,7 +431,7 @@ test('basic prettifier tests', async (t) => {
     log.info('foo')
   })
 
-  await t.test('will format time to UTC in custom format', (t) => {
+  test('will format time to UTC in custom format', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ translateTime: 'HH:MM:ss o' })
     const log = pino({}, new Writable({
@@ -449,7 +449,7 @@ test('basic prettifier tests', async (t) => {
     log.info('foo')
   })
 
-  await t.test('will format time to local systemzone in ISO 8601 format', (t) => {
+  test('will format time to local systemzone in ISO 8601 format', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ translateTime: 'sys:standard' })
     const log = pino({}, new Writable({
@@ -469,7 +469,7 @@ test('basic prettifier tests', async (t) => {
     log.info('foo')
   })
 
-  await t.test('will format time to local systemzone in custom format', (t) => {
+  test('will format time to local systemzone in custom format', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
       translateTime: 'SYS:yyyy/mm/dd HH:MM:ss o'
@@ -492,14 +492,14 @@ test('basic prettifier tests', async (t) => {
   })
 
   // TODO: 2019-03-30 -- We don't really want the indentation in this case? Or at least some better formatting.
-  await t.test('handles missing time', (t) => {
+  test('handles missing time', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const formatted = pretty('{"hello":"world"}')
     t.assert.strictEqual(formatted, '    hello: "world"\n')
   })
 
-  await t.test('handles missing pid, hostname and name', (t) => {
+  test('handles missing pid, hostname and name', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({ base: null }, new Writable({
@@ -512,7 +512,7 @@ test('basic prettifier tests', async (t) => {
     log.info('hello world')
   })
 
-  await t.test('handles missing pid', (t) => {
+  test('handles missing pid', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const name = 'test'
@@ -536,7 +536,7 @@ test('basic prettifier tests', async (t) => {
     log.info(msg)
   })
 
-  await t.test('handles missing hostname', (t) => {
+  test('handles missing hostname', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const name = 'test'
@@ -560,7 +560,7 @@ test('basic prettifier tests', async (t) => {
     log.info(msg)
   })
 
-  await t.test('handles missing name', (t) => {
+  test('handles missing name', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const msg = 'hello world'
@@ -583,7 +583,7 @@ test('basic prettifier tests', async (t) => {
     log.info(msg)
   })
 
-  await t.test('works without time', (t) => {
+  test('works without time', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({ timestamp: null }, new Writable({
@@ -596,7 +596,7 @@ test('basic prettifier tests', async (t) => {
     log.info('hello world')
   })
 
-  await t.test('prettifies properties', (t) => {
+  test('prettifies properties', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({}, new Writable({
@@ -609,7 +609,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ a: 'b' }, 'hello world')
   })
 
-  await t.test('prettifies nested properties', (t) => {
+  test('prettifies nested properties', (t) => {
     t.plan(6)
     const expectedLines = [
       '    a: {',
@@ -634,7 +634,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ a: { b: { c: 'd' } } }, 'hello world')
   })
 
-  await t.test('treats the name with care', (t) => {
+  test('treats the name with care', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({ name: 'matteo' }, new Writable({
@@ -647,7 +647,7 @@ test('basic prettifier tests', async (t) => {
     log.info('hello world')
   })
 
-  await t.test('handles spec allowed primitives', (t) => {
+  test('handles spec allowed primitives', (t) => {
     const pretty = prettyFactory()
     let formatted = pretty(null)
     t.assert.strictEqual(formatted, 'null\n')
@@ -659,7 +659,7 @@ test('basic prettifier tests', async (t) => {
     t.assert.strictEqual(formatted, 'false\n')
   })
 
-  await t.test('handles numbers', (t) => {
+  test('handles numbers', (t) => {
     const pretty = prettyFactory()
     let formatted = pretty(2)
     t.assert.strictEqual(formatted, '2\n')
@@ -677,14 +677,14 @@ test('basic prettifier tests', async (t) => {
     t.assert.strictEqual(formatted, 'NaN\n')
   })
 
-  await t.test('handles `undefined` input', (t) => {
+  test('handles `undefined` input', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const formatted = pretty(undefined)
     t.assert.strictEqual(formatted, 'undefined\n')
   })
 
-  await t.test('handles customLogLevel', (t) => {
+  test('handles customLogLevel', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({ customLevels: { testCustom: 35 } }, new Writable({
@@ -697,7 +697,7 @@ test('basic prettifier tests', async (t) => {
     log.testCustom('test message')
   })
 
-  await t.test('filter some lines based on minimumLevel', (t) => {
+  test('filter some lines based on minimumLevel', (t) => {
     t.plan(3)
     const pretty = prettyFactory({ minimumLevel: 'info' })
     const expected = [
@@ -721,7 +721,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'baz', level: 30 })
   })
 
-  await t.test('filter lines based on minimumLevel using custom levels and level key', (t) => {
+  test('filter lines based on minimumLevel using custom levels and level key', (t) => {
     t.plan(3)
     const pretty = prettyFactory({ minimumLevel: 20, levelKey: 'bar' })
     const expected = [
@@ -744,7 +744,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'baz', bar: 30 })
   })
 
-  await t.test('formats a line with an undefined field', (t) => {
+  test('formats a line with an undefined field', (t) => {
     t.plan(1)
     const pretty = prettyFactory()
     const log = pino({}, new Writable({
@@ -763,7 +763,7 @@ test('basic prettifier tests', async (t) => {
     log.info('foo')
   })
 
-  await t.test('prettifies msg object', (t) => {
+  test('prettifies msg object', (t) => {
     t.plan(6)
     const expectedLines = [
       '    msg: {',
@@ -788,7 +788,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: { b: { c: 'd' } } })
   })
 
-  await t.test('prettifies msg object with circular references', (t) => {
+  test('prettifies msg object with circular references', (t) => {
     t.plan(7)
     const expectedLines = [
       '    msg: {',
@@ -817,7 +817,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg })
   })
 
-  await t.test('prettifies custom key', (t) => {
+  test('prettifies custom key', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
       customPrettifiers: {
@@ -829,7 +829,7 @@ test('basic prettifier tests', async (t) => {
     t.assert.strictEqual(arst, 'INFO: hello world\n    foo: bar_baz\n    multiline\n    cow: MOO\n')
   })
 
-  await t.test('does not add trailing space if prettified value begins with eol', (t) => {
+  test('does not add trailing space if prettified value begins with eol', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
       customPrettifiers: {
@@ -840,7 +840,7 @@ test('basic prettifier tests', async (t) => {
     t.assert.strictEqual(arst, 'INFO: doing work\n    calls:\n      step 1\n      step 2\n      step 3\n')
   })
 
-  await t.test('does not prettify custom key that does not exists', (t) => {
+  test('does not prettify custom key that does not exists', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
       customPrettifiers: {
@@ -852,7 +852,7 @@ test('basic prettifier tests', async (t) => {
     t.assert.strictEqual(arst, 'INFO: hello world\n    foo: bar_baz\n')
   })
 
-  await t.test('prettifies object with some undefined values', (t) => {
+  test('prettifies object with some undefined values', (t) => {
     t.plan(1)
     const destination = new Writable({
       write (chunk, _, cb) {
@@ -878,63 +878,63 @@ test('basic prettifier tests', async (t) => {
     })
   })
 
-  await t.test('ignores multiple keys', (t) => {
+  test('ignores multiple keys', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'pid,hostname' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.assert.strictEqual(arst, `[${formattedEpoch}] INFO: hello world\n`)
   })
 
-  await t.test('ignores a single key', (t) => {
+  test('ignores a single key', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'pid' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.assert.strictEqual(arst, `[${formattedEpoch}] INFO (on ${hostname}): hello world\n`)
   })
 
-  await t.test('ignores time', (t) => {
+  test('ignores time', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'time' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.assert.strictEqual(arst, `INFO (${pid} on ${hostname}): hello world\n`)
   })
 
-  await t.test('ignores time and level', (t) => {
+  test('ignores time and level', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'time,level' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.assert.strictEqual(arst, `(${pid} on ${hostname}): hello world\n`)
   })
 
-  await t.test('ignores all keys but message', (t) => {
+  test('ignores all keys but message', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'time,level,name,pid,hostname' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.assert.strictEqual(arst, 'hello world\n')
   })
 
-  await t.test('include nothing', (t) => {
+  test('include nothing', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ include: '' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.assert.strictEqual(arst, 'hello world\n')
   })
 
-  await t.test('include multiple keys', (t) => {
+  test('include multiple keys', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ include: 'time,level' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.assert.strictEqual(arst, `[${formattedEpoch}] INFO: hello world\n`)
   })
 
-  await t.test('include a single key', (t) => {
+  test('include a single key', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ include: 'level' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.assert.strictEqual(arst, 'INFO: hello world\n')
   })
 
-  await t.test('log error-like object', (t) => {
+  test('log error-like object', (t) => {
     t.plan(7)
     const expectedLines = [
       '    type: "Error"',
@@ -960,14 +960,14 @@ test('basic prettifier tests', async (t) => {
     log.error({ type: 'Error', message: 'm', stack: ['line1', 'line2'] })
   })
 
-  await t.test('include should override ignore', (t) => {
+  test('include should override ignore', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'time,level', include: 'time,level' })
     const arst = pretty(`{"msg":"hello world", "pid":"${pid}", "hostname":"${hostname}", "time":${epoch}, "level":30}`)
     t.assert.strictEqual(arst, `[${formattedEpoch}] INFO: hello world\n`)
   })
 
-  await t.test('include a single key with null object', (t) => {
+  test('include a single key with null object', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ include: 'level' })
     const obj = new Empty()
@@ -983,7 +983,7 @@ test('basic prettifier tests', async (t) => {
     t.assert.strictEqual(arst, 'INFO: hello world\n')
   })
 
-  await t.test('prettifies trace caller', (t) => {
+  test('prettifies trace caller', (t) => {
     t.plan(1)
     const traceCaller = (instance) => {
       const { symbols: { asJsonSym } } = pino
@@ -1012,14 +1012,14 @@ test('basic prettifier tests', async (t) => {
     log.info('foo')
   })
 
-  await t.test('handles specified timestampKey', (t) => {
+  test('handles specified timestampKey', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ timestampKey: '@timestamp' })
     const arst = pretty(`{"msg":"hello world", "@timestamp":${epoch}, "level":30}`)
     t.assert.strictEqual(arst, `[${formattedEpoch}] INFO: hello world\n`)
   })
 
-  await t.test('keeps "v" key in log', (t) => {
+  test('keeps "v" key in log', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'time' })
     const log = pino({}, new Writable({
@@ -1032,7 +1032,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ v: 1 })
   })
 
-  await t.test('Hide object `{ key: "value" }` from output when flag `hideObject` is set', (t) => {
+  test('Hide object `{ key: "value" }` from output when flag `hideObject` is set', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ hideObject: true })
     const log = pino({}, new Writable({
@@ -1045,7 +1045,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ key: 'value' }, 'hello world')
   })
 
-  await t.test('Prints extra objects on one line with singleLine=true', (t) => {
+  test('Prints extra objects on one line with singleLine=true', (t) => {
     t.plan(1)
     const pretty = prettyFactory({
       singleLine: true,
@@ -1066,7 +1066,7 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'message', extra: { foo: 'bar', number: 42 }, upper: 'foobar', undef: 'this will not show up' })
   })
 
-  await t.test('Does not print empty object with singleLine=true', (t) => {
+  test('Does not print empty object with singleLine=true', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ singleLine: true, colorize: false })
     const log = pino({}, new Writable({
@@ -1079,12 +1079,12 @@ test('basic prettifier tests', async (t) => {
     log.info({ msg: 'message' })
   })
 
-  await t.test('default options', (t) => {
+  test('default options', (t) => {
     t.plan(1)
     t.assert.doesNotThrow(pinoPretty)
   })
 
-  await t.test('does not call fs.close on stdout stream', (t) => {
+  test('does not call fs.close on stdout stream', (t) => {
     t.plan(2)
     const destination = pino.destination({ minLength: 4096, sync: true })
     const prettyDestination = pinoPretty({ destination, colorize: false })
@@ -1110,7 +1110,7 @@ test('basic prettifier tests', async (t) => {
     t.assert.strictEqual(closeCalled, false)
   })
 
-  await t.test('wait for close event from destination', (t, end) => {
+  test('wait for close event from destination', (t, end) => {
     t.plan(2)
     const destination = pino.destination({ minLength: 4096, sync: true })
     const prettyDestination = pinoPretty({ destination, colorize: false })
@@ -1143,7 +1143,7 @@ test('basic prettifier tests', async (t) => {
     prettyDestination.end()
   })
 
-  await t.test('stream usage', async (t) => {
+  test('stream usage', async (t) => {
     t.plan(1)
     const tmpDir = join(__dirname, '.tmp_' + Date.now())
     t.after(() => rimraf.sync(tmpDir))
@@ -1171,7 +1171,7 @@ test('basic prettifier tests', async (t) => {
     t.assert.strictEqual(formatted, `[${formattedEpoch}] INFO (${pid}): message {"extra":{"foo":"bar","number":42},"upper":"FOOBAR"}\n`)
   })
 
-  await t.test('sync option', async (t) => {
+  test('sync option', async (t) => {
     t.plan(1)
     const tmpDir = join(__dirname, '.tmp_' + Date.now())
     t.after(() => rimraf.sync(tmpDir))
@@ -1198,7 +1198,7 @@ test('basic prettifier tests', async (t) => {
     t.assert.strictEqual(formatted, `[${formattedEpoch}] INFO (${pid}): message {"extra":{"foo":"bar","number":43},"upper":"foobar"}\n`)
   })
 
-  await t.test('support custom colors object', async (t) => {
+  test('support custom colors object', async (t) => {
     t.plan(1)
     const pretty = prettyFactory({
       colorize: true,
@@ -1224,7 +1224,7 @@ test('basic prettifier tests', async (t) => {
     log.info('foo')
   })
 
-  await t.test('check support for colors', (t) => {
+  test('check support for colors', (t) => {
     t.plan(1)
     const isColorSupported = pinoPretty.isColorSupported
     t.assert.strictEqual(typeof isColorSupported, 'boolean')
@@ -1232,17 +1232,17 @@ test('basic prettifier tests', async (t) => {
 })
 
 if (semver.gte(pino.version, '8.21.0')) {
-  test('using pino config', async (t) => {
-    t.beforeEach(() => {
+  describe('using pino config', () => {
+    beforeEach(() => {
       Date.originalNow = Date.now
       Date.now = () => epoch
     })
-    t.afterEach(() => {
+    afterEach(() => {
       Date.now = Date.originalNow
       delete Date.originalNow
     })
 
-    await t.test('can use different message keys', (t) => {
+    test('can use different message keys', (t) => {
       t.plan(1)
       const destination = new Writable({
         write (formatted, enc, cb) {
@@ -1261,7 +1261,7 @@ if (semver.gte(pino.version, '8.21.0')) {
       log.info({ bar: 'baz' })
     })
 
-    await t.test('handles customLogLevels', (t) => {
+    test('handles customLogLevels', (t) => {
       t.plan(1)
       const destination = new Writable({
         write (formatted, enc, cb) {
