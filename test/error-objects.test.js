@@ -3,7 +3,7 @@
 process.env.TZ = 'UTC'
 
 const { Writable } = require('node:stream')
-const { test } = require('node:test')
+const { describe, test, afterEach, beforeEach } = require('node:test')
 const pino = require('pino')
 const semver = require('semver')
 const serializers = pino.stdSerializers
@@ -24,17 +24,17 @@ const epoch = 1522431328992
 const formattedEpoch = '17:35:28.992'
 const pid = process.pid
 
-test('error like objects tests', async (t) => {
-  t.beforeEach(() => {
+describe('error like objects tests', () => {
+  beforeEach(() => {
     Date.originalNow = Date.now
     Date.now = () => epoch
   })
-  t.afterEach(() => {
+  afterEach(() => {
     Date.now = Date.originalNow
     delete Date.originalNow
   })
 
-  await t.test('pino transform prettifies Error', (t) => {
+  test('pino transform prettifies Error', (t) => {
     t.plan(2)
     const pretty = prettyFactory()
     const err = Error('hello world')
@@ -54,7 +54,7 @@ test('error like objects tests', async (t) => {
     log.info(err)
   })
 
-  await t.test('errorProps recognizes user specified properties', (t) => {
+  test('errorProps recognizes user specified properties', (t) => {
     t.plan(3)
     const pretty = prettyFactory({ errorProps: 'statusCode,originalStack' })
     const log = pino({}, new Writable({
@@ -75,13 +75,13 @@ test('error like objects tests', async (t) => {
     log.error(error)
   })
 
-  await t.test('prettifies ignores undefined errorLikeObject', (t) => {
+  test('prettifies ignores undefined errorLikeObject', (t) => {
     const pretty = prettyFactory()
     pretty({ err: undefined })
     pretty({ error: undefined })
   })
 
-  await t.test('prettifies Error in property within errorLikeObjectKeys', (t) => {
+  test('prettifies Error in property within errorLikeObjectKeys', (t) => {
     t.plan(8)
     const pretty = prettyFactory({
       errorLikeObjectKeys: ['err']
@@ -111,7 +111,7 @@ test('error like objects tests', async (t) => {
     log.info({ err })
   })
 
-  await t.test('prettifies Error in property with singleLine=true', (t) => {
+  test('prettifies Error in property with singleLine=true', (t) => {
     // singleLine=true doesn't apply to errors
     t.plan(8)
     const pretty = prettyFactory({
@@ -146,7 +146,7 @@ test('error like objects tests', async (t) => {
     log.info({ err, extra: { a: 1, b: 2 } })
   })
 
-  await t.test('prettifies Error in property within errorLikeObjectKeys with custom function', (t) => {
+  test('prettifies Error in property within errorLikeObjectKeys with custom function', (t) => {
     t.plan(4)
     const pretty = prettyFactory({
       errorLikeObjectKeys: ['err'],
@@ -176,7 +176,7 @@ test('error like objects tests', async (t) => {
     log.info({ err })
   })
 
-  await t.test('prettifies Error in property within errorLikeObjectKeys when stack has escaped characters', (t) => {
+  test('prettifies Error in property within errorLikeObjectKeys when stack has escaped characters', (t) => {
     t.plan(8)
     const pretty = prettyFactory({
       errorLikeObjectKeys: ['err']
@@ -206,7 +206,7 @@ test('error like objects tests', async (t) => {
     log.info({ err })
   })
 
-  await t.test('prettifies Error in property within errorLikeObjectKeys when stack is not the last property', (t) => {
+  test('prettifies Error in property within errorLikeObjectKeys when stack is not the last property', (t) => {
     t.plan(9)
     const pretty = prettyFactory({
       errorLikeObjectKeys: ['err']
@@ -238,7 +238,7 @@ test('error like objects tests', async (t) => {
     log.info({ err })
   })
 
-  await t.test('errorProps flag with "*" (print all nested props)', function (t) {
+  test('errorProps flag with "*" (print all nested props)', function (t) {
     const pretty = prettyFactory({ errorProps: '*' })
     const expectedLines = [
       '    err: {',
@@ -283,7 +283,7 @@ test('error like objects tests', async (t) => {
     log.error(error)
   })
 
-  await t.test('prettifies legacy error object at top level when singleLine=true', function (t) {
+  test('prettifies legacy error object at top level when singleLine=true', function (t) {
     t.plan(4)
     const pretty = prettyFactory({ singleLine: true })
     const err = Error('hello world')
@@ -305,7 +305,7 @@ test('error like objects tests', async (t) => {
     log.info({ type: 'Error', stack: err.stack, msg: err.message })
   })
 
-  await t.test('errorProps: legacy error object at top level', function (t) {
+  test('errorProps: legacy error object at top level', function (t) {
     const pretty = prettyFactory({ errorProps: '*' })
     const expectedLines = [
       'INFO:',
@@ -345,7 +345,7 @@ test('error like objects tests', async (t) => {
     }
   })
 
-  await t.test('errorProps flag with a single property', function (t) {
+  test('errorProps flag with a single property', function (t) {
     const pretty = prettyFactory({ errorProps: 'originalStack' })
     const expectedLines = [
       'INFO:',
@@ -376,7 +376,7 @@ test('error like objects tests', async (t) => {
     }
   })
 
-  await t.test('errorProps flag with a single property non existent', function (t) {
+  test('errorProps flag with a single property non existent', function (t) {
     const pretty = prettyFactory({ errorProps: 'originalStackABC' })
     const expectedLines = [
       'INFO:',
@@ -406,7 +406,7 @@ test('error like objects tests', async (t) => {
     }
   })
 
-  await t.test('handles errors with a null stack', (t) => {
+  test('handles errors with a null stack', (t) => {
     t.plan(2)
     const pretty = prettyFactory()
     const log = pino({}, new Writable({
@@ -422,7 +422,7 @@ test('error like objects tests', async (t) => {
     log.error(error)
   })
 
-  await t.test('handles errors with a null stack for Error object', (t) => {
+  test('handles errors with a null stack for Error object', (t) => {
     const pretty = prettyFactory()
     const expectedLines = [
       '      "type": "Error",',
@@ -453,17 +453,17 @@ test('error like objects tests', async (t) => {
 })
 
 if (semver.gte(pino.version, '8.21.0')) {
-  test('using pino config', async (t) => {
-    t.beforeEach(() => {
+  describe('using pino config', () => {
+    beforeEach(() => {
       Date.originalNow = Date.now
       Date.now = () => epoch
     })
-    t.afterEach(() => {
+    afterEach(() => {
       Date.now = Date.originalNow
       delete Date.originalNow
     })
 
-    await t.test('prettifies Error in custom errorKey', (t) => {
+    test('prettifies Error in custom errorKey', (t) => {
       t.plan(8)
       const destination = new Writable({
         write (chunk, enc, cb) {
