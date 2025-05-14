@@ -2,4 +2,5 @@ reporters:
   - '@jsumners/line-reporter'
 
 files:
+  - 'lib/**/*.test.js'
   - 'test/**/*.test.js'
