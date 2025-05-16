@@ -380,7 +380,7 @@ This option can also be defined as a `function` with this function signature:
     // do some log message customization
     //
     // `colors` is a Colorette object with colors enabled based on `colorize` option
-    return `This is a ${color.red('colorized')}, custom message: ${log[messageKey]}`;
+    return `This is a ${colors.red('colorized')}, custom message: ${log[messageKey]}`;
   }
 }
 ```
