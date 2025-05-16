@@ -4,6 +4,7 @@ import pretty from "../../";
 import PinoPretty, {
   PinoPretty as PinoPrettyNamed,
   PrettyOptions,
+  CustomPrettifiers,
   colorizerFactory,
   prettyFactory
 } from "../../";
@@ -13,6 +14,19 @@ import PinoPrettyCjsImport = require("../../");
 import PrettyStream = PinoPretty.PrettyStream;
 const PinoPrettyCjs = require("../../");
 
+const customPrettifiers: CustomPrettifiers = new Map();
+customPrettifiers.set("key", (value) => {
+  return value.toString().toUpperCase();
+});
+customPrettifiers.set(
+  "level",
+  (level, levelKey, log, { label, labelColorized, colors }) => {
+    return level.toString();
+  }
+);
+customPrettifiers.set("foo", (value, key, log, { colors }) => {
+  return value.toString();
+});
 const options: PinoPretty.PrettyOptions = {
   colorize: true,
   crlf: false,
@@ -29,14 +43,7 @@ const options: PinoPretty.PrettyOptions = {
   minimumLevel: "trace",
   translateTime: "UTC:h:MM:ss TT Z",
   singleLine: false,
-  customPrettifiers: {
-    key: (value) => {
-      return value.toString().toUpperCase();
-    },
-    level: (level, label, colorized) => {
-      return level.toString();
-    }
-  },
+  customPrettifiers,
   customLevels: 'verbose:5',
   customColors: 'default:white,verbose:gray',
   sync: false,
