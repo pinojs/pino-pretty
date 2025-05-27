@@ -34,8 +34,6 @@ jobs:
   test:
     name: Test
     runs-on: ${{ matrix.os }}
-    outputs:
-      COVERALLS: ${{ steps.coveralls-trigger.outputs.COVERALLS_TRIGGER }}
     permissions:
       contents: read
     strategy:
