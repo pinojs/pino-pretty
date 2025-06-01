@@ -110,6 +110,9 @@ const defaultOptions = {
  * @returns {LogPrettifierFunc}
  */
 function prettyFactory (options) {
+  if (options.customPrettifiers instanceof Map) {
+    options.customPrettifiers = Object.fromEntries(options.customPrettifiers)
+  }
   const context = parseFactoryOptions(Object.assign({}, defaultOptions, options))
   return pretty.bind({ ...context, context })
 }

@@ -21,6 +21,8 @@ process.removeAllListeners('warning')
 function prettyFactory (opts) {
   if (!opts) {
     opts = { colorize: false }
+  } else if (opts instanceof Map && !opts.has('colorize')) {
+    opts.set('colorize', false)
   } else if (!Object.prototype.hasOwnProperty.call(opts, 'colorize')) {
     opts.colorize = false
   }
@@ -249,6 +251,25 @@ test('basic prettifier tests', (t) => {
         t.equal(
           formatted,
           `[${formattedEpoch}] LEVEL: ok (${pid}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info({ msg: 'foo' })
+  })
+
+  t.test('can use a Map customPrettifier', (t) => {
+    t.plan(1)
+    const customPrettifiers = new Map([
+      ['level', () => 'LEVEL: bar']
+    ])
+    const pretty = prettyFactory({ customPrettifiers })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.equal(
+          formatted,
+          `[${formattedEpoch}] LEVEL: bar (${pid}): foo\n`
         )
         cb()
       }

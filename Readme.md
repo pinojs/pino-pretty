@@ -310,6 +310,15 @@ const prettifyQuery = value => {
 }
 ```
 
+```ts
+// In TypeScript you have to use a Map
+{
+  customPrettifiers: new Map([
+    ['query', prettifyQuery]
+  ])
+}
+```
+
 All prettifiers use this function signature:
 
 ```js
