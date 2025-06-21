@@ -11,7 +11,7 @@ const help = require('help-me')({
 const pump = require('pump')
 const sjp = require('secure-json-parse')
 const JoyCon = require('joycon')
-const stripJsonComments = require('strip-json-comments')
+const { default: stripJsonComments } = require('strip-json-comments')
 
 const build = require('./')
 const CONSTANTS = require('./lib/constants')
