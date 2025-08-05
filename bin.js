@@ -60,7 +60,8 @@ if (cmd.h || cmd.help) {
       ignore: 'i',
       include: 'I',
       hideObject: 'H',
-      singleLine: 'S'
+      singleLine: 'S',
+      colorizeMessage: 'z'
     },
     default: {
       messageKey: DEFAULT_VALUE,

@@ -77,6 +77,7 @@ node app.js | pino-pretty
 - `--minimumLevel` (`-L`): Hide messages below the specified log level. Accepts a number, `trace`, `debug`, `info`, `warn`, `error`, or `fatal`. If any more filtering is required, consider using [`jq`](https://stedolan.github.io/jq/).
 - `--customLevels` (`-x`): Override default levels with custom levels, e.g. `-x err:99,info:1`
 - `--customColors` (`-X`): Override default colors with custom colors, e.g. `-X err:red,info:blue`
+- `--colorizeMessage` (`-z`): Applies the level label color to the entire message output
 - `--useOnlyCustomProps` (`-U`): Only use custom levels and colors (if provided) (default: true); else fallback to default levels and colors, e.g. `-U false`
 - `--messageFormat` (`-o`): Format output of message, e.g. `{levelLabel} - {pid} - url:{req.url}` will output message: `INFO - 1123 - url:localhost:3000/test`
   Default: `false`
@@ -267,6 +268,7 @@ The options accepted have keys corresponding to the options described in [CLI Ar
   singleLine: false, // --singleLine
   customColors: 'err:red,info:blue', // --customColors
   customLevels: 'err:99,info:1', // --customLevels (not required with pino >=8.21.0)
+  colorizeMessage: false, // --colorizeMessage
   levelLabel: 'levelLabel', // --levelLabel
   minimumLevel: 'info', // --minimumLevel
   useOnlyCustomProps: true, // --useOnlyCustomProps
