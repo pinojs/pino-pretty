@@ -215,7 +215,7 @@ declare namespace PinoPretty {
      */
     useOnlyCustomProps?: boolean;
     /**
-     * Print the messa same color of the level.
+     * Print the message same color of the level.
      *
      * @default false
      */
