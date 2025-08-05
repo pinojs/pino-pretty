@@ -47,6 +47,7 @@ const options: PinoPretty.PrettyOptions = {
   append: true,
   mkdir: true,
   useOnlyCustomProps: false,
+  colorizeMessage: false,
 };
 
 expectType<PrettyStream>(pretty()); // #326

@@ -214,6 +214,12 @@ declare namespace PinoPretty {
      * @default true
      */
     useOnlyCustomProps?: boolean;
+    /**
+     * Print the messa same color of the level.
+     *
+     * @default false
+     */
+    colorizeMessage?: boolean;
   }
 
   function build(options: PrettyOptions): PrettyStream;
