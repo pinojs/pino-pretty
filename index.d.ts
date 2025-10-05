@@ -225,9 +225,10 @@ declare namespace PinoPretty {
   type ColorizerFactory = typeof colorizerFactory;
   type PrettyFactory = typeof prettyFactory;
   type Build = typeof build;
-  type isColorSupported = typeof Colorette.isColorSupported;
 
-  export { build, PinoPretty, PrettyOptions, PrettyStream, colorizerFactory, prettyFactory, isColorSupported };
+  // @ts-ignore
+  export const isColorSupported = Colorette.isColorSupported;
+  export { build, PinoPretty, PrettyOptions, PrettyStream, colorizerFactory, prettyFactory };
 }
 
 export = PinoPretty;
