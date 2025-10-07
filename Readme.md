@@ -107,6 +107,10 @@ node app.js | pino-pretty
 We recommend against using `pino-pretty` in production and highly
 recommend installing `pino-pretty` as a development dependency.
 
+```bash
+npm install --save-dev pino-pretty
+```
+
 Install `pino-pretty` alongside `pino` and set the transport target to `'pino-pretty'`:
 
 ```js
@@ -119,6 +123,7 @@ const logger = pino({
 
 logger.info('hi')
 ```
+
 
 The transport option can also have an options object containing `pino-pretty` options:
 
@@ -161,6 +166,23 @@ logger.info('hi')
 
 See the [Options](#options) section for all possible options.
 
+The following configuration ensures that `pino-pretty` is activated only in development mode.
+
+```js
+const pino = require('pino')
+
+// Define the transport configuration only for development
+const transport =
+  process.env.NODE_ENV !== 'production'
+    ? { transport: { target: 'pino-pretty' } }
+    : {};
+
+const logger = pino({
+  ...transport
+})
+
+logger.info('hi')
+```
 
 ### Usage as a stream
 
