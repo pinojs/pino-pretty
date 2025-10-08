@@ -9,8 +9,9 @@
     "pino-pretty": "./bin.js"
   },
   "scripts": {
-    "ci": "standard && borp --check-coverage && npm run test-types",
-    "lint": "standard | snazzy",
+    "ci": "eslint && borp --check-coverage && npm run test-types",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "test": "borp",
     "test-types": "tsc && tsd && attw --pack .",
     "test:watch": "borp -w --reporter gh",
@@ -29,10 +30,6 @@
     "url": "https://github.com/pinojs/pino-pretty/issues"
   },
   "homepage": "https://github.com/pinojs/pino-pretty#readme",
-  "precommit": [
-    "lint",
-    "test"
-  ],
   "dependencies": {
     "colorette": "^2.0.7",
     "dateformat": "^4.6.3",
@@ -54,13 +51,12 @@
     "@jsumners/line-reporter": "^1.0.1",
     "@types/node": "^24.0.8",
     "borp": "^0.20.0",
+    "eslint": "^9.37.0",
     "fastbench": "^1.0.1",
+    "neostandard": "^0.12.2",
     "pino": "^9.0.0",
-    "pre-commit": "^1.2.2",
     "rimraf": "^6.0.1",
     "semver": "^7.6.0",
-    "snazzy": "^9.0.0",
-    "standard": "^17.0.0",
     "tap": "^16.0.0",
     "tsd": "^0.33.0",
     "typescript": "~5.9.2"
