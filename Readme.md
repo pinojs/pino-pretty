@@ -124,7 +124,6 @@ const logger = pino({
 logger.info('hi')
 ```
 
-
 The transport option can also have an options object containing `pino-pretty` options:
 
 ```js
