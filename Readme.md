@@ -170,9 +170,9 @@ The following configuration ensures that `pino-pretty` is activated only in deve
 ```js
 const pino = require('pino')
 
-// Define the transport configuration only for development
+// Define the transport configuration only when the output stream is connected to a TTY
 const transport =
-  process.env.NODE_ENV !== 'production'
+  process.stdout.isTTY
     ? { transport: { target: 'pino-pretty' } }
     : {};
 
