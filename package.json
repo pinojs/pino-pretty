@@ -50,7 +50,7 @@
     "@jsumners/assert-match": "^1.0.0",
     "@jsumners/line-reporter": "^1.0.1",
     "@types/node": "^24.0.8",
-    "borp": "^0.20.0",
+    "borp": "^0.21.0",
     "eslint": "^9.37.0",
     "fastbench": "^1.0.1",
     "neostandard": "^0.12.2",
