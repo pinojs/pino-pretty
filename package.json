@@ -9,9 +9,9 @@
     "pino-pretty": "./bin.js"
   },
   "scripts": {
-    "ci": "eslint && borp --check-coverage && npm run test-types",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix",
+    "ci": "eslint --cache && borp --check-coverage && npm run test-types",
+    "lint": "eslint --cache",
+    "lint:fix": "eslint --fix --cache",
     "test": "borp",
     "test-types": "tsc && tsd && attw --pack .",
     "test:watch": "borp -w --reporter gh",
