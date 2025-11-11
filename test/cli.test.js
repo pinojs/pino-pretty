@@ -162,6 +162,20 @@ describe('cli', () => {
     })
   }
 
+  for (const optionName of ['--colorizeMessage', '-z']) {
+    test(`colorize messages via ${optionName}`, async (t) => {
+      t.plan(1)
+      const child = spawn(process.argv[0], [bin, optionName], { env })
+      child.on('error', t.assert.fail)
+      const endPromise = once(child.stdout, 'data', (data) => {
+        t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): hello world\n`)
+      })
+      child.stdin.write(logLine)
+      await endPromise
+      t.after(() => child.kill())
+    })
+  }
+
   for (const optionName of ['--useOnlyCustomProps', '-U']) {
     test(`customize levels via ${optionName} false and customColors`, async (t) => {
       t.plan(1)
