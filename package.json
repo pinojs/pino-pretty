@@ -31,8 +31,8 @@
   },
   "homepage": "https://github.com/pinojs/pino-pretty#readme",
   "dependencies": {
+    "@pinojs/dateformat": "^1.0.0-rc.2",
     "colorette": "^2.0.7",
-    "dateformat": "^4.6.3",
     "fast-copy": "^3.0.2",
     "fast-safe-stringify": "^2.1.1",
     "help-me": "^5.0.0",
