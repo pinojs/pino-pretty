@@ -2,18 +2,19 @@
 
 process.env.TZ = 'UTC'
 
-const { Writable } = require('node:stream')
 const os = require('node:os')
+const fs = require('node:fs')
+const { join } = require('node:path')
 const { describe, test, beforeEach, afterEach } = require('node:test')
+const { Writable } = require('node:stream')
 const match = require('@jsumners/assert-match')
 const pino = require('pino')
 const dateformat = require('dateformat')
 const rimraf = require('rimraf')
-const { join } = require('node:path')
-const fs = require('node:fs')
-const semver = require('semver')
-const pinoPretty = require('..')
 const SonicBoom = require('sonic-boom')
+const semver = require('semver')
+
+const pinoPretty = require('..')
 const _prettyFactory = pinoPretty.prettyFactory
 
 // Disable pino warnings
