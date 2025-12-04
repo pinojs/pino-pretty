@@ -38,28 +38,27 @@
     "help-me": "^5.0.0",
     "joycon": "^3.1.1",
     "minimist": "^1.2.6",
-    "on-exit-leak-free": "^2.1.0",
+    "on-exit-leak-free": "^2.1.2",
     "pino-abstract-transport": "^3.0.0",
-    "pump": "^3.0.0",
-    "secure-json-parse": "^4.0.0",
-    "sonic-boom": "^4.0.1",
-    "strip-json-comments": "^5.0.2"
+    "pump": "^3.0.3",
+    "secure-json-parse": "^4.1.0",
+    "sonic-boom": "^4.2.0",
+    "strip-json-comments": "^5.0.3"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.1",
     "@jsumners/assert-match": "^1.0.0",
     "@jsumners/line-reporter": "^1.0.1",
-    "@types/node": "^24.0.8",
+    "@types/node": "^24.10.1",
     "borp": "^0.21.0",
-    "eslint": "^9.37.0",
+    "eslint": "^9.39.1",
     "fastbench": "^1.0.1",
     "neostandard": "^0.12.2",
     "pino": "^10.1.0",
-    "rimraf": "^6.0.1",
+    "rimraf": "^6.1.2",
     "semver": "^7.6.0",
-    "tap": "^16.0.0",
     "tsd": "^0.33.0",
-    "typescript": "~5.9.2"
+    "typescript": "^5.9.3"
   },
   "tsd": {
     "directory": "./test/types"

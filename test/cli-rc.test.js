@@ -2,11 +2,11 @@
 
 process.env.TZ = 'UTC'
 
+const fs = require('node:fs')
 const path = require('node:path')
 const { spawn } = require('node:child_process')
 const { describe, after, test } = require('node:test')
 const match = require('@jsumners/assert-match')
-const fs = require('node:fs')
 const { rimraf } = require('rimraf')
 const { once } = require('./helper')
 
