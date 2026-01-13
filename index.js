@@ -103,6 +103,52 @@ const defaultOptions = {
 }
 
 /**
+ * Normalizes a value to a boolean if it's the string "true" or "false".
+ * Otherwise returns the value unchanged.
+ *
+ * @param {any} value The value to normalize
+ * @returns {any} The normalized value
+ */
+function normalizeBoolean (value) {
+  if (value === 'true') return true
+  if (value === 'false') return false
+  return value
+}
+
+/**
+ * Normalizes boolean options by converting "true" and "false" strings to booleans.
+ *
+ * @param {PinoPrettyOptions} options The options to normalize
+ * @returns {PinoPrettyOptions} The normalized options
+ */
+function normalizeBooleanOptions (options) {
+  const normalized = { ...options }
+  const booleanOptions = [
+    'colorize',
+    'colorizeObjects',
+    'crlf',
+    'hideObject',
+    'levelFirst',
+    'singleLine',
+    'useOnlyCustomProps'
+  ]
+
+  for (const key of booleanOptions) {
+    if (key in normalized) {
+      normalized[key] = normalizeBoolean(normalized[key])
+    }
+  }
+
+  // translateTime can be boolean or string (format string)
+  // Only normalize if it's exactly "true" or "false"
+  if ('translateTime' in normalized && (normalized.translateTime === 'true' || normalized.translateTime === 'false')) {
+    normalized.translateTime = normalizeBoolean(normalized.translateTime)
+  }
+
+  return normalized
+}
+
+/**
  * Processes the supplied options and returns a function that accepts log data
  * and produces a prettified log string.
  *
@@ -110,7 +156,9 @@ const defaultOptions = {
  * @returns {LogPrettifierFunc}
  */
 function prettyFactory (options) {
-  const context = parseFactoryOptions(Object.assign({}, defaultOptions, options))
+  const mergedOptions = Object.assign({}, defaultOptions, options)
+  const normalizedOptions = normalizeBooleanOptions(mergedOptions)
+  const context = parseFactoryOptions(normalizedOptions)
   return pretty.bind({ ...context, context })
 }
 
