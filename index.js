@@ -58,8 +58,6 @@ const pretty = require('./lib/pretty')
  * @property {undefined|string|number} [minimumLevel=undefined] The minimum
  * level for logs that should be processed. Any logs below this level will
  * be omitted.
- * @property {object} [outputStream=process.stdout] The stream to write
- * prettified log lines to.
  * @property {boolean} [singleLine=false] When `true` any objects, except error
  * objects, in the log data will be printed as a single line instead as multiple
  * lines.
@@ -95,7 +93,6 @@ const defaultOptions = {
   messageFormat: null,
   messageKey: MESSAGE_KEY,
   minimumLevel: undefined,
-  outputStream: process.stdout,
   singleLine: false,
   timestampKey: TIMESTAMP_KEY,
   translateTime: true,
