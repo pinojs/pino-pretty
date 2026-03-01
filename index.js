@@ -68,6 +68,8 @@ const pretty = require('./lib/pretty')
  * it must be a format string.
  * @property {boolean} [useOnlyCustomProps=true] When true, only custom levels
  * and colors will be used if they have been provided.
+ * @property {boolean} [colorizeMessage=false] When true, the message will
+ * get the same color of the level
  */
 
 /**
@@ -96,7 +98,8 @@ const defaultOptions = {
   singleLine: false,
   timestampKey: TIMESTAMP_KEY,
   translateTime: true,
-  useOnlyCustomProps: true
+  useOnlyCustomProps: true,
+  colorizeMessage: false
 }
 
 /**
