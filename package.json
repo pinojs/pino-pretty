@@ -9,11 +9,11 @@
     "pino-pretty": "./bin.js"
   },
   "scripts": {
-    "ci": "eslint && borp --check-coverage && npm run test-types",
+    "ci": "eslint && borp --check-coverage && npm run test:types",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "borp",
-    "test-types": "tsc && tsd && attw --pack .",
+    "test:types": "tstyche",
     "test:watch": "borp -w --reporter gh",
     "test:report": "c8 --reporter html borp"
   },
@@ -53,14 +53,12 @@
     "borp": "^1.0.0",
     "eslint": "^9.39.1",
     "fastbench": "^1.0.1",
+    "fastify-tsconfig": "^3.0.0",
     "neostandard": "^0.12.2",
     "pino": "^10.1.0",
     "rimraf": "^6.1.2",
     "semver": "^7.6.0",
-    "tsd": "^0.33.0",
+    "tstyche": "^6.2.0",
     "typescript": "^5.9.3"
-  },
-  "tsd": {
-    "directory": "./test/types"
   }
 }

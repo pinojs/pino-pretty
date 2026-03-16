@@ -1,23 +1,18 @@
-// Type definitions for pino-pretty 7.0
 // Project: https://github.com/pinojs/pino-pretty#readme
 // Definitions by: Adam Vigneaux <https://github.com/AdamVig>
 //                 tearwyx <https://github.com/tearwyx>
-// Minimum TypeScript Version: 3.0
 
 /// <reference types="node" />
 
-import { Transform } from 'node:stream';
-import { OnUnknown } from 'pino-abstract-transport';
+import { Transform } from 'node:stream'
+import { OnUnknown } from 'pino-abstract-transport'
 // @ts-ignore fall back to any if pino is not available, i.e. when running pino tests
-import { DestinationStream, Level } from 'pino';
-import * as Colorette from "colorette";
+import { DestinationStream, Level } from 'pino'
+import * as Colorette from 'colorette'
 
-type LogDescriptor = Record<string, unknown>;
-
-declare function PinoPretty(options?: PinoPretty.PrettyOptions): PinoPretty.PrettyStream;
+declare function PinoPretty (options?: PinoPretty.PrettyOptions): PinoPretty.PrettyStream
 declare namespace PinoPretty {
-
-  function colorizerFactory(
+  export function colorizerFactory (
     useColors?: boolean,
     customColors?: [number, string][],
     useOnlyCustomProps?: boolean,
@@ -33,9 +28,9 @@ declare namespace PinoPretty {
     greyMessage: (input: string | number) => string,
   }
 
-  function prettyFactory(options: PrettyOptions): (inputData: any) => string
+  export function prettyFactory (options: PrettyOptions): (inputData: any) => string
 
-  interface PrettyOptions {
+  export interface PrettyOptions {
     /**
      * Hide objects from output (but not error object).
      * @default false
@@ -197,7 +192,7 @@ declare namespace PinoPretty {
      *
      * Not required when used with pino >= 8.21.0
      */
-    customLevels?: string|object;
+    customLevels?: string | object;
     /**
      * Change the level colors to an user custom preset.
      *
@@ -207,7 +202,7 @@ declare namespace PinoPretty {
      * @example ( CSV ) customColors: 'info:white,some_level:red'
      * @example ( Object ) customColors: { info: 'white', some_level: 'red' }
      */
-    customColors?: string|object;
+    customColors?: string | object;
     /**
      * Only use custom levels and colors (if provided); else fallback to default levels and colors.
      *
@@ -216,19 +211,17 @@ declare namespace PinoPretty {
     useOnlyCustomProps?: boolean;
   }
 
-  function build(options: PrettyOptions): PrettyStream;
+  export function build (options?: PrettyOptions): PrettyStream
 
-  type Prettifier = (inputData: string | object, key: string, log: object, extras: PrettifierExtras) => string;
-  type PrettifierExtras = {colors: Colorette.Colorette, label: string, labelColorized: string};
-  type MessageFormatFunc = (log: LogDescriptor, messageKey: string, levelLabel: string, extras: PrettifierExtras) => string;
-  type PrettyStream = Transform & OnUnknown;
-  type ColorizerFactory = typeof colorizerFactory;
-  type PrettyFactory = typeof prettyFactory;
-  type Build = typeof build;
+  export type Prettifier = (inputData: string | object, key: string, log: object, extras: PrettifierExtras) => string
+  export type PrettifierExtras = { colors: Colorette.Colorette, label: string, labelColorized: string }
+  export type MessageFormatFunc = (log: Record<string, unknown>, messageKey: string, levelLabel: string, extras: PrettifierExtras) => string
+  export type PrettyStream = Transform & OnUnknown
 
   // @ts-ignore
-  export const isColorSupported = Colorette.isColorSupported;
-  export { build, PinoPretty, PrettyOptions, PrettyStream, colorizerFactory, prettyFactory };
+  export const isColorSupported = Colorette.isColorSupported
+
+  export { PinoPretty }
 }
 
-export = PinoPretty;
+export = PinoPretty
