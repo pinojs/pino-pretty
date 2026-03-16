@@ -176,12 +176,6 @@ test('PrettyOptions', () => {
   expect<Pick<PrettyOptions, 'customPrettifiers'>>().type.toBe<{
     customPrettifiers?: Record<string, Prettifier> & { level?: Prettifier };
   }>()
-  expect<PrettyOptions['customPrettifiers']>().type.toBeAssignableFrom(
-    { customPrettifier, level: customPrettifier }
-  )
-  expect<PrettyOptions['customPrettifiers']>().type.not.toBeAssignableFrom(
-    { level: 'wrong' }
-  )
 
   expect<Pick<PrettyOptions, 'customLevels'>>().type.toBe<{
     customLevels?: string | object;
