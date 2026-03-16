@@ -13,7 +13,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "borp",
-    "test:types": "tstyche",
+    "test:types": "tstyche && attw --pack .",
     "test:watch": "borp -w --reporter gh",
     "test:report": "c8 --reporter html borp"
   },
