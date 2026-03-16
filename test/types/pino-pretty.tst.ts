@@ -198,6 +198,7 @@ test('PrettyOptions', () => {
 
 test('prettyFactory', () => {
   expect(prettyFactory(options)).type.toBe<(inputData: any) => string>()
+  expect(prettyFactory).type.not.toBeCallableWith()
 })
 
 test('PrettyStream', () => {
