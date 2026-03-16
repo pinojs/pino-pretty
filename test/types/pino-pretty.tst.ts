@@ -14,7 +14,6 @@ import pretty, {
   PrettyStream
 } from '../../index.js'
 
-declare const customPrettifier: Prettifier
 declare const options: PrettyOptions
 
 test('default export', () => {
