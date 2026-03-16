@@ -215,7 +215,7 @@ declare namespace PinoPretty {
 
   type PrettifierExtras = { colors: Colorette.Colorette, label: string, labelColorized: string }
   export type Prettifier = (inputData: string | object, key: string, log: object, extras: PrettifierExtras) => string
-  export type MessageFormatFunc = (log: Record<string, unknown>, messageKey: string, levelLabel: string, extras: PrettifierExtras) => string
+  export type MessageFormatFunc = (log: Record<string, unknown>, messageKey: string, levelLabel: string, extras: Pick<PrettifierExtras, 'colors'>) => string
   export type PrettyStream = Transform & OnUnknown
 
   // @ts-ignore

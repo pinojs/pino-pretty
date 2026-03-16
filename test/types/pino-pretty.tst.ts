@@ -26,6 +26,23 @@ test('build', () => {
   expect(build(options)).type.toBe<PrettyStream>()
 })
 
+test('PinoPretty', () => {
+  expect(PinoPretty()).type.toBe<PrettyStream>()
+  expect(PinoPretty(options)).type.toBe<PrettyStream>()
+})
+
+test('PrettyStream', () => {
+  const stream = pretty()
+  pino(stream)
+
+  expect<PrettyStream>().type.toBeAssignableTo<pino.DestinationStream>()
+})
+
+test('prettyFactory', () => {
+  expect(prettyFactory(options)).type.toBe<(inputData: any) => string>()
+  expect(prettyFactory).type.not.toBeCallableWith()
+})
+
 test('colorizerFactory', () => {
   const colorizer = colorizerFactory()
 
@@ -56,148 +73,68 @@ test('isColorSupported', () => {
   expect(isColorSupported).type.toBe<boolean>()
 })
 
-test('MessageFormatFunc', () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const messageFormat: MessageFormatFunc = (log, messageKey, levelLabel, extras) => {
+test('PrettyOptions', () => {
+  expect<PrettyOptions>().type.toBeAssignableFrom({ colorize: true })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ colorizeObjects: true })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ crlf: false })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ errorLikeObjectKeys: ['err', 'error'] })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ errorProps: '' })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ levelFirst: false })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ messageKey: 'msg' })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ levelKey: 'level' })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ messageFormat: false as const })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ messageFormat: '{levelLabel} - {pid} - url:{req.url}' })
+
+  const messageFormat: MessageFormatFunc = (log, messageKey, levelLabel, { colors }) => {
     expect(log).type.toBe<Record<string, unknown>>()
     expect(messageKey).type.toBe<string>()
     expect(levelLabel).type.toBe<string>()
-    expect(extras.colors).type.toBe<Colorette>()
-    expect(extras.label).type.toBe<string>()
-    expect(extras.labelColorized).type.toBe<string>()
+    expect(colors).type.toBe<colorette.Colorette>()
 
     return ''
   }
-})
 
-test('PinoPretty', () => {
-  expect(PinoPretty()).type.toBe<PrettyStream>()
-  expect(PinoPretty(options)).type.toBe<PrettyStream>()
-})
+  expect<PrettyOptions>().type.toBeAssignableFrom({ messageFormat })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ timestampKey: 'time' })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ translateTime: false })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ translateTime: 'SYS:standard' })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ ignore: 'pid,hostname' })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ include: 'level,time' })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ hideObject: false })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ singleLine: false })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ customColors: 'err:red,info:blue' })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ customColors: { info: 'white', some_level: 'red' } })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ customLevels: 'err:99,info:1' })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ customLevels: { info: 10, some_level: 40 } })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ levelLabel: 'levelLabel' })
+  expect<PrettyOptions>().type.toBeAssignableFrom<{ minimumLevel: pino.Level }>()
+  expect<PrettyOptions>().type.toBeAssignableFrom({ useOnlyCustomProps: true })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ destination: '1' })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ destination: 1 })
+  expect<PrettyOptions>().type.toBeAssignableFrom<{ destination: pino.DestinationStream }>()
+  expect<PrettyOptions>().type.toBeAssignableFrom<{ destination: NodeJS.WritableStream }>()
 
-test('Prettifier', () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const prettifier: Prettifier = (input, key, log, extras) => {
+  expect<PrettyOptions>().type.toBeAssignableFrom({ sync: false })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ append: true })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ mkdir: true })
+
+  const levelPrettifier: Prettifier = (input, key, log, { colors, label, labelColorized }) => {
     expect(input).type.toBe<string | object>()
     expect(key).type.toBe<string>()
     expect(log).type.toBe<object>()
-    expect(extras.colors).type.toBe<colorette.Colorette>()
-    expect(extras.label).type.toBe<string>()
-    expect(extras.labelColorized).type.toBe<string>()
+    expect(colors).type.toBe<colorette.Colorette>()
+    expect(label).type.toBe<string>()
+    expect(labelColorized).type.toBe<string>()
 
     return input.toString()
   }
-})
 
-test('PrettyOptions', () => {
-  expect<PrettyOptions>().type.toBeAssignableFrom({})
+  const customPrettifiers: Record<string, Prettifier> = {
+    time: timestamp => `🕰 ${timestamp}`,
+    level: logLevel => `LEVEL: ${logLevel}`,
+    name: (name, _key, _log, { colors }) => `${colors.blue(name.toString())}`,
+  }
 
-  expect<Pick<PrettyOptions, 'hideObject'>>().type.toBe<{
-    hideObject?: boolean;
-  }>()
-
-  expect<Pick<PrettyOptions, 'translateTime'>>().type.toBe<{
-    translateTime?: boolean | string;
-  }>()
-
-  expect<Pick<PrettyOptions, 'levelFirst'>>().type.toBe<{
-    levelFirst?: boolean;
-  }>()
-
-  expect<Pick<PrettyOptions, 'levelKey'>>().type.toBe<{
-    levelKey?: string;
-  }>()
-
-  expect<Pick<PrettyOptions, 'levelLabel'>>().type.toBe<{
-    levelLabel?: string;
-  }>()
-
-  expect<Pick<PrettyOptions, 'messageKey'>>().type.toBe<{
-    messageKey?: string;
-  }>()
-
-  expect<Pick<PrettyOptions, 'singleLine'>>().type.toBe<{
-    singleLine?: boolean;
-  }>()
-
-  expect<Pick<PrettyOptions, 'timestampKey'>>().type.toBe<{
-    timestampKey?: string;
-  }>()
-
-  expect<Pick<PrettyOptions, 'minimumLevel'>>().type.toBe<{
-    minimumLevel?: pino.Level;
-  }>()
-
-  expect<Pick<PrettyOptions, 'messageFormat'>>().type.toBe<{
-    messageFormat?: false | string | MessageFormatFunc;
-  }>()
-
-  expect<Pick<PrettyOptions, 'colorize'>>().type.toBe<{
-    colorize?: boolean;
-  }>()
-
-  expect<Pick<PrettyOptions, 'colorizeObjects'>>().type.toBe<{
-    colorizeObjects?: boolean;
-  }>()
-
-  expect<Pick<PrettyOptions, 'crlf'>>().type.toBe<{
-    crlf?: boolean;
-  }>()
-
-  expect<Pick<PrettyOptions, 'errorLikeObjectKeys'>>().type.toBe<{
-    errorLikeObjectKeys?: string[];
-  }>()
-
-  expect<Pick<PrettyOptions, 'errorProps'>>().type.toBe<{
-    errorProps?: string;
-  }>()
-
-  expect<Pick<PrettyOptions, 'ignore'>>().type.toBe<{
-    ignore?: string;
-  }>()
-
-  expect<Pick<PrettyOptions, 'include'>>().type.toBe<{
-    include?: string;
-  }>()
-
-  expect<Pick<PrettyOptions, 'sync'>>().type.toBe<{
-    sync?: boolean;
-  }>()
-
-  expect<Pick<PrettyOptions, 'destination'>>().type.toBe<{
-    destination?: string | number | pino.DestinationStream | NodeJS.WritableStream;
-  }>()
-
-  expect<Pick<PrettyOptions, 'append'>>().type.toBe<{
-    append?: boolean;
-  }>()
-
-  expect<Pick<PrettyOptions, 'mkdir'>>().type.toBe<{
-    mkdir?: boolean;
-  }>()
-
-  expect<Pick<PrettyOptions, 'customPrettifiers'>>().type.toBe<{
-    customPrettifiers?: Record<string, Prettifier> & { level?: Prettifier };
-  }>()
-
-  expect<Pick<PrettyOptions, 'customLevels'>>().type.toBe<{
-    customLevels?: string | object;
-  }>()
-
-  expect<Pick<PrettyOptions, 'customColors'>>().type.toBe<{
-    customColors?: string | object;
-  }>()
-
-  expect<Pick<PrettyOptions, 'useOnlyCustomProps'>>().type.toBe<{
-    useOnlyCustomProps?: boolean;
-  }>()
-})
-
-test('prettyFactory', () => {
-  expect(prettyFactory(options)).type.toBe<(inputData: any) => string>()
-  expect(prettyFactory).type.not.toBeCallableWith()
-})
-
-test('PrettyStream', () => {
-  expect<PrettyStream>().type.toBeAssignableTo<pino.DestinationStream>()
+  expect<PrettyOptions>().type.toBeAssignableFrom({ customPrettifiers: { level: levelPrettifier } })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ customPrettifiers })
 })
