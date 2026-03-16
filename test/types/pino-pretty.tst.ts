@@ -1,5 +1,6 @@
 import { expect, test } from 'tstyche'
 
+import colorette from 'colorette'
 import pino from 'pino'
 import pretty, {
   build,
@@ -8,7 +9,6 @@ import pretty, {
   MessageFormatFunc,
   PinoPretty,
   Prettifier,
-  PrettifierExtras,
   prettyFactory,
   PrettyOptions,
   PrettyStream
@@ -62,7 +62,9 @@ test('MessageFormatFunc', () => {
     expect(log).type.toBe<Record<string, unknown>>()
     expect(messageKey).type.toBe<string>()
     expect(levelLabel).type.toBe<string>()
-    expect(extras).type.toBe<PrettifierExtras>()
+    expect(extras.colors).type.toBe<Colorette>()
+    expect(extras.label).type.toBe<string>()
+    expect(extras.labelColorized).type.toBe<string>()
 
     return ''
   }
@@ -75,13 +77,15 @@ test('PinoPretty', () => {
 
 test('Prettifier', () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const prettifier: Prettifier = (inputData, key, log, extras) => {
-    expect(inputData).type.toBe<string | object>()
+  const prettifier: Prettifier = (input, key, log, extras) => {
+    expect(input).type.toBe<string | object>()
     expect(key).type.toBe<string>()
     expect(log).type.toBe<object>()
-    expect(extras).type.toBe<PrettifierExtras>()
+    expect(extras.colors).type.toBe<colorette.Colorette>()
+    expect(extras.label).type.toBe<string>()
+    expect(extras.labelColorized).type.toBe<string>()
 
-    return ''
+    return input.toString()
   }
 })
 
