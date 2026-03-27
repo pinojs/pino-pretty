@@ -51,7 +51,7 @@
     "@jsumners/line-reporter": "^1.0.1",
     "@types/node": "^25.0.3",
     "borp": "^1.0.0",
-    "eslint": "^9.39.1",
+    "eslint": "^10.1.0",
     "fastbench": "^1.0.1",
     "fastify-tsconfig": "^3.0.0",
     "neostandard": "^0.12.2",
