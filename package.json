@@ -59,6 +59,6 @@
     "rimraf": "^6.1.2",
     "semver": "^7.6.0",
     "tstyche": "^6.2.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   }
 }
