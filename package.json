@@ -54,7 +54,7 @@
     "eslint": "^9.39.1",
     "fastbench": "^1.0.1",
     "fastify-tsconfig": "^3.0.0",
-    "neostandard": "^0.12.2",
+    "neostandard": "^0.13.0",
     "pino": "^10.1.0",
     "rimraf": "^6.1.2",
     "semver": "^7.6.0",
