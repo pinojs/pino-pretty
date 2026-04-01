@@ -42,7 +42,7 @@
     "pino-abstract-transport": "^3.0.0",
     "pump": "^3.0.3",
     "secure-json-parse": "^4.1.0",
-    "sonic-boom": "^4.2.0",
+    "sonic-boom": "^5.0.0",
     "strip-json-comments": "^5.0.3"
   },
   "devDependencies": {
