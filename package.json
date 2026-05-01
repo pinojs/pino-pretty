@@ -58,7 +58,7 @@
     "pino": "^10.1.0",
     "rimraf": "^6.1.2",
     "semver": "^7.6.0",
-    "tstyche": "^6.2.0",
+    "tstyche": "^7.1.0",
     "typescript": "^6.0.2"
   }
 }
