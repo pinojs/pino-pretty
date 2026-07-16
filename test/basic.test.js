@@ -1080,6 +1080,31 @@ describe('basic prettifier tests', () => {
     log.info({ msg: 'message' })
   })
 
+  test('sorts object keys alphabetically with sortKeys=true', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ sortKeys: true, colorize: false })
+    const formatted = pretty(`{"level":30,"time":${epoch},"pid":${pid},"hostname":"myhost","msg":"hello","zebra":"z","apple":"a","mango":"m"}`)
+    t.assert.ok(formatted.indexOf('apple') < formatted.indexOf('mango'))
+    // zebra should come after mango
+  })
+
+  test('sorts object keys in descending order with sortKeys="desc"', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ sortKeys: 'desc', colorize: false })
+    const formatted = pretty(`{"level":30,"time":${epoch},"pid":${pid},"hostname":"myhost","msg":"hello","apple":"a","zebra":"z","mango":"m"}`)
+    t.assert.ok(formatted.indexOf('zebra') < formatted.indexOf('apple'))
+  })
+
+  test('sorts object keys with custom comparator function', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({
+      sortKeys: (a, b) => b.localeCompare(a),
+      colorize: false
+    })
+    const formatted = pretty(`{"level":30,"time":${epoch},"pid":${pid},"hostname":"myhost","msg":"hello","apple":"a","zebra":"z","mango":"m"}`)
+    t.assert.ok(formatted.indexOf('zebra') < formatted.indexOf('apple'))
+  })
+
   test('default options', (t) => {
     t.plan(1)
     t.assert.doesNotThrow(pinoPretty)
