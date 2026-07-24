@@ -42,8 +42,11 @@ if (cmd.h || cmd.help) {
 
   let opts = minimist(process.argv, {
     alias: {
+      // defaults to true (sonic-boom options default)
+      append: 'append',
       colorize: 'c',
       crlf: 'f',
+      destination: 'd',
       errorProps: 'e',
       levelFirst: 'l',
       minimumLevel: 'L',
@@ -52,6 +55,7 @@ if (cmd.h || cmd.help) {
       useOnlyCustomProps: 'U',
       errorLikeObjectKeys: 'k',
       messageKey: 'm',
+      mkdir: 'r',
       levelKey: CONSTANTS.LEVEL_KEY,
       levelLabel: 'b',
       messageFormat: 'o',
@@ -60,7 +64,8 @@ if (cmd.h || cmd.help) {
       ignore: 'i',
       include: 'I',
       hideObject: 'H',
-      singleLine: 'S'
+      singleLine: 'S',
+      sync: 'sync'
     },
     default: {
       messageKey: DEFAULT_VALUE,
