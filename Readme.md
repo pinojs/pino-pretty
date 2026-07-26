@@ -101,6 +101,19 @@ node app.js | pino-pretty
 - `--singleLine` (`-S`): Print each log message on a single line (errors will still be multi-line)
 - `--config`: Specify a path to a config file containing the pino-pretty options.  pino-pretty will attempt to read from a `.pino-prettyrc` in your current directory (`process.cwd`) if not specified
 
+<a id="clienv"></a>
+### CLI Environment Variables
+
+The same options can be set via environment variables using `SCREAMING_SNAKE_CASE`
+names that match the long option names. Boolean options accept values such as
+`true` / `false` (not only `1` / `0`):
+
+```sh
+node app.js | SINGLE_LINE=true COLORIZE=true pino-pretty
+```
+
+CLI arguments override config files, which override environment variables.
+
 <a id="integration"></a>
 ## Programmatic Integration
 
