@@ -153,3 +153,9 @@ test/.tmp*
 
 # Local History
 .history
+
+# AI
+AGENTS.md
+.pi*
+CLAUDE.md
+.claude
