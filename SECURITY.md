@@ -12,11 +12,8 @@ production log streams.
 Individuals who find potential vulnerabilities in pino-pretty are invited
 to report them via email at matteo.collina@gmail.com.
 
-### Strict measures when reporting vulnerabilities
-
-Avoid creating new "informative" reports. Only report a potential
-vulnerability if you are reasonably sure it is an actual vulnerability.
-Be mindful of the maintainers' time.
+For issues that are not security-sensitive, please open a pull request
+that fixes the issue instead of submitting a vulnerability report.
 
 ## Threat model
 
@@ -41,7 +38,7 @@ Log record contents may contain malformed or unexpected values, including
 values derived from HTTP requests or other external input handled by the
 application under development.
 
-### Security invariants
+### Security requirements
 
 Malformed or externally influenced log content must not:
 
@@ -50,23 +47,23 @@ Malformed or externally influenced log content must not:
 * Choose an output destination or access arbitrary files
 * Pollute object prototypes through parsed JSON
 
-Configuration and custom callbacks may perform these actions because they are
-explicitly trusted code.
+These requirements apply to log record contents, not to trusted configuration
+or custom callbacks. Those are executable code and may perform these actions
+by design; callers are responsible for reviewing them.
 
-### Accepted risks
+### Accepted limitations
 
-Within the intended development use, the following are accepted as low-impact
-risks:
+Within the intended development use, the following are accepted limitations,
+not vulnerabilities under this policy by themselves:
 
 * Control characters or embedded newlines may distort terminal output
 * Very large or deeply nested records may slow or terminate the formatter
 * Sensitive values already present in logs may be displayed
-* JavaScript configuration files execute code when loaded
 * Formatting failures may interrupt the developer's logging workflow
 
-These behaviors primarily affect the local developer process. They are not
-generally considered vulnerabilities unless they violate one of the security
-invariants above.
+These limitations primarily affect the local developer process. A report is
+warranted if one of them enables a violation of the security requirements
+above.
 
 ### Out of scope
 
