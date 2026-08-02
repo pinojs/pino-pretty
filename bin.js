@@ -33,6 +33,32 @@ const joycon = new JoyCon({
   stopDir: path.dirname(process.cwd())
 })
 
+// Map SCREAMING_SNAKE env vars to camelCase CLI option names.
+// Example: SINGLE_LINE=true COLORIZE=true pino-pretty
+const ENV_OPTION_MAP = {
+  COLORIZE: 'colorize',
+  COLORIZE_OBJECTS: 'colorizeObjects',
+  CONFIG: 'config',
+  CRLF: 'crlf',
+  CUSTOM_COLORS: 'customColors',
+  CUSTOM_LEVELS: 'customLevels',
+  ERROR_LIKE_OBJECT_KEYS: 'errorLikeObjectKeys',
+  ERROR_PROPS: 'errorProps',
+  HIDE_OBJECT: 'hideObject',
+  IGNORE: 'ignore',
+  INCLUDE: 'include',
+  LEVEL_FIRST: 'levelFirst',
+  LEVEL_KEY: 'levelKey',
+  LEVEL_LABEL: 'levelLabel',
+  MESSAGE_FORMAT: 'messageFormat',
+  MESSAGE_KEY: 'messageKey',
+  MINIMUM_LEVEL: 'minimumLevel',
+  SINGLE_LINE: 'singleLine',
+  TIMESTAMP_KEY: 'timestampKey',
+  TRANSLATE_TIME: 'translateTime',
+  USE_ONLY_CUSTOM_PROPS: 'useOnlyCustomProps'
+}
+
 const cmd = minimist(process.argv.slice(2))
 
 if (cmd.h || cmd.help) {
@@ -72,9 +98,10 @@ if (cmd.h || cmd.help) {
 
   // Remove default values
   opts = filter(opts, value => value !== DEFAULT_VALUE)
-  const config = loadConfig(opts.config)
-  // Override config with cli options
-  opts = Object.assign({}, config, opts)
+  const envOpts = loadEnvOptions()
+  const config = loadConfig(opts.config || envOpts.config)
+  // Precedence: CLI > config file > environment variables
+  opts = Object.assign({}, envOpts, config, opts)
   // set defaults
   opts.errorLikeObjectKeys = opts.errorLikeObjectKeys || 'err,error'
   opts.errorProps = opts.errorProps || ''
@@ -86,6 +113,16 @@ if (cmd.h || cmd.help) {
   /* istanbul ignore next */
   if (!process.stdin.isTTY && !fs.fstatSync(process.stdin.fd).isFile()) {
     process.once('SIGINT', function noOp () {})
+  }
+
+  function loadEnvOptions () {
+    const result = {}
+    for (const [envName, optionName] of Object.entries(ENV_OPTION_MAP)) {
+      if (Object.prototype.hasOwnProperty.call(process.env, envName)) {
+        result[optionName] = process.env[envName]
+      }
+    }
+    return result
   }
 
   function loadConfig (configPath) {
