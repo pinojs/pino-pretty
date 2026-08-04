@@ -71,6 +71,19 @@ const pretty = require('./lib/pretty')
  */
 
 /**
+ * @typedef {object} BuildStreamOpts
+ * @property {object|number|string} [destination] A destination stream, file
+ * descriptor, or target path to a file.
+ * @property {boolean} [append]
+ * @property {boolean} [mkdir]
+ * @property {boolean} [sync=false]
+ */
+
+/**
+ * @typedef {PinoPrettyOptions & BuildStreamOpts} CombinedOptions
+ */
+
+/**
  * The default options that will be used when prettifying log lines.
  *
  * @type {PinoPrettyOptions}
@@ -160,19 +173,10 @@ function prettyFactory (options) {
 }
 
 /**
- * @typedef {PinoPrettyOptions} BuildStreamOpts
- * @property {object|number|string} [destination] A destination stream, file
- * descriptor, or target path to a file.
- * @property {boolean} [append]
- * @property {boolean} [mkdir]
- * @property {boolean} [sync=false]
- */
-
-/**
  * Constructs a {@link LogPrettifierFunc} and a stream to which the produced
  * prettified log data will be written.
  *
- * @param {BuildStreamOpts} opts
+ * @param {CombinedOptions} opts
  * @returns {Transform | (Transform & OnUnknown)}
  */
 function build (opts = {}) {

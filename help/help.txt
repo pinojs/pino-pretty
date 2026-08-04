@@ -5,11 +5,13 @@
     version  Display version
   
   Options:
+        --append                For file destination, append instead of overwrite (defaults to append; use `--no-append` to overwrite instead)
     -c, --colorize              Force adding color sequences to the output
-    -C, --config                specify a path to a json file containing the pino-pretty options
+    -C, --config                Specify a path to a json file containing the pino-pretty options
     -f, --crlf                  Append CRLF instead of LF to formatted lines
     -X, --customColors          Override default colors using names from https://www.npmjs.com/package/colorette (`-X err:red,info:blue`)
     -x, --customLevels          Override default levels (`-x err:99,info:1`)
+    -d, --destination [path]    Write to a file instead of stdout
     -k, --errorLikeObjectKeys   Define which keys contain error objects (`-k err,error`) (defaults to `err,error`)
     -e, --errorProps            Comma separated list of properties on error objects to show (`*` for all properties) (defaults to ``)
     -h, --help                  Output usage information
@@ -22,7 +24,9 @@
     -o, --messageFormat         Format output of message
     -m, --messageKey [value]    Highlight the message under the specified key (defaults to "msg")
     -L, --minimumLevel          Hide messages below the specified log level
+    -r, --mkdir                 For file destination, create file directory (recursively) if it does not exist
     -S, --singleLine            Print all non-error objects on a single line
+        --sync                  Write messages synchronously
     -a, --timestampKey [value]  Display the timestamp from the specified key (defaults to "time")
     -t, --translateTime         Display epoch timestamps as UTC ISO format or according to an optional format string (default ISO 8601)
     -U, --useOnlyCustomProps    Only use custom levels and colors (if provided); don't fallback to default levels and colors (-U false)
@@ -31,6 +35,12 @@
   Examples:
     - To prettify logs, simply pipe a log file through
     $ cat log | pino-pretty
+
+    - To ensure correct line order for mixed logs of pino objects and arbitrary log lines
+    $ cat log | pino-pretty --sync
+
+    - To write to a file
+    $ cat log | pino-pretty -d some/file/path/my.log --mkdir --no-append
 
     - To highlight a string at a key other than 'msg'
     $ cat log | pino-pretty -m fooMessage
