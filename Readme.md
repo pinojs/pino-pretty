@@ -67,6 +67,9 @@ node app.js | pino-pretty
 - `--errorLikeObjectKeys` (`-k`): Define the log keys that are associated with
   error like objects. Default: `err,error`.
 - `--messageKey` (`-m`): Define the key that contains the main log message.
+  Nested keys are supported with each property delimited by a dot character (`.`).
+  Keys may be escaped to target property names that contain the delimiter itself
+  (same rules as `--levelKey`).
   Default: `msg`.
 - `--levelKey` (`--levelKey`): Define the key that contains the level of the log. Nested keys are supported with each property delimited by a dot character (`.`).
   Keys may be escaped to target property names that contains the delimiter itself:
@@ -81,6 +84,9 @@ node app.js | pino-pretty
 - `--messageFormat` (`-o`): Format output of message, e.g. `{levelLabel} - {pid} - url:{req.url}` will output message: `INFO - 1123 - url:localhost:3000/test`
   Default: `false`
 - `--timestampKey` (`-a`): Define the key that contains the log timestamp.
+  Nested keys are supported with each property delimited by a dot character (`.`).
+  Keys may be escaped to target property names that contain the delimiter itself
+  (same rules as `--levelKey`), e.g. `--timestampKey nested_key.time`.
   Default: `time`.
 - `--translateTime` (`-t`): Translate the epoch time value into a human-readable
   date and time string. This flag also can set the format string to apply when

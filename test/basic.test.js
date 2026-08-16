@@ -1020,6 +1020,20 @@ describe('basic prettifier tests', () => {
     t.assert.strictEqual(arst, `[${formattedEpoch}] INFO: hello world\n`)
   })
 
+  test('handles nested timestampKey', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ timestampKey: 'nested_key.time' })
+    const arst = pretty(`{"msg":"hello world", "nested_key":{"time":${epoch}}, "level":30}`)
+    t.assert.strictEqual(arst, `[${formattedEpoch}] INFO: hello world\n`)
+  })
+
+  test('handles nested messageKey', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ messageKey: 'payload.text', ignore: 'time' })
+    const arst = pretty(`{"payload":{"text":"hello world"}, "time":${epoch}, "level":30}`)
+    t.assert.strictEqual(arst, 'INFO: hello world\n')
+  })
+
   test('keeps "v" key in log', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'time' })
