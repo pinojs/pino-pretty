@@ -1034,6 +1034,21 @@ describe('basic prettifier tests', () => {
     t.assert.strictEqual(arst, 'INFO: hello world\n')
   })
 
+  test('handles null parents for nested timestampKey and messageKey', (t) => {
+    t.plan(2)
+    const prettyTime = prettyFactory({ timestampKey: 'nested_key.time' })
+    const prettyMessage = prettyFactory({ messageKey: 'payload.text', ignore: 'time' })
+
+    t.assert.strictEqual(
+      prettyTime('{"msg":"hello world", "nested_key":null, "level":30}'),
+      'INFO: hello world\n    nested_key: null\n'
+    )
+    t.assert.strictEqual(
+      prettyMessage('{"payload":null, "level":30}'),
+      'INFO:\n    payload: null\n'
+    )
+  })
+
   test('keeps "v" key in log', (t) => {
     t.plan(1)
     const pretty = prettyFactory({ ignore: 'time' })
