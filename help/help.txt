@@ -23,6 +23,7 @@
     -m, --messageKey [value]    Highlight the message under the specified key (defaults to "msg")
     -L, --minimumLevel          Hide messages below the specified log level
     -S, --singleLine            Print all non-error objects on a single line
+    --sync                      Write to the destination synchronously (default: false)
     -a, --timestampKey [value]  Display the timestamp from the specified key (defaults to "time")
     -t, --translateTime         Display epoch timestamps as UTC ISO format or according to an optional format string (default ISO 8601)
     -U, --useOnlyCustomProps    Only use custom levels and colors (if provided); don't fallback to default levels and colors (-U false)
