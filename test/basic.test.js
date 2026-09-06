@@ -1080,6 +1080,36 @@ describe('basic prettifier tests', () => {
     log.info({ msg: 'message' })
   })
 
+  test('singleLine=true keeps the output single-line when the message ends with CRLF (issue #414)', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ singleLine: true, colorize: false })
+    const formatted = pretty(JSON.stringify({
+      level: 30,
+      time: epoch,
+      pid,
+      msg: 'frame= 2000 fps=232 speed= 7.8x\r\n'
+    }))
+    t.assert.strictEqual(
+      formatted,
+      `[${formattedEpoch}] INFO (${pid}): frame= 2000 fps=232 speed= 7.8x\n`
+    )
+  })
+
+  test('message ending with CRLF does not add a blank line (issue #414)', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ colorize: false })
+    const formatted = pretty(JSON.stringify({
+      level: 30,
+      time: epoch,
+      pid,
+      msg: 'frame= 2000 fps=232 speed= 7.8x\r\n'
+    }))
+    t.assert.strictEqual(
+      formatted,
+      `[${formattedEpoch}] INFO (${pid}): frame= 2000 fps=232 speed= 7.8x\n`
+    )
+  })
+
   test('default options', (t) => {
     t.plan(1)
     t.assert.doesNotThrow(pinoPretty)
