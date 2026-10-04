@@ -96,7 +96,9 @@ node app.js | pino-pretty
   (`-i time,hostname,req.headers,log\\.domain\\.corp/foo`).
   The `--ignore` option would be ignored, if both `--ignore` and `--include` are passed.
   Default: `hostname`.
-- `--include` (`-I`): The opposite of `--ignore`. Include one or several keys.
+- `--include` (`-I`): The opposite of `--ignore`. Include one or several keys, nested keys are supported with each property delimited by a dot character (`.`),
+  keys may be escaped to target property names that contains the delimiter itself:
+  (`-I time,hostname,req.headers,log\.domain\.corp/foo`).
 - `--hideObject` (`-H`): Hide objects from output (but not error object)
 - `--singleLine` (`-S`): Print each log message on a single line (errors will still be multi-line)
 - `--config`: Specify a path to a config file containing the pino-pretty options.  pino-pretty will attempt to read from a `.pino-prettyrc` in your current directory (`process.cwd`) if not specified
