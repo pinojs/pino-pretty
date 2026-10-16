@@ -26,6 +26,7 @@ declare namespace PinoPretty {
     ): string,
     message: (input: string | number) => string,
     greyMessage: (input: string | number) => string,
+    json: (input: any) => string,
   }
 
   export function prettyFactory (options: PrettyOptions): (inputData: any) => string

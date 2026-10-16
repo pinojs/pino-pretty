@@ -154,7 +154,7 @@ describe('boolean options string conversion', () => {
                 if (value === 'true') {
                   t.assert.strictEqual(
                     formatted,
-                    `[${formattedEpoch}] \u001B[32mINFO\u001B[39m (${pid}): \u001B[36mfoo\u001B[39m \u001B[90m{"foo":"bar"}\u001B[39m\n`
+                    `[${formattedEpoch}] \u001B[32mINFO\u001B[39m (${pid}): \u001B[36mfoo\u001B[39m \u001B[92m{\u001B[39m\u001B[91m"foo"\u001B[39m\u001B[90m:\u001B[39m\u001B[92m"bar"\u001B[39m\u001B[92m}\u001B[39m\n`
                   )
                 } else {
                   t.assert.strictEqual(
