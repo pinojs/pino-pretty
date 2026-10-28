@@ -333,6 +333,23 @@ const prettifyQuery = value => {
 }
 ```
 
+Use `'*'` to provide a fallback for object fields without a named prettifier:
+
+```js
+{
+  customPrettifiers: {
+    query: prettifyQuery,
+    '*': value => JSON.stringify(value)
+  }
+}
+```
+
+Named prettifiers take precedence over the wildcard. The wildcard receives the
+same arguments as a named prettifier, including the actual field name, and can
+return `undefined` to omit a field. It applies to object fields, including error
+fields, without changing message, timestamp, level, or metadata formatting. It
+formats each field's value as a whole rather than visiting nested properties.
+
 All prettifiers use this function signature:
 
 ```js
