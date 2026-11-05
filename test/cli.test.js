@@ -26,6 +26,18 @@ describe('cli', () => {
     t.after(() => child.kill())
   })
 
+  test('formats {levelLabel} in --messageFormat without custom levels', async (t) => {
+    t.plan(1)
+    const child = spawn(process.argv[0], [bin, '--messageFormat', '{levelLabel} - {pid} - {msg}'], { env })
+    child.on('error', t.assert.fail)
+    const endPromise = once(child.stdout, 'data', (data) => {
+      t.assert.strictEqual(data.toString(), `[${formattedEpoch}] INFO (42): INFO - 42 - hello world\n`)
+    })
+    child.stdin.write(logLine)
+    await endPromise
+    t.after(() => child.kill())
+  })
+
   for (const optionName of ['--levelFirst', '-l']) {
     test(`flips epoch and level via ${optionName}`, async (t) => {
       t.plan(1)
