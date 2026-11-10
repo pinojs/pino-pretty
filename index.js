@@ -160,12 +160,16 @@ function prettyFactory (options) {
 }
 
 /**
- * @typedef {PinoPrettyOptions} BuildStreamOpts
+ * @typedef {object} BuildStreamDestinationOpts
  * @property {object|number|string} [destination] A destination stream, file
  * descriptor, or target path to a file.
  * @property {boolean} [append]
  * @property {boolean} [mkdir]
  * @property {boolean} [sync=false]
+ */
+
+/**
+ * @typedef {PinoPrettyOptions & BuildStreamDestinationOpts} BuildStreamOpts
  */
 
 /**
