@@ -47,6 +47,13 @@ declare namespace PinoPretty {
      */
     translateTime?: boolean | string;
     /**
+     * An IANA time zone name, e.g. `America/Los_Angeles`. When set, it is used instead of the local system's
+     * timezone when translating time (the default format and formats with a `SYS:` prefix). `UTC:` formats are
+     * not affected.
+     * @default undefined
+     */
+    timeZone?: string;
+    /**
      * If set to true, it will print the name of the log level as the first field in the log line.
      * @default false
      */

@@ -54,6 +54,18 @@ describe('cli', () => {
     })
   }
 
+  test('translates time in the given time zone via --timeZone', async (t) => {
+    t.plan(1)
+    const child = spawn(process.argv[0], [bin, '--timeZone', 'America/Los_Angeles'], { env })
+    child.on('error', t.assert.fail)
+    const endPromise = once(child.stdout, 'data', (data) => {
+      t.assert.strictEqual(data.toString(), '[10:35:28.992] INFO (42): hello world\n')
+    })
+    child.stdin.write(logLine)
+    await endPromise
+    t.after(() => child.kill())
+  })
+
   for (const optionName of ['--ignore', '-i']) {
     test('does ignore multiple keys', async (t) => {
       t.plan(1)
