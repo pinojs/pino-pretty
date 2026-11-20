@@ -25,6 +25,7 @@
     -S, --singleLine            Print all non-error objects on a single line
     -a, --timestampKey [value]  Display the timestamp from the specified key (defaults to "time")
     -t, --translateTime         Display epoch timestamps as UTC ISO format or according to an optional format string (default ISO 8601)
+        --timeZone [value]      Use this IANA time zone instead of the system's for the default and "SYS:" time formats
     -U, --useOnlyCustomProps    Only use custom levels and colors (if provided); don't fallback to default levels and colors (-U false)
     -v, --version               Output the version number
   
@@ -49,6 +50,9 @@
 
     - To convert Epoch timestamps to local timezone format use the -t option with "SYS:" prefixed format string
     $ cat log | pino-pretty -t "SYS:yyyy-mm-dd HH:MM:ss"
+
+    - To show those times in another time zone than the system's use the --timeZone option
+    $ cat log | pino-pretty -t "SYS:yyyy-mm-dd HH:MM:ss" --timeZone America/Los_Angeles
 
     - To flip level and time/date in standard output use the -l option
     $ cat log | pino-pretty -l

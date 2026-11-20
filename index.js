@@ -63,6 +63,9 @@ const pretty = require('./lib/pretty')
  * lines.
  * @property {string} [timestampKey='time'] Defines the key in incoming logs
  * that contains the timestamp of the log, if present.
+ * @property {string} [timeZone=undefined] An IANA time zone name, e.g.
+ * `America/Los_Angeles`, to use instead of the system's local time zone when
+ * translating timestamps (the default format and `SYS:` formats).
  * @property {boolean|string} [translateTime=true] When true, will translate a
  * JavaScript date integer into a human-readable string. If set to a string,
  * it must be a format string.
@@ -95,6 +98,7 @@ const defaultOptions = {
   minimumLevel: undefined,
   singleLine: false,
   timestampKey: TIMESTAMP_KEY,
+  timeZone: undefined,
   translateTime: true,
   useOnlyCustomProps: true
 }

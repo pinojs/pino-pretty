@@ -91,6 +91,11 @@ node app.js | pino-pretty
   - Require a `SYS:` prefix to translate time to the local system's time zone. A
     shortcut `SYS:standard` to translate time to `yyyy-mm-dd HH:MM:ss.l o` in
     system time zone.
+- `--timeZone`: Use this IANA time zone instead of the local system's time zone
+  when translating time (the default format and `SYS:` formats), e.g.
+  `--timeZone America/Los_Angeles -t SYS:standard`. Useful when the process runs
+  with `TZ=UTC` but you want to read logs in your own time zone. Formats without
+  a prefix and `UTC:` formats stay in UTC.
 - `--ignore` (`-i`): Ignore one or several keys, nested keys are supported with each property delimited by a dot character (`.`),
   keys may be escaped to target property names that contains the delimiter itself:
   (`-i time,hostname,req.headers,log\\.domain\\.corp/foo`).
@@ -284,6 +289,7 @@ The options accepted have keys corresponding to the options described in [CLI Ar
   messageFormat: false, // --messageFormat
   timestampKey: 'time', // --timestampKey
   translateTime: false, // --translateTime
+  timeZone: undefined, // --timeZone
   ignore: 'pid,hostname', // --ignore
   include: 'level,time', // --include
   hideObject: false, // --hideObject
