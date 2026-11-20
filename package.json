@@ -9,7 +9,8 @@
     "pino-pretty": "./bin.js"
   },
   "scripts": {
-    "ci": "eslint && borp --check-coverage && npm run test:types",
+    "ci": "eslint && borp --check-coverage && npm run test:types && npm run docs",
+    "docs": "jsdoc -r index.js lib/",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "borp",
@@ -54,6 +55,7 @@
     "eslint": "^9.39.1",
     "fastbench": "^1.0.1",
     "fastify-tsconfig": "^3.0.0",
+    "jsdoc": "^4.0.5",
     "neostandard": "^0.13.0",
     "pino": "^10.1.0",
     "rimraf": "^6.1.2",

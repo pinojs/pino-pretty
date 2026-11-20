@@ -173,7 +173,7 @@ function prettyFactory (options) {
  * prettified log data will be written.
  *
  * @param {BuildStreamOpts} opts
- * @returns {Transform | (Transform & OnUnknown)}
+ * @returns {Transform}
  */
 function build (opts = {}) {
   let pretty = prettyFactory(opts)
