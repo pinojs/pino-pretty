@@ -136,5 +136,7 @@ test('PrettyOptions', () => {
   }
 
   expect<PrettyOptions>().type.toBeAssignableFrom({ customPrettifiers: { level: levelPrettifier } })
+  const wildcardPrettifier: Prettifier = value => value.toString()
+  expect<PrettyOptions>().type.toBeAssignableFrom({ customPrettifiers: { '*': wildcardPrettifier } })
   expect<PrettyOptions>().type.toBeAssignableFrom({ customPrettifiers })
 })
