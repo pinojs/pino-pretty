@@ -127,6 +127,7 @@ function normalizeBooleanOptions (options) {
     'hideObject',
     'levelFirst',
     'singleLine',
+    'sync',
     'useOnlyCustomProps'
   ]
 
