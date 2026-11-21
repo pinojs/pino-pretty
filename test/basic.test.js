@@ -298,6 +298,43 @@ describe('basic prettifier tests', () => {
     log.info({ msg: 'foo' })
   })
 
+  test('can use a customPrettifier to get final level label with default options', (t) => {
+    t.plan(1)
+    const customPrettifiers = {
+      level: (level, key, logThis, { label }) => {
+        return `LEVEL: ${label}`
+      }
+    }
+    const pretty = prettyFactory({ customPrettifiers })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.assert.strictEqual(
+          formatted,
+          `[${formattedEpoch}] LEVEL: WARN (${pid}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.warn({ msg: 'foo' })
+  })
+
+  test('formats {levelLabel} in messageFormat with default options', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({ messageFormat: '{levelLabel} - {msg}' })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.assert.strictEqual(
+          formatted,
+          `[${formattedEpoch}] ERROR (${pid}): ERROR - foo\n`
+        )
+        cb()
+      }
+    }))
+    log.error({ msg: 'foo' })
+  })
+
   test('can use a customPrettifier to get final level label (colorized)', (t) => {
     t.plan(1)
     const customPrettifiers = {
