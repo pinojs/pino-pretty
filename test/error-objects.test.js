@@ -452,6 +452,90 @@ describe('error like objects tests', () => {
   })
 })
 
+describe('hideObject error handling', () => {
+  for (const errorKey of ['err', 'fault']) {
+    test(`hideObject preserves serialized errors under ${errorKey}`, (t) => {
+      const pretty = prettyFactory({ hideObject: true, errorLikeObjectKeys: [errorKey] })
+      const err = Error('visible failure')
+      let formatted
+      const log = pino({ base: null, timestamp: false, errorKey }, new Writable({
+        write (chunk, enc, cb) {
+          formatted = pretty(chunk.toString())
+          cb()
+        }
+      }))
+
+      log.error({ [errorKey]: err, extra: { marker: 'hidden payload' } }, 'request failed')
+      t.assert.match(formatted, /^ERROR: request failed\n/)
+      t.assert.ok(formatted.includes(`${errorKey}: {`))
+      t.assert.ok(formatted.includes(err.stack.split('\n')[1].trim()))
+      t.assert.ok(!formatted.includes('hidden payload'))
+    })
+  }
+
+  test('hideObject preserves custom error prettifiers without running hidden prettifiers', (t) => {
+    let hiddenCalls = 0
+    let errorCalls = 0
+    const pretty = prettyFactory({
+      hideObject: true,
+      customPrettifiers: {
+        extra: () => { hiddenCalls++; return 'hidden payload' },
+        err: (value, key, log) => { errorCalls++; return `${value.message} for ${log.requestId}` }
+      }
+    })
+    const formatted = pretty({
+      level: 50,
+      msg: 'request failed',
+      err: serializers.err(Error('visible failure')),
+      requestId: 'request-1',
+      extra: { marker: 'hidden payload' }
+    })
+
+    t.assert.strictEqual(formatted, 'ERROR: request failed\n    err: visible failure for request-1\n')
+    t.assert.strictEqual(errorCalls, 1)
+    t.assert.strictEqual(hiddenCalls, 0)
+  })
+
+  for (const options of [{ ignore: 'err' }, { include: 'level,msg' }, { errorLikeObjectKeys: [] }]) {
+    test(`hideObject respects error filtering ${JSON.stringify(options)}`, (t) => {
+      const pretty = prettyFactory({ hideObject: true, ...options })
+      const formatted = pretty({ level: 50, msg: 'request failed', err: serializers.err(Error('hidden error')) })
+      t.assert.strictEqual(formatted, 'ERROR: request failed\n')
+    })
+  }
+
+  test('hideObject leaves single-line output unchanged when no error is rendered', (t) => {
+    const pretty = prettyFactory({ hideObject: true, singleLine: true, customPrettifiers: { err: () => undefined } })
+    for (const err of [undefined, serializers.err(Error('hidden error'))]) {
+      const formatted = pretty({ level: 50, msg: 'request failed', err, extra: { marker: 'hidden payload' } })
+      t.assert.strictEqual(formatted, 'ERROR: request failed')
+    }
+    t.assert.strictEqual(pretty({ level: 50, msg: 'request failed' }), 'ERROR: request failed')
+  })
+
+  test('hideObject retains explicit legacy error properties and nested prettifiers', (t) => {
+    const pretty = prettyFactory({ hideObject: true, errorProps: '*', customPrettifiers: { detail: value => `custom ${value}` } })
+    const formatted = pretty({ level: 50, msg: 'legacy', type: 'Error', stack: 'Error: legacy\n    at legacy.js:1:1', code: 500, nested: { detail: 'kept' } })
+    t.assert.strictEqual(formatted, 'ERROR: legacy\n    Error: legacy\n        at legacy.js:1:1\n    code: 500\n    nested: {\n        detail: custom kept\n    }\n')
+  })
+
+  test('hideObject uses the custom errorKey supplied by Pino config', async (t) => {
+    let resolveLine
+    const output = new Promise(resolve => { resolveLine = resolve })
+    const destination = new Writable({ write (chunk, enc, cb) { resolveLine(chunk.toString()); cb() } })
+    const pretty = pinoPretty({ destination, colorize: false, hideObject: true })
+    const log = pino({ base: null, timestamp: false, errorKey: 'fault' }, pretty)
+    const err = Error('visible failure')
+    log.error({ fault: err, extra: { marker: 'hidden payload' } }, 'request failed')
+    const formatted = await output
+    pretty.end()
+
+    t.assert.ok(formatted.includes('fault: {'))
+    t.assert.ok(formatted.includes(err.stack.split('\n')[1].trim()))
+    t.assert.ok(!formatted.includes('hidden payload'))
+  })
+})
+
 if (semver.gte(pino.version, '8.21.0')) {
   describe('using pino config', () => {
     beforeEach(() => {
