@@ -101,6 +101,7 @@ node app.js | pino-pretty
   (`-I time,hostname,req.headers,log\.domain\.corp/foo`).
 - `--hideObject` (`-H`): Hide objects from output (but not error object)
 - `--singleLine` (`-S`): Print each log message on a single line (errors will still be multi-line)
+- `--sync`: Write to the destination synchronously (default: `false`). This can help preserve the order of non-Pino lines and prettified log lines.
 - `--config`: Specify a path to a config file containing the pino-pretty options.  pino-pretty will attempt to read from a `.pino-prettyrc` in your current directory (`process.cwd`) if not specified
 
 <a id="integration"></a>
