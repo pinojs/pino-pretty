@@ -492,6 +492,32 @@ describe('basic prettifier tests', () => {
     log.info('foo')
   })
 
+  test('will format time in the given time zone', (t) => {
+    t.plan(1)
+    const pretty = prettyFactory({
+      translateTime: 'SYS:yyyy-mm-dd HH:MM:ss o',
+      timeZone: 'Asia/Tokyo'
+    })
+    const log = pino({}, new Writable({
+      write (chunk, enc, cb) {
+        const formatted = pretty(chunk.toString())
+        t.assert.strictEqual(
+          formatted,
+          `[2018-03-31 02:35:28 +0900] INFO (${pid}): foo\n`
+        )
+        cb()
+      }
+    }))
+    log.info('foo')
+  })
+
+  test('throws on an invalid time zone', (t) => {
+    t.assert.throws(
+      () => prettyFactory({ timeZone: 'Not/A_Zone' }),
+      { message: 'options.timeZone must be a valid IANA time zone name, received: Not/A_Zone' }
+    )
+  })
+
   // TODO: 2019-03-30 -- We don't really want the indentation in this case? Or at least some better formatting.
   test('handles missing time', (t) => {
     t.plan(1)

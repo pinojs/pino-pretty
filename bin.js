@@ -57,6 +57,7 @@ if (cmd.h || cmd.help) {
       messageFormat: 'o',
       timestampKey: 'a',
       translateTime: 't',
+      timeZone: 'T',
       ignore: 'i',
       include: 'I',
       hideObject: 'H',

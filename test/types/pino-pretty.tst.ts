@@ -98,6 +98,7 @@ test('PrettyOptions', () => {
   expect<PrettyOptions>().type.toBeAssignableFrom({ timestampKey: 'time' })
   expect<PrettyOptions>().type.toBeAssignableFrom({ translateTime: false })
   expect<PrettyOptions>().type.toBeAssignableFrom({ translateTime: 'SYS:standard' })
+  expect<PrettyOptions>().type.toBeAssignableFrom({ timeZone: 'America/Los_Angeles' })
   expect<PrettyOptions>().type.toBeAssignableFrom({ ignore: 'pid,hostname' })
   expect<PrettyOptions>().type.toBeAssignableFrom({ include: 'level,time' })
   expect<PrettyOptions>().type.toBeAssignableFrom({ hideObject: false })
