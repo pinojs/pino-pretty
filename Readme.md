@@ -91,7 +91,7 @@ node app.js | pino-pretty
   - Require a `SYS:` prefix to translate time to the local system's time zone. A
     shortcut `SYS:standard` to translate time to `yyyy-mm-dd HH:MM:ss.l o` in
     system time zone.
-- `--timeZone`: Use this IANA time zone instead of the local system's time zone
+- `--timeZone` (`-T`): Use this IANA time zone instead of the local system's time zone
   when translating time (the default format and `SYS:` formats), e.g.
   `--timeZone America/Los_Angeles -t SYS:standard`. Useful when the process runs
   with `TZ=UTC` but you want to read logs in your own time zone. Formats without
