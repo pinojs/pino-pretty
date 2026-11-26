@@ -128,11 +128,12 @@ declare namespace PinoPretty {
      */
     errorProps?: string;
     /**
-     * Ignore one or several keys.
-     * Will be overridden by the option include if include is presented.
+     * Log keys to omit, as a comma-separated string or an array of key paths.
+     * The include option takes precedence.
      * @example "time,hostname"
+     * @example ["time", "hostname"]
      */
-    ignore?: string;
+    ignore?: string | string[];
     /**
      * Include one or several keys.
      * @example "time,level"

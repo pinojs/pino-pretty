@@ -309,6 +309,10 @@ The options accepted have keys corresponding to the options described in [CLI Ar
 }
 ```
 
+The programmatic `ignore` option accepts a comma-separated string or an array of
+key paths. For example, `ignore: ['pid', 'req.headers', 'a,b']` omits the
+`pid` field, the nested `req.headers` field, and the single field named `a,b`.
+
 The `colorize` default follows
 [`colorette.isColorSupported`](https://github.com/jorgebucaran/colorette#iscolorsupported).
 
