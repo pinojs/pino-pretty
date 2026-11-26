@@ -38,8 +38,8 @@ const pretty = require('./lib/pretty')
  * error objects to include in the output.
  * @property {boolean} [hideObject=false] When `true`, data objects will be
  * omitted from the output (except for error objects).
- * @property {string} [ignore='hostname'] A comma separated list of log keys
- * to omit when outputting the prettified log information.
+ * @property {string|string[]} [ignore='hostname'] Log keys to omit, as a
+ * comma-separated string or an array of key paths.
  * @property {undefined|string} [include=undefined] A comma separated list of
  * log keys to include in the prettified log information. Only the keys in this
  * list will be included in the output.
