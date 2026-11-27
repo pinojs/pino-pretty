@@ -58,6 +58,7 @@ test('colorizerFactory', () => {
   const input: string | number = ''
   expect(colorizer.message(input)).type.toBe<string>()
   expect(colorizer.greyMessage(input)).type.toBe<string>()
+  expect(colorizer.json(input)).type.toBe<string>()
 
   let level: string | number | undefined
   expect(colorizer(level)).type.toBe<string>()
