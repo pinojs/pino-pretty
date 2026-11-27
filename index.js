@@ -61,6 +61,10 @@ const pretty = require('./lib/pretty')
  * @property {boolean} [singleLine=false] When `true` any objects, except error
  * objects, in the log data will be printed as a single line instead as multiple
  * lines.
+ * @property {boolean|string|function} [sortKeys=false] When `true`, sorts
+ * object keys in alphabetical (ascending) order. When set to `'desc'`, sorts
+ * in descending order. When a function, it is used as the comparator for
+ * `Array.prototype.sort()`.
  * @property {string} [timestampKey='time'] Defines the key in incoming logs
  * that contains the timestamp of the log, if present.
  * @property {boolean|string} [translateTime=true] When true, will translate a
@@ -94,6 +98,7 @@ const defaultOptions = {
   messageKey: MESSAGE_KEY,
   minimumLevel: undefined,
   singleLine: false,
+  sortKeys: false,
   timestampKey: TIMESTAMP_KEY,
   translateTime: true,
   useOnlyCustomProps: true
