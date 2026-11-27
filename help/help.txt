@@ -65,4 +65,7 @@
     - Loads options from a config file
     $ cat log | pino-pretty --config=/path/to/config.json
 
+    - Set options via environment variables (SCREAMING_SNAKE_CASE of the long option name)
+    $ cat log | SINGLE_LINE=true COLORIZE=true pino-pretty
+
   
